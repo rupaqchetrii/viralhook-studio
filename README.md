@@ -59,11 +59,11 @@ Our team is working on dataset validation, machine learning experimentation, bac
 
 **ViralHook Studio — Core Development Team**
 
-- [Rupak ] — Project Lead / .gitignore,docs,backend
-- [Tanvir ] — ML
-- [Aditya ] — backend
-- [Samina ] —frontend
-- [Meenmoy ] — frontend
+- **Rupak** — Project Lead / Architecture, Git Hygiene (`.gitignore`), Documentation (`docs/`), Backend Integration
+- **Tanvir** — Machine Learning & NLP Pipeline Lead (Dual-Tower ML, Whisper, Calibration)
+- **Aditya** — Backend API & Database Lead (FastAPI, SQLite, Schemas, Linter Rules)
+- **Samina** — Frontend Lead / UI System & Architecture (React, Vite, Tailwind, Zustand)
+- **Meenmoy** — Frontend Lead / Battle Arena & Visualizations (A/B Arena, Pace Meter, Linter UI)
 
 ## 🎯 Our Vision
 
