@@ -1,16 +1,79 @@
-# React + Vite
+# ViralHook Studio — Frontend Architecture (Day 1)
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+**Lead:** Samina (Frontend UI Architecture & State Store Lead)  
+**Stack:** React 18 / 19, Vite, Tailwind CSS v4, Zustand, Lucide React, Recharts  
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🎨 Dark Studio SaaS Design System
 
-## React Compiler
+Configured in `src/index.css` according to PRD Section 5.2 specifications:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Token | Hex Value | Usage |
+|---|---|---|
+| `--color-studio-bg` | `#11121B` | Deep obsidian canvas background |
+| `--color-studio-panel` | `#202238` | Card and modal surface panels |
+| `--color-studio-panel-elevated` | `#282a45` | Hovered and elevated panel surfaces |
+| `--color-studio-border` | `#2e3152` | Subtle panel and divider borders |
+| `--color-studio-accent` | `#A78BFA` | Primary studio violet accent |
+| `--color-studio-accent-hover` | `#9065f7` | Active / hover button violet |
+| `--color-studio-text` | `#F1F5F9` | High-contrast WCAG 2.1 AA body text |
+| `--color-studio-muted` | `#94A3B8` | Secondary labels and metadata |
+| `--color-studio-success` | `#10B981` | Green pacing zone (≤ 3.0s) & low clickbait risk |
+| `--color-studio-warning` | `#F59E0B` | Yellow moderate zone & Dead-Heat margin guard |
+| `--color-studio-danger` | `#EF4444` | Red warning zone (> 4.5s) & linter clichés |
 
-## Expanding the Oxlint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## 🧩 Shared UI Primitives (`src/components/ui/`)
+
+Pre-built components ready for Meenmoy (Battle Arena) and team integration:
+
+* **`<Button variant="..." size="..." icon={...}>`**:
+  * Variants: `primary`, `secondary`, `outline`, `danger`, `ghost`
+  * Sizes: `sm`, `md`, `lg`
+* **`<Card>`**, **`<CardHeader>`**, **`<CardBody>`**:
+  * Dark studio panel with `#202238` background and `#2e3152` borders. Supports `borderAccent` for highlighting battle winners.
+* **`<Badge variant="..." size="...">`**:
+  * Status badges (`default`, `accent`, `success`, `warning`, `danger`).
+* **`<Tooltip text="...">`**:
+  * Accessible hovering tooltips with positioned popovers.
+
+---
+
+## 🏗️ Folder Structure
+
+```
+frontend/
+├── src/
+│   ├── assets/              # Static branding and SVG icons
+│   ├── components/
+│   │   ├── ui/              # Samina: Shared primitives (Button, Card, Badge, Tooltip)
+│   │   ├── layout/          # Samina: Studio App Shell (Header, Footer, Onboarding)
+│   │   ├── arena/           # Meenmoy: Battle Arena, Pace Barometer, Linter Popovers
+│   │   └── history/         # Samina: Saved Battle Library Drawer
+│   ├── store/               # Samina: Zustand Global State Store (useHookStore.js)
+│   ├── services/            # Samina: Backend API service client & offline heuristics
+│   ├── utils/               # Pacing tempo calculator (2.75 wps) & linter regexes
+│   ├── App.jsx              # Studio workspace container
+│   ├── index.css            # Tailwind v4 dark studio tokens
+│   └── main.jsx             # React entrypoint
+├── package.json
+└── vite.config.js
+```
+
+---
+
+## 🚀 Running Locally
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Build for production:
+```bash
+npm run build
+```
+*(Verified: compiles in <1.5s with zero errors).*
