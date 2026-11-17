@@ -51,9 +51,25 @@ The initial ML pipeline is designed around:
 
 ## 🏗️ Project Status
 
-🚧 **Currently in Development**
+✅ **3-Day Sprint Complete (16–18 Nov 2026)**
+- **Day 1**: Architecture setup, health checks, prediction gateway, Pydantic v2 schemas.
+- **Day 2**: 8-feature psycholinguistic explainer, 13-rule hook linter, `/api/analyze` endpoint.
+- **Day 3**: Trained hybrid TF-IDF + 24-feature Logistic Regression model (Macro-F1: 0.9977), full E2E & edge-case test suite (60/60 tests passing), close-result decision guard.
 
-Our team is working on dataset validation, machine learning experimentation, backend development and frontend implementation.
+### 🧪 Running the Tests
+```bash
+# Backend & E2E Tests (49 tests)
+pytest backend/tests/ -v
+
+# ML Data Pipeline & Feature Extractor Tests (11 tests)
+pytest tests/ -v
+```
+
+### 🚀 Running the App
+```bash
+# Start backend server (serves API & single-page UI at http://127.0.0.1:8000)
+python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
+```
 
 ## 👥 Team
 
