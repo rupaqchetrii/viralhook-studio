@@ -18,9 +18,9 @@ export function MarginGuardBanner({ marginGuard }) {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h4 className="font-bold text-amber-300 text-base">Statistical Dead-Heat Declared</h4>
+                <h4 className="font-bold text-amber-300 text-base">Close Result (Similar Scores)</h4>
                 <Badge variant="warning" size="xs">
-                  Margin Guard: ΔP &lt; 8.0%
+                  Margin Guard: ΔP ≤ 8.0%
                 </Badge>
               </div>
               <p className="text-xs text-[#94A3B8] mt-1 max-w-2xl">{summary}</p>
@@ -29,11 +29,11 @@ export function MarginGuardBanner({ marginGuard }) {
 
           <div className="flex items-center gap-3 shrink-0 self-end md:self-center">
             <div className="text-right">
-              <div className="text-[11px] text-[#64748B] uppercase font-mono">Margin Difference</div>
+              <div className="text-[11px] text-[#64748B] uppercase font-mono">Score Margin</div>
               <div className="text-sm font-bold font-mono text-amber-400">ΔP = {deltaPercent}%</div>
             </div>
             <div className="px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-semibold">
-              No Deceptive Winner
+              Close Match Guard
             </div>
           </div>
         </div>
@@ -53,11 +53,11 @@ export function MarginGuardBanner({ marginGuard }) {
           <div>
             <div className="flex items-center gap-2">
               <h4 className="font-bold text-[#F1F5F9] text-base">
-                Clear Stat Winner:{' '}
+                Leading Hook:{' '}
                 <span className="text-[#A78BFA]">{isWinnerA ? 'Hook A' : 'Hook B'}</span>
               </h4>
               <Badge variant="accent" size="xs">
-                ΔP ≥ 8.0%
+                ΔP &gt; 8.0%
               </Badge>
             </div>
             <p className="text-xs text-[#94A3B8] mt-1 max-w-2xl">{summary}</p>
@@ -66,11 +66,11 @@ export function MarginGuardBanner({ marginGuard }) {
 
         <div className="flex items-center gap-3 shrink-0 self-end md:self-center">
           <div className="text-right">
-            <div className="text-[11px] text-[#64748B] uppercase font-mono">Significant Delta</div>
-            <div className="text-sm font-bold font-mono text-[#A78BFA]">ΔP = {deltaPercent}%</div>
+            <div className="text-[11px] text-[#64748B] uppercase font-mono">Engagement Lead</div>
+            <div className="text-sm font-bold font-mono text-[#A78BFA]">+{deltaPercent}%</div>
           </div>
           <div className="px-3 py-1.5 rounded-lg bg-[#A78BFA]/20 border border-[#A78BFA]/40 text-[#F1F5F9] text-xs font-bold">
-            {isWinnerA ? '🏆 Hook A Recommended' : '🏆 Hook B Recommended'}
+            {isWinnerA ? '🏆 Hook A Leads' : '🏆 Hook B Leads'}
           </div>
         </div>
       </div>

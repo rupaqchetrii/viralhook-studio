@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ViralHook Studio — Creator A/B Hook Lab</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0B0D14;
+            color: #E2E8F0;
+        }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .gradient-card {
+            background: linear-gradient(180deg, rgba(30, 35, 58, 0.7) 0%, rgba(18, 21, 37, 0.9) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+        }
+        .gradient-card-active {
+            border: 1px solid rgba(167, 139, 250, 0.4);
+            box-shadow: 0 0 25px -5px rgba(167, 139, 250, 0.15);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-purple-500 selection:text-white">
+
+    <!-- Top Navigation Bar -->
+    <header class="border-b border-white/10 bg-[#0F111D]/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center font-bold text-white text-lg shadow-lg shadow-purple-500/20">
+                    ⚡
+                </div>
+                <div>
+                    <h1 class="text-base font-bold text-white tracking-tight flex items-center gap-2">
+                        ViralHook Studio
+                        <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-semibold border border-purple-500/30">Day 1 MVP</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Creator A/B Hook Lab & Virality Predictor</p>
+                </div>
+            </div>
+
+            <!-- API Status Pill & Docs Link -->
+            <div class="flex items-center gap-4">
+                <a href="/docs" target="_blank" class="text-xs text-slate-400 hover:text-purple-300 transition-colors flex items-center gap-1 border border-white/10 px-3 py-1.5 rounded-lg hover:border-purple-500/40">
+                    <span>📖 API Docs</span>
+                </a>
+                <div id="statusPill" class="flex items-center gap-2 text-xs px-3 py-1.5 rounded-full bg-slate-800/80 border border-slate-700/60 text-slate-300">
+                    <span id="statusDot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                    <span id="statusText">Checking API...</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="max-w-6xl mx-auto px-6 py-8 flex-1 w-full">
+
+        <!-- Intro Banner & Example Loader -->
+        <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+                <h2 class="text-2xl font-extrabold text-white tracking-tight">A/B Opening Hook Battle</h2>
+                <p class="text-sm text-slate-400 mt-1 max-w-xl">
+                    Compare two opening video lines before recording. Our model analyzes linguistic patterns from historical short-form data to estimate engagement potential.
+                </p>
+            </div>
+            <!-- Preset Buttons -->
+            <div class="flex items-center gap-2">
+                <span class="text-xs text-slate-500">Presets:</span>
+                <button onclick="loadExample(1)" class="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800/60 hover:bg-purple-900/30 border border-slate-700 hover:border-purple-500/50 text-slate-300 transition-colors">
+                    Tech / Coding
+                </button>
+                <button onclick="loadExample(2)" class="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800/60 hover:bg-purple-900/30 border border-slate-700 hover:border-purple-500/50 text-slate-300 transition-colors">
+                    Close Match (Tie)
+                </button>
+            </div>
+        </div>
+
+        <!-- Two-Hook Input Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            
+            <!-- Hook A Card -->
+            <div class="gradient-card rounded-2xl p-6 transition-all duration-300 focus-within:gradient-card-active">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-lg bg-purple-500/20 text-purple-300 flex items-center justify-center font-bold text-xs border border-purple-500/30">A</span>
+                        <h3 class="text-sm font-semibold text-white">Opening Hook A</h3>
+                    </div>
+                    <span id="countA" class="mono text-xs text-slate-400">0 / 280</span>
+                </div>
+                <textarea id="hookA" rows="4" maxlength="280" placeholder="e.g. Here are five Python mistakes beginner programmers make..." class="w-full bg-[#121525] border border-white/10 rounded-xl p-3.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500/60 transition-colors resize-none"></textarea>
+                <div class="flex items-center justify-between mt-3 text-xs text-slate-500">
+                    <span id="wordsA">0 words</span>
+                    <span>Max 280 chars</span>
+                </div>
+            </div>
+
+            <!-- Hook B Card -->
+            <div class="gradient-card rounded-2xl p-6 transition-all duration-300 focus-within:gradient-card-active">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-lg bg-indigo-500/20 text-indigo-300 flex items-center justify-center font-bold text-xs border border-indigo-500/30">B</span>
+                        <h3 class="text-sm font-semibold text-white">Opening Hook B</h3>
+                    </div>
+                    <span id="countB" class="mono text-xs text-slate-400">0 / 280</span>
+                </div>
+                <textarea id="hookB" rows="4" maxlength="280" placeholder="e.g. You are probably making this Python mistake without knowing it..." class="w-full bg-[#121525] border border-white/10 rounded-xl p-3.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500/60 transition-colors resize-none"></textarea>
+                <div class="flex items-center justify-between mt-3 text-xs text-slate-500">
+                    <span id="wordsB">0 words</span>
+                    <span>Max 280 chars</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Action Bar -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
+            <button id="compareBtn" onclick="runComparison()" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold text-sm shadow-xl shadow-purple-600/25 hover:shadow-purple-600/40 transition-all flex items-center justify-center gap-2 active:scale-[0.98]">
+                <span>⚔️ Compare Hooks</span>
+            </button>
+            <button onclick="clearInputs()" class="text-xs text-slate-400 hover:text-slate-200 transition-colors px-4 py-2">
+                Clear All
+            </button>
+        </div>
+
+        <!-- Error Notification Banner (Hidden by default) -->
+        <div id="errorBox" class="hidden max-w-2xl mx-auto mb-8 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs text-center"></div>
+
+        <!-- Result Section (Hidden until comparison runs) -->
+        <div id="resultSection" class="hidden transition-all duration-500">
+            
+            <div class="gradient-card rounded-2xl p-8 border border-white/10 relative overflow-hidden">
+                <!-- Background Accent Glow -->
+                <div id="glowAccent" class="absolute -top-24 -left-24 w-64 h-64 bg-purple-600/20 rounded-full blur-3xl pointer-events-none"></div>
+
+                <!-- Verdict Header -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
+                    <div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-purple-400">Comparison Outcome</span>
+                        <div class="flex items-center gap-3 mt-1">
+                            <h3 id="verdictText" class="text-2xl font-black text-white">Analyzing...</h3>
+                            <span id="leadBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30"></span>
+                        </div>
+                    </div>
+                    <div id="diffBadge" class="mono text-xs px-3.5 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700 text-slate-300 self-start sm:self-auto">
+                        ΔP: 0.0%
+                    </div>
+                </div>
+
+                <!-- Explanation Box -->
+                <div class="py-5">
+                    <p id="explanationText" class="text-sm text-slate-200 leading-relaxed bg-[#121526]/80 p-4 rounded-xl border border-white/5"></p>
+                </div>
+
+                <!-- Side-by-Side Probabilities Breakdown -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 pb-6 border-b border-white/10">
+                    
+                    <!-- Hook A Breakdown -->
+                    <div class="p-4 rounded-xl bg-black/20 border border-white/5">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold text-purple-300">Hook A Breakdown</span>
+                            <span id="classA" class="text-xs font-semibold px-2 py-0.5 rounded bg-purple-900/40 text-purple-200 border border-purple-500/30">High</span>
+                        </div>
+                        <div class="space-y-2 text-xs">
+                            <div>
+                                <div class="flex justify-between text-slate-400 mb-1">
+                                    <span>High Engagement Probability</span>
+                                    <span id="probHighA" class="mono text-white font-semibold">0%</span>
+                                </div>
+                                <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                                    <div id="barHighA" class="h-full bg-purple-500 rounded-full" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between text-[11px] text-slate-500 pt-2 border-t border-white/5">
+                                <span id="metaA">0 words • 0 chars</span>
+                                <span id="sampleChecksA">Check: Ready</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hook B Breakdown -->
+                    <div class="p-4 rounded-xl bg-black/20 border border-white/5">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold text-indigo-300">Hook B Breakdown</span>
+                            <span id="classB" class="text-xs font-semibold px-2 py-0.5 rounded bg-indigo-900/40 text-indigo-200 border border-indigo-500/30">Medium</span>
+                        </div>
+                        <div class="space-y-2 text-xs">
+                            <div>
+                                <div class="flex justify-between text-slate-400 mb-1">
+                                    <span>High Engagement Probability</span>
+                                    <span id="probHighB" class="mono text-white font-semibold">0%</span>
+                                </div>
+                                <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                                    <div id="barHighB" class="h-full bg-indigo-500 rounded-full" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between text-[11px] text-slate-500 pt-2 border-t border-white/5">
+                                <span id="metaB">0 words • 0 chars</span>
+                                <span id="sampleChecksB">Check: Ready</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Mandatory Ethical Disclaimer -->
+                <div class="mt-6 flex items-start gap-3 p-3.5 rounded-xl bg-amber-500/5 border border-amber-500/20 text-amber-200/80 text-xs">
+                    <span class="text-base leading-none">⚠️</span>
+                    <p id="disclaimerText" class="leading-relaxed">
+                        Notice: The predicted engagement class is only an estimate based on historical text patterns in the dataset. It cannot and does not guarantee that a video will go viral. Real-world performance depends heavily on visual delivery, topic relevance, timing, and platform recommendation algorithms.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 bg-[#0B0D14] py-6 text-center text-xs text-slate-500">
+        <p>ViralHook Studio — Department of Computer Science & Engineering • 1st-Semester Assessment</p>
+        <p class="mt-1 text-[11px] text-slate-600">Built with FastAPI & Scikit-learn • Core Team: Rupak (Lead), Tanvir, Aditya, Samina, Meenmoy • Mentor: Megha Gupta</p>
+    </footer>
+
+    <!-- Client-Side Logic -->
+    <script>
+        const API_BASE = window.location.origin.includes(':8000') ? '' : 'http://127.0.0.1:8000';
+
+        // Check Backend Health on Load
+        async function checkHealth() {
+            const statusDot = document.getElementById('statusDot');
+            const statusText = document.getElementById('statusText');
+            try {
+                const res = await fetch(`${API_BASE}/api/health`);
+                if (res.ok) {
+                    const data = await res.json();
+                    statusDot.className = "w-2 h-2 rounded-full bg-emerald-400";
+                    statusText.textContent = `API Ready (${data.inference_mode === 'trained_model' ? 'ML Model' : 'Gateway'})`;
+                    statusText.className = "text-emerald-400 font-medium";
+                } else {
+                    throw new Error();
+                }
+            } catch (err) {
+                statusDot.className = "w-2 h-2 rounded-full bg-red-400";
+                statusText.textContent = "API Offline (Start FastAPI)";
+                statusText.className = "text-red-400";
+            }
+        }
+
+        // Live Counters
+        function updateCounters(id, countId, wordId) {
+            const el = document.getElementById(id);
+            const text = el.value;
+            document.getElementById(countId).textContent = `${text.length} / 280`;
+            const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+            document.getElementById(wordId).textContent = `${words} words`;
+        }
+
+        document.getElementById('hookA').addEventListener('input', () => updateCounters('hookA', 'countA', 'wordsA'));
+        document.getElementById('hookB').addEventListener('input', () => updateCounters('hookB', 'countB', 'wordsB'));
+
+        // Preset Examples
+        function loadExample(type) {
+            if (type === 1) {
+                document.getElementById('hookA').value = "Stop scrolling if you code in Python, here are 5 critical mistakes.";
+                document.getElementById('hookB').value = "Hello guys today in this video I will discuss some programming errors.";
+            } else if (type === 2) {
+                document.getElementById('hookA').value = "Here are 5 mistakes Python devs make.";
+                document.getElementById('hookB').value = "Here are 5 errors Python coders make.";
+            }
+            updateCounters('hookA', 'countA', 'wordsA');
+            updateCounters('hookB', 'countB', 'wordsB');
+        }
+
+        function clearInputs() {
+            document.getElementById('hookA').value = '';
+            document.getElementById('hookB').value = '';
+            updateCounters('hookA', 'countA', 'wordsA');
+            updateCounters('hookB', 'countB', 'wordsB');
+            document.getElementById('resultSection').classList.add('hidden');
+            document.getElementById('errorBox').classList.add('hidden');
+        }
+
+        // Run Comparison
+        async function runComparison() {
+            const hookA = document.getElementById('hookA').value.trim();
+            const hookB = document.getElementById('hookB').value.trim();
+            const errorBox = document.getElementById('errorBox');
+            const resultSection = document.getElementById('resultSection');
+            const btn = document.getElementById('compareBtn');
+
+            errorBox.classList.add('hidden');
+
+            if (!hookA || !hookB) {
+                errorBox.textContent = "Please enter both Hook A and Hook B before comparing.";
+                errorBox.classList.remove('hidden');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = `<span>⏳ Comparing...</span>`;
+
+            try {
+                const res = await fetch(`${API_BASE}/api/compare`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ hook_a: hookA, hook_b: hookB })
+                });
+
+                if (!res.ok) {
+                    const errData = await res.json();
+                    throw new Error(errData.detail || "Comparison failed");
+                }
+
+                const data = await res.json();
+                renderResults(data);
+                resultSection.classList.remove('hidden');
+                resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } catch (err) {
+                errorBox.textContent = `Error: ${err.message}. Is your backend server running on port 8000?`;
+                errorBox.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<span>⚔️ Compare Hooks</span>`;
+            }
+        }
+
+        function renderResults(data) {
+            document.getElementById('verdictText').textContent = data.verdict;
+            const leadBadge = document.getElementById('leadBadge');
+            const diffBadge = document.getElementById('diffBadge');
+
+            if (data.is_close_result) {
+                leadBadge.textContent = "⚖️ Close Result (≤ 8% diff)";
+                leadBadge.className = "px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30";
+            } else if (data.leading_hook === "A") {
+                leadBadge.textContent = "⭐ Hook A Leads";
+                leadBadge.className = "px-3 py-1 rounded-full text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30";
+            } else {
+                leadBadge.textContent = "⭐ Hook B Leads";
+                leadBadge.className = "px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30";
+            }
+
+            diffBadge.textContent = `ΔP: ${(data.score_difference * 100).toFixed(1)}%`;
+            document.getElementById('explanationText').textContent = data.explanation;
+
+            // Hook A Details
+            document.getElementById('classA').textContent = data.hook_a.predicted_class;
+            const pHighA = (data.hook_a.probabilities.High * 100).toFixed(1);
+            document.getElementById('probHighA').textContent = `${pHighA}%`;
+            document.getElementById('barHighA').style.width = `${pHighA}%`;
+            document.getElementById('metaA').textContent = `${data.hook_a.word_count} words • ${data.hook_a.character_count} chars`;
+
+            // Hook B Details
+            document.getElementById('classB').textContent = data.hook_b.predicted_class;
+            const pHighB = (data.hook_b.probabilities.High * 100).toFixed(1);
+            document.getElementById('probHighB').textContent = `${pHighB}%`;
+            document.getElementById('barHighB').style.width = `${pHighB}%`;
+            document.getElementById('metaB').textContent = `${data.hook_b.word_count} words • ${data.hook_b.character_count} chars`;
+
+            // Sample Checks Indicator
+            const sampleKeywords = ['why', 'how', 'stop', 'mistake', 'secret', 'you', 'your'];
+            const hasKeyA = sampleKeywords.some(w => data.hook_a.text.toLowerCase().includes(w));
+            const hasKeyB = sampleKeywords.some(w => data.hook_b.text.toLowerCase().includes(w));
+            document.getElementById('sampleChecksA').textContent = hasKeyA ? "✨ Keywords Detected" : "Standard phrasing";
+            document.getElementById('sampleChecksB').textContent = hasKeyB ? "✨ Keywords Detected" : "Standard phrasing";
+
+            document.getElementById('disclaimerText').textContent = data.disclaimer;
+        }
+
+        // Initialize on page load
+        checkHealth();
+    </script>
+</body>
+</html>

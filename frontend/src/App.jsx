@@ -6,6 +6,7 @@ import { OnboardingModal } from './components/layout/OnboardingModal';
 import { HistoryDrawer } from './components/history/HistoryDrawer';
 import { HookEditor } from './components/arena/HookEditor';
 import { ComparisonArena } from './components/arena/ComparisonArena';
+import { RemixLab } from './components/arena/RemixLab';
 import { Button } from './components/ui/Button';
 import { Card, CardBody } from './components/ui/Card';
 import { useHookStore } from './store/useHookStore';
@@ -135,6 +136,9 @@ export function App() {
 
         {/* Comparison Arena: Results, Margin Guard & Recharts */}
         {comparisonResult && <ComparisonArena result={comparisonResult} />}
+
+        {/* Hook Remix & Inspiration Lab (Day 3 Feature) */}
+        <RemixLab />
       </main>
 
       {/* Slide-out Library / History Drawer */}

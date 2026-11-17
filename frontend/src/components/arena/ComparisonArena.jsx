@@ -1,14 +1,16 @@
 import React from 'react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell, Legend } from 'recharts';
-import { Zap, ShieldCheck, AlertCircle, BarChart3, TrendingUp, Layers } from 'lucide-react';
+import { Zap, ShieldCheck, AlertCircle, BarChart3, TrendingUp, Layers, Info, Cpu } from 'lucide-react';
 import { Card, CardBody, CardHeader } from '../ui/Card';
 import { Badge } from '../ui/Badge';
 import { MarginGuardBanner } from './MarginGuardBanner';
+import { SignalsComparison } from './SignalsComparison';
+import { ExportBanner } from './ExportBanner';
 
 export function ComparisonArena({ result }) {
   if (!result) return null;
 
-  const { hook_a, hook_b, margin_guard } = result;
+  const { hook_a, hook_b, margin_guard, disclaimer, isMockModel } = result;
 
   // Prepare chart data for Recharts
   const chartData = [
@@ -31,8 +33,22 @@ export function ComparisonArena({ result }) {
 
   return (
     <div className="space-y-6 pt-4">
-      {/* 1. Margin Guard Dead-Heat / Winner Announcement */}
+      {/* 1. Margin Guard Decision Support Banner */}
       <MarginGuardBanner marginGuard={margin_guard} />
+
+      {/* Model Mode Indicator Pill */}
+      <div className="flex items-center justify-between text-xs px-2 text-[#94A3B8]">
+        <div className="flex items-center gap-2">
+          <Cpu className="w-3.5 h-3.5 text-[#A78BFA]" />
+          <span>Inference Engine:</span>
+          <span className="font-semibold text-[#F1F5F9]">
+            {isMockModel ? 'Heuristic Rules Fallback' : 'Trained Hybrid ML Model (TF-IDF + 24 Features)'}
+          </span>
+        </div>
+        <div className="text-[11px] font-mono text-[#64748B]">
+          Decision Margin: ΔP = {(margin_guard.delta_p * 100).toFixed(1)}% (Threshold: 8.0%)
+        </div>
+      </div>
 
       {/* 2. Side-by-Side Engagement & FNVM Metric Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -151,7 +167,7 @@ export function ComparisonArena({ result }) {
             </h3>
           </div>
           <span className="text-xs text-[#94A3B8]">
-            Dense Sentence Transformers + Sparse TF-IDF (P sum = 1.000)
+            TF-IDF + 24 Psychological Features (P sum = 1.000)
           </span>
         </CardHeader>
         <CardBody>
@@ -175,9 +191,7 @@ export function ComparisonArena({ result }) {
                   }}
                   formatter={(value) => [`${value}%`, '']}
                 />
-                <Legend
-                  wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }}
-                />
+                <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
                 <Bar dataKey="HookA" name="Hook A" fill="#818CF8" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="HookB" name="Hook B" fill="#C084FC" radius={[4, 4, 0, 0]} />
               </BarChart>
@@ -185,6 +199,22 @@ export function ComparisonArena({ result }) {
           </div>
         </CardBody>
       </Card>
+
+      {/* 4. Day 2 Psycholinguistic Signals Breakdown */}
+      <SignalsComparison hookA={hook_a} hookB={hook_b} />
+
+      {/* 5. Day 3 Export & Share Banner */}
+      <ExportBanner result={result} />
+
+      {/* 6. Mandatory Ethical Disclaimer (Faculty Mentor Requirement) */}
+      <div className="p-4 rounded-xl bg-[#191a2c]/40 border border-[#2e3152] flex items-start gap-3 text-xs text-[#94A3B8]">
+        <Info className="w-4 h-4 text-[#A78BFA] shrink-0 mt-0.5" />
+        <p className="leading-relaxed">
+          <strong className="text-[#F1F5F9]">Academic & Creator Disclaimer:</strong>{' '}
+          {disclaimer ||
+            'Notice: The predicted engagement class is only an estimate based on historical text patterns in the dataset. It cannot and does not guarantee that a video will go viral. Real-world performance depends heavily on visual delivery, topic relevance, timing, and platform recommendation algorithms.'}
+        </p>
+      </div>
     </div>
   );
 }

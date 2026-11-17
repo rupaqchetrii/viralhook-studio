@@ -2,6 +2,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from backend.app.config import get_settings
 from backend.app.api.compare import router as compare_router
 from backend.app.api.analyze import router as analyze_router
@@ -10,6 +11,9 @@ from backend.app.services.prediction_gateway import gateway
 settings = get_settings()
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+FRONTEND_DIST = BASE_DIR / "frontend" / "dist"
+FRONTEND_DIST_INDEX = FRONTEND_DIST / "index.html"
+DAY1_STATIC_INDEX = BASE_DIR / "frontend" / "public" / "day1_static.html"
 FRONTEND_INDEX = BASE_DIR / "frontend" / "index.html"
 
 app = FastAPI(
@@ -31,10 +35,18 @@ app.add_middleware(
 app.include_router(compare_router, prefix=settings.API_V1_PREFIX)
 app.include_router(analyze_router, prefix=settings.API_V1_PREFIX)
 
+# Mount Vite Assets directory if built
+if FRONTEND_DIST.exists() and (FRONTEND_DIST / "assets").exists():
+    app.mount("/assets", StaticFiles(directory=FRONTEND_DIST / "assets"), name="assets")
+
 
 @app.get("/", tags=["UI"], summary="Serve ViralHook Studio Web Interface")
 def serve_ui():
-    """Serves the single-page creator UI if available, else API information."""
+    """Serves the production React Studio UI if built, else fallback."""
+    if FRONTEND_DIST_INDEX.exists():
+        return FileResponse(FRONTEND_DIST_INDEX)
+    if DAY1_STATIC_INDEX.exists():
+        return FileResponse(DAY1_STATIC_INDEX)
     if FRONTEND_INDEX.exists():
         return FileResponse(FRONTEND_INDEX)
     return {
@@ -44,6 +56,14 @@ def serve_ui():
         "health_check": f"{settings.API_V1_PREFIX}/health",
         "compare_endpoint": f"{settings.API_V1_PREFIX}/compare",
     }
+
+
+@app.get("/day1", tags=["UI"], summary="Serve Day 1 Prototype Web Interface")
+def serve_day1_ui():
+    """Serves the standalone Day 1 prototype interface."""
+    if DAY1_STATIC_INDEX.exists():
+        return FileResponse(DAY1_STATIC_INDEX)
+    return {"message": "Day 1 prototype file not found"}
 
 
 @app.get(f"{settings.API_V1_PREFIX}/health", tags=["Health"], summary="System & Model Health Check")

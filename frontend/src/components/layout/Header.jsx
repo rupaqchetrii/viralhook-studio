@@ -1,8 +1,9 @@
-import React from 'react';
-import { Flame, History, HelpCircle, Layers, Sparkles, RefreshCw } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Flame, History, HelpCircle, Layers, Sparkles, RefreshCw, Cpu, Wifi } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { useHookStore } from '../../store/useHookStore';
+import { checkBackendHealth } from '../../services/api';
 
 export function Header() {
   const {
@@ -15,6 +16,17 @@ export function Header() {
     setOnboardingOpen,
     swapHooks,
   } = useHookStore();
+
+  const [healthStatus, setHealthStatus] = useState(null);
+
+  useEffect(() => {
+    checkBackendHealth().then((res) => {
+      setHealthStatus(res);
+    });
+  }, []);
+
+  const isModelLive = healthStatus?.status === 'healthy';
+  const isTrained = healthStatus?.inference_mode === 'trained_model';
 
   return (
     <header className="border-b border-[#2e3152] bg-[#11121B]/90 backdrop-blur-md sticky top-0 z-40">
@@ -32,6 +44,18 @@ export function Header() {
               <Badge variant="accent" size="xs">
                 v1.0 Lab
               </Badge>
+              {healthStatus && (
+                <span
+                  className={`hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono border ${
+                    isModelLive
+                      ? 'bg-emerald-950/40 text-emerald-300 border-emerald-500/30'
+                      : 'bg-amber-950/40 text-amber-300 border-amber-500/30'
+                  }`}
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full ${isModelLive ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+                  {isTrained ? 'Trained Model' : isModelLive ? 'API Live' : 'Offline'}
+                </span>
+              )}
             </div>
             <p className="text-[11px] text-[#94A3B8] hidden sm:block">
               Creator A/B Hook Lab & Virality Predictor

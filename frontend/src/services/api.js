@@ -1,17 +1,22 @@
 /**
- * ViralHook Studio - API Service Client
- * Connects to FastAPI backend (`/api/v1/compare`).
- * Provides high-fidelity offline heuristic fallback if the backend service is offline.
+ * ViralHook Studio - API Service Client (Day 2 & Day 3 Full Implementation)
+ * Connects directly to FastAPI backend endpoints:
+ * - POST /api/compare
+ * - POST /api/analyze
+ * Provides high-fidelity offline heuristic fallback if backend service is unreachable.
  */
 
 import { countWords, calculateSpokenTime, getPacingZone } from '../utils/pacingCalculator';
 import { lintHook } from '../utils/linterRules';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  (typeof window !== 'undefined' && window.location.origin.includes(':8000')
+    ? window.location.origin
+    : 'http://127.0.0.1:8000');
 
 /**
- * High-fidelity client-side heuristic inference engine used when FastAPI is unreachable
- * or running offline in local presentation mode.
+ * High-fidelity client-side heuristic inference engine used when FastAPI is offline.
  */
 function runHeuristicInference(text, topic = '') {
   const words = countWords(text);
@@ -46,21 +51,17 @@ function runHeuristicInference(text, topic = '') {
   const clampedScore = Math.max(5, Math.min(95, score));
   const normScore = clampedScore / 100;
 
-  // Softmax-like calibrated probability distribution [Low, Medium, High]
   let pLow = Math.max(0.05, (1 - normScore) * 0.7);
   let pHigh = Math.max(0.05, normScore * 0.75);
   let pMed = Math.max(0.1, 1 - (pLow + pHigh));
 
-  // Normalize to exactly 1.000
   const sum = pLow + pMed + pHigh;
   pLow = Math.round((pLow / sum) * 1000) / 1000;
   pMed = Math.round((pMed / sum) * 1000) / 1000;
   pHigh = Math.round((1 - (pLow + pMed)) * 1000) / 1000;
 
-  // Calculate FNVM (Follower-Normalized Virality Multiplier)
   const fnvm = Math.round((pHigh * 3.8 + pMed * 1.5 + pLow * 0.4) * 10) / 10;
 
-  // Hook-to-Promise semantic alignment (simple lexical overlap when offline)
   let topicAlignment = 0.85;
   let clickbaitWarning = false;
   if (topic.trim().length > 0) {
@@ -77,6 +78,7 @@ function runHeuristicInference(text, topic = '') {
 
   return {
     probabilities: { low: pLow, medium: pMed, high: pHigh },
+    predictedClass: pHigh >= pMed && pHigh >= pLow ? 'High' : pMed >= pLow ? 'Medium' : 'Low',
     fnvmScore: fnvm,
     topicAlignment,
     clickbaitWarning,
@@ -84,23 +86,30 @@ function runHeuristicInference(text, topic = '') {
     spokenTime,
     pacingZone: getPacingZone(spokenTime),
     linterFlags,
+    signals: [
+      { label: 'Direct Address', value: /\b(you|your)\b/i.test(text) ? '✅ Present' : '❌ Absent', impact: /\b(you|your)\b/i.test(text) ? 'positive' : 'negative' },
+      { label: 'Curiosity Loop', value: /\b(secret|mistake|why|how|stop)\b/i.test(text) ? '✅ Detected' : '❌ None', impact: /\b(secret|mistake|why|how|stop)\b/i.test(text) ? 'positive' : 'negative' },
+      { label: 'Specificity', value: /\d+/.test(text) ? '✅ Number used' : '⚠️ No numbers', impact: /\d+/.test(text) ? 'positive' : 'neutral' },
+      { label: 'Pacing Window', value: spokenTime <= 3.0 ? '🟢 Sweet spot' : '🟡 Review pace', impact: spokenTime <= 3.0 ? 'positive' : 'neutral' },
+    ],
   };
 }
 
+/**
+ * Execute Hook A vs Hook B Comparison via backend API or fallback
+ */
 export async function compareHooksAPI({ hookA, hookB, topic = '', platform = 'tiktok', niche = 'general' }) {
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000); // 2-second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 4000); // 4-second timeout
 
-    const response = await fetch(`${API_BASE_URL}/api/v1/compare`, {
+    // 1. Primary Compare Call
+    const response = await fetch(`${API_BASE_URL}/api/compare`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         hook_a: hookA,
         hook_b: hookB,
-        topic_summary: topic,
-        platform,
-        niche,
       }),
       signal: controller.signal,
     });
@@ -108,39 +117,149 @@ export async function compareHooksAPI({ hookA, hookB, topic = '', platform = 'ti
 
     if (response.ok) {
       const data = await response.json();
-      return { ...data, isOfflineFallback: false };
+
+      // Optional: also fetch deep feature signals from /api/analyze in parallel
+      let analysisA = null;
+      let analysisB = null;
+      try {
+        const [resA, resB] = await Promise.all([
+          fetch(`${API_BASE_URL}/api/analyze`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ hook: hookA }),
+          }),
+          fetch(`${API_BASE_URL}/api/analyze`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ hook: hookB }),
+          }),
+        ]);
+        if (resA.ok) analysisA = await resA.json();
+        if (resB.ok) analysisB = await resB.json();
+      } catch (e) {
+        // analyze endpoint failure is non-fatal
+      }
+
+      // Map backend probabilities to frontend contract
+      const pLowA = Number(data.hook_a.probabilities?.Low || 0.33);
+      const pMedA = Number(data.hook_a.probabilities?.Medium || 0.33);
+      const pHighA = Number(data.hook_a.probabilities?.High || 0.34);
+
+      const pLowB = Number(data.hook_b.probabilities?.Low || 0.33);
+      const pMedB = Number(data.hook_b.probabilities?.Medium || 0.33);
+      const pHighB = Number(data.hook_b.probabilities?.High || 0.34);
+
+      const fnvmA = Math.round((pHighA * 4.2 + pMedA * 1.5 + pLowA * 0.3) * 10) / 10;
+      const fnvmB = Math.round((pHighB * 4.2 + pMedB * 1.5 + pLowB * 0.3) * 10) / 10;
+
+      // Determine winner representation
+      let winner = 'DEAD_HEAT';
+      if (!data.is_close_result) {
+        winner = data.leading_hook === 'A' ? 'HOOK_A' : 'HOOK_B';
+      }
+
+      // Calculate simple topic alignment
+      let topicAlignmentA = 0.88;
+      let clickbaitWarningA = false;
+      let topicAlignmentB = 0.88;
+      let clickbaitWarningB = false;
+
+      if (topic.trim().length > 0) {
+        const topicWords = topic.toLowerCase().match(/\b\w+\b/g) || [];
+        const checkWords = (t) => t.toLowerCase().match(/\b\w+\b/g) || [];
+        const matchA = checkWords(hookA).filter((w) => topicWords.includes(w) && w.length > 3);
+        const matchB = checkWords(hookB).filter((w) => topicWords.includes(w) && w.length > 3);
+
+        if (matchA.length === 0 && topicWords.length > 2) {
+          topicAlignmentA = 0.35;
+          clickbaitWarningA = true;
+        } else {
+          topicAlignmentA = Math.min(0.98, 0.45 + matchA.length * 0.18);
+        }
+
+        if (matchB.length === 0 && topicWords.length > 2) {
+          topicAlignmentB = 0.35;
+          clickbaitWarningB = true;
+        } else {
+          topicAlignmentB = Math.min(0.98, 0.45 + matchB.length * 0.18);
+        }
+      }
+
+      const spokenTimeA = calculateSpokenTime(data.hook_a.word_count);
+      const spokenTimeB = calculateSpokenTime(data.hook_b.word_count);
+
+      return {
+        timestamp: new Date().toISOString(),
+        isOfflineFallback: false,
+        isMockModel: Boolean(data.is_mock_model),
+        disclaimer: data.disclaimer,
+        hook_a: {
+          text: hookA,
+          predictedClass: data.hook_a.predicted_class,
+          probabilities: { low: pLowA, medium: pMedA, high: pHighA },
+          fnvmScore: fnvmA,
+          topicAlignment: topicAlignmentA,
+          clickbaitWarning: clickbaitWarningA,
+          words: data.hook_a.word_count,
+          spokenTime: spokenTimeA,
+          pacingZone: getPacingZone(spokenTimeA),
+          linterFlags: lintHook(hookA),
+          analysis: analysisA,
+        },
+        hook_b: {
+          text: hookB,
+          predictedClass: data.hook_b.predicted_class,
+          probabilities: { low: pLowB, medium: pMedB, high: pHighB },
+          fnvmScore: fnvmB,
+          topicAlignment: topicAlignmentB,
+          clickbaitWarning: clickbaitWarningB,
+          words: data.hook_b.word_count,
+          spokenTime: spokenTimeB,
+          pacingZone: getPacingZone(spokenTimeB),
+          linterFlags: lintHook(hookB),
+          analysis: analysisB,
+        },
+        margin_guard: {
+          delta_p: Number(data.score_difference),
+          is_dead_heat: Boolean(data.is_close_result),
+          threshold: 0.08,
+          winner,
+          summary: data.explanation,
+        },
+      };
     }
-    throw new Error(`API error: ${response.status}`);
+
+    throw new Error(`API response status: ${response.status}`);
   } catch (err) {
-    // Graceful fallback to heuristic inference engine
-    console.warn('FastAPI backend offline or unreachable. Falling back to local heuristic engine:', err.message);
+    console.warn('FastAPI backend offline or unreachable. Using offline heuristic engine:', err.message);
 
     const resultA = runHeuristicInference(hookA, topic);
     const resultB = runHeuristicInference(hookB, topic);
 
-    // Minimum Significant Margin (ΔP ≥ 0.08) for honest tie detection
     const pHighA = resultA.probabilities.high;
     const pHighB = resultB.probabilities.high;
     const deltaP = Math.round(Math.abs(pHighA - pHighB) * 1000) / 1000;
-    const isDeadHeat = deltaP < 0.08;
+    const isDeadHeat = deltaP <= 0.08;
 
     let winner = 'DEAD_HEAT';
     let summaryMessage = '';
 
     if (isDeadHeat) {
       winner = 'DEAD_HEAT';
-      summaryMessage = `Statistical Dead-Heat (ΔP = ${(deltaP * 100).toFixed(1)}% < 8.0%). Both hooks show virtually equivalent engagement probability. Choose based on tone and production style.`;
+      summaryMessage = `Close result (ΔP = ${(deltaP * 100).toFixed(1)}% ≤ 8.0%). Both hooks show similar estimated potential. Neither has a distinct statistical advantage. Choose the one that best fits your video delivery.`;
     } else if (pHighA > pHighB) {
       winner = 'HOOK_A';
-      summaryMessage = `Hook A statistically outperforms Hook B by ${(deltaP * 100).toFixed(1)}% higher virality probability.`;
+      summaryMessage = `Hook A leads with an estimated ${(pHighA * 100).toFixed(0)}% chance of high engagement vs ${(pHighB * 100).toFixed(0)}% for Hook B (+${(deltaP * 100).toFixed(1)}% lead).`;
     } else {
       winner = 'HOOK_B';
-      summaryMessage = `Hook B statistically outperforms Hook A by ${(deltaP * 100).toFixed(1)}% higher virality probability.`;
+      summaryMessage = `Hook B leads with an estimated ${(pHighB * 100).toFixed(0)}% chance of high engagement vs ${(pHighA * 100).toFixed(0)}% for Hook A (+${(deltaP * 100).toFixed(1)}% lead).`;
     }
 
     return {
       timestamp: new Date().toISOString(),
       isOfflineFallback: true,
+      isMockModel: true,
+      disclaimer: 'Notice: Result is an estimate based on historical data, not a guarantee of virality.',
       hook_a: {
         text: hookA,
         ...resultA,
@@ -158,4 +277,19 @@ export async function compareHooksAPI({ hookA, hookB, topic = '', platform = 'ti
       },
     };
   }
+}
+
+/**
+ * Health check endpoint
+ */
+export async function checkBackendHealth() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/health`);
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (e) {
+    return { status: 'offline', error: e.message };
+  }
+  return { status: 'offline' };
 }
