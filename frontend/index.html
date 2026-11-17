@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dribbble — Discover the World’s Top Designers & Creative Work</title>
+  <title>ViralHook Studio — Creator A/B Hook Lab & Virality Predictor</title>
   
   <!-- Fonts: Plus Jakarta Sans & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -32,6 +32,7 @@
           },
           fontFamily: {
             sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
           },
           letterSpacing: {
             tightest: '-0.03em',
@@ -43,7 +44,6 @@
   </script>
 
   <style>
-    /* Dribbble Exact Micro-interactions & Physics */
     body {
       background-color: #FFFFFF;
       color: #0D0C22;
@@ -66,11 +66,11 @@
 
     /* Gradient scrim overlay */
     .shot-scrim {
-      background: linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(13,12,34,0.78) 100%);
+      background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(13,12,34,0.85) 100%);
       transition: opacity 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 
-    /* Icon button hover physics */
+    /* Tactile button physics */
     .tactile-btn {
       transition: transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1), background-color 150ms ease, color 150ms ease;
     }
@@ -81,7 +81,6 @@
       transform: scale(0.94);
     }
 
-    /* Custom Hide Scrollbar for Horizontal Pills */
     .no-scrollbar::-webkit-scrollbar {
       display: none;
     }
@@ -90,26 +89,7 @@
       scrollbar-width: none;
     }
 
-    /* Filter Drawer smooth collapse */
-    #filterDrawer {
-      transition: max-height 300ms ease-out, opacity 250ms ease-out, padding 300ms ease-out;
-      overflow: hidden;
-    }
-    #filterDrawer.collapsed {
-      max-height: 0;
-      opacity: 0;
-      padding-top: 0;
-      padding-bottom: 0;
-      pointer-events: none;
-    }
-    #filterDrawer.expanded {
-      max-height: 480px;
-      opacity: 1;
-      padding-top: 24px;
-      padding-bottom: 24px;
-    }
-
-    /* Staggered load animation */
+    /* Staggered animation */
     @keyframes fadeInUp {
       from {
         opacity: 0;
@@ -139,7 +119,6 @@
       animation: modalSlideUp 260ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    /* Pro badge hover shift */
     .badge-pro {
       background-color: #E7E7E9;
       color: #6E6D7A;
@@ -159,90 +138,77 @@
   <header class="sticky top-0 z-40 w-full h-[92px] bg-white/95 backdrop-blur-md border-b border-dribbble-hairline transition-all">
     <div class="max-w-[1520px] mx-auto h-full px-6 md:px-10 flex items-center justify-between gap-4">
       
-      <!-- Left: Brand Wordmark + Horizontal Nav Links -->
+      <!-- Left: Brand Wordmark (ViralHook Studio) + Navigation -->
       <div class="flex items-center gap-8">
-        <!-- Dribbble Signature Wordmark -->
         <a href="/" class="flex items-center gap-2 group text-decoration-none">
-          <span class="font-bold text-[28px] tracking-tightest text-dribbble-dark font-sans flex items-center select-none">
-            dribbble
-            <span class="inline-block w-2 h-2 rounded-full bg-dribbble-pink ml-0.5 group-hover:scale-125 transition-transform duration-200"></span>
-          </span>
-          <span class="hidden sm:inline-flex items-center px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider rounded-md bg-dribbble-light text-dribbble-slate border border-dribbble-hairline ml-1">
-            Studio
+          <div class="w-10 h-10 rounded-xl bg-dribbble-dark flex items-center justify-center text-white text-lg font-bold shadow-sm group-hover:bg-dribbble-pink transition-colors">
+            ⚡
+          </div>
+          <div class="flex flex-col">
+            <span class="font-extrabold text-[22px] tracking-tight text-dribbble-dark font-sans flex items-center select-none leading-none">
+              viralhook
+              <span class="inline-block w-2 h-2 rounded-full bg-dribbble-pink ml-1"></span>
+            </span>
+            <span class="text-[11px] font-bold text-dribbble-slate tracking-wider uppercase mt-1">
+              Studio Lab
+            </span>
+          </div>
+          <span class="hidden sm:inline-flex items-center px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md bg-dribbble-light text-dribbble-slate border border-dribbble-hairline ml-1">
+            Group M
           </span>
         </a>
 
-        <!-- Desktop Navigation Links with Dropdown Chevrons -->
+        <!-- Desktop Navigation Links -->
         <nav class="hidden lg:flex items-center gap-6">
-          <button onclick="switchTab('shots')" id="navLinkExplore" class="text-[14px] font-medium text-dribbble-dark hover:text-dribbble-pink transition-colors flex items-center gap-1.5 py-2">
-            Explore
-            <svg class="w-3.5 h-3.5 text-dribbble-slate" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-          </button>
-          <button onclick="openHookBattleModal()" class="text-[14px] font-medium text-dribbble-dark hover:text-dribbble-pink transition-colors flex items-center gap-1.5 py-2 group">
+          <a href="#arena" class="text-[14px] font-semibold text-dribbble-dark hover:text-dribbble-pink transition-colors flex items-center gap-1.5 py-2">
             <span class="relative flex h-2 w-2">
               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-dribbble-pink opacity-75"></span>
               <span class="relative inline-flex rounded-full h-2 w-2 bg-dribbble-pink"></span>
             </span>
             A/B Hook Arena
-            <span class="text-[10px] font-bold uppercase tracking-wider bg-dribbble-pink/10 text-dribbble-pink px-2 py-0.5 rounded-full ml-1 border border-dribbble-pink/20">Live ML</span>
-          </button>
-          <a href="#inspiration" onclick="filterCategory('Viral Hooks')" class="text-[14px] font-medium text-dribbble-slate hover:text-dribbble-dark transition-colors py-2">
-            Hook Inspiration
           </a>
-          <a href="#creators" class="text-[14px] font-medium text-dribbble-slate hover:text-dribbble-dark transition-colors flex items-center gap-1.5 py-2">
-            Find Designers
-            <svg class="w-3.5 h-3.5 text-dribbble-slate" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+          <a href="#matrix" class="text-[14px] font-medium text-dribbble-slate hover:text-dribbble-dark transition-colors py-2">
+            Psycholinguistic Matrix
           </a>
-          <a href="#pro" class="text-[14px] font-medium text-dribbble-slate hover:text-dribbble-dark transition-colors py-2">
-            Go Pro
+          <a href="#inspiration" class="text-[14px] font-medium text-dribbble-slate hover:text-dribbble-dark transition-colors py-2">
+            Hook Inspiration Lab
+          </a>
+          <a href="/docs" target="_blank" class="text-[14px] font-medium text-dribbble-slate hover:text-dribbble-dark transition-colors flex items-center gap-1 py-2">
+            <span>API Docs</span>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
           </a>
         </nav>
       </div>
 
-      <!-- Center / Right: Pill-Shaped Integrated Search Bar -->
-      <div class="flex-1 max-w-[480px] hidden md:flex items-center">
+      <!-- Center: Search Bar for Hooks & Niches -->
+      <div class="flex-1 max-w-[440px] hidden md:flex items-center">
         <div class="w-full h-[48px] rounded-full bg-dribbble-surface border border-transparent focus-within:border-dribbble-hairline focus-within:bg-white focus-within:shadow-sm px-4 flex items-center gap-3 transition-all duration-200">
-          
-          <!-- Category Selector Dropdown inside Search -->
-          <div class="relative flex items-center border-r border-dribbble-hairline pr-3">
-            <select id="searchCategory" class="bg-transparent text-[13px] font-medium text-dribbble-dark focus:outline-none cursor-pointer pr-4 appearance-none">
-              <option value="shots">Shots</option>
-              <option value="hooks">Viral Hooks</option>
-              <option value="designers">Designers</option>
-              <option value="services">Services</option>
-            </select>
-            <svg class="w-3 h-3 text-dribbble-slate absolute right-0 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+          <div class="flex items-center border-r border-dribbble-hairline pr-3 text-[13px] font-medium text-dribbble-dark select-none">
+            <span>Hooks</span>
           </div>
-
-          <!-- Text Input -->
           <input 
             type="text" 
             id="searchInput"
-            placeholder="Search 18M+ shots & viral hooks..." 
+            placeholder="Search viral hooks, archetypes, niches..." 
             class="w-full bg-transparent text-[14px] text-dribbble-dark placeholder-dribbble-muted focus:outline-none"
             oninput="handleSearch(this.value)"
           />
-
-          <!-- Circular Rose-Pink Search Icon Button -->
           <button onclick="triggerSearch()" class="w-8 h-8 rounded-full bg-dribbble-pink hover:bg-dribbble-pink-hover text-white flex items-center justify-center flex-shrink-0 transition-transform hover:scale-105 active:scale-95 shadow-sm">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
           </button>
         </div>
       </div>
 
-      <!-- Far Right: Log In Link + Solid #0D0C22 Pill Button + Hook Arena CTA -->
+      <!-- Far Right: System Status & Quick Compare CTA -->
       <div class="flex items-center gap-4">
-        <button onclick="openHookBattleModal()" class="hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-full text-[13px] font-semibold text-dribbble-pink bg-dribbble-pink-light border border-dribbble-pink/20 hover:bg-dribbble-pink hover:text-white transition-all duration-200">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-          <span>A/B Hook Arena</span>
-        </button>
+        <div id="statusPill" class="hidden sm:flex items-center gap-2 text-xs px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 font-semibold">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>FastAPI ML Online</span>
+        </div>
 
-        <a href="#login" class="text-[14px] font-medium text-dribbble-dark hover:text-dribbble-pink transition-colors">
-          Log in
-        </a>
-
-        <a href="#signup" class="px-5 py-2.5 rounded-full text-white bg-dribbble-dark hover:bg-dribbble-dark-hover text-[14px] font-semibold transition-all shadow-sm active:scale-95">
-          Sign up
+        <a href="#arena" class="px-5 py-2.5 rounded-full text-white bg-dribbble-dark hover:bg-dribbble-dark-hover text-[14px] font-semibold transition-all shadow-sm active:scale-95 flex items-center gap-1.5">
+          <span>Compare Now</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
         </a>
       </div>
 
@@ -250,1137 +216,793 @@
   </header>
 
   <!-- ========================================================================= -->
-  <!-- 2. HERO / DISCOVERY HEADER                                                 -->
+  <!-- 2. HERO SECTION                                                            -->
   <!-- ========================================================================= -->
-  <section class="w-full pt-12 pb-8 px-6 md:px-10 text-center max-w-5xl mx-auto">
+  <section class="w-full pt-12 pb-6 px-6 md:px-10 text-center max-w-5xl mx-auto">
     <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-dribbble-light border border-dribbble-hairline text-dribbble-slate text-[13px] font-medium mb-5">
-      <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-      <span>Over 3 million designers & creators share their top converting work</span>
+      <span class="w-2 h-2 rounded-full bg-dribbble-pink"></span>
+      <span>Pre-Production Video Virality Predictor • Tested on 3,000 Historical Hooks</span>
     </div>
 
-    <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-dribbble-dark tracking-tighter leading-[1.12] mb-4">
-      Discover the world’s top <br class="hidden sm:inline" />
-      <span class="text-transparent bg-clip-text bg-gradient-to-r from-dribbble-pink via-purple-600 to-dribbble-dark">viral hooks & design shots</span>
+    <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-dribbble-dark tracking-tight leading-[1.12] mb-4">
+      Test your opening 3 seconds <br class="hidden sm:inline" />
+      <span class="text-transparent bg-clip-text bg-gradient-to-r from-dribbble-pink via-purple-600 to-dribbble-dark">
+        before hitting record
+      </span>
     </h1>
 
-    <p class="text-base md:text-lg text-dribbble-slate max-w-2xl mx-auto font-normal leading-relaxed mb-8">
-      Explore high-retention video hooks, design architectures, and short-form storytelling patterns crafted by the top 1% of creators.
+    <p class="text-base md:text-lg text-dribbble-slate max-w-2xl mx-auto font-normal leading-relaxed mb-6">
+      ViralHook Studio predicts short-form video retention using 24 psycholinguistic features. Catch filler intros, balance speech tempo, and see which hook wins.
     </p>
 
-    <!-- Trending Search Tag Pills -->
+    <!-- Quick Presets -->
     <div class="flex flex-wrap items-center justify-center gap-2 pt-1 max-w-3xl mx-auto">
-      <span class="text-[13px] font-medium text-dribbble-slate mr-2">Trending:</span>
-      <button onclick="applyTag('TikTok Hooks')" class="px-4 py-1.5 rounded-full bg-dribbble-light hover:bg-dribbble-surface border border-dribbble-hairline hover:border-dribbble-dark text-dribbble-slate hover:text-dribbble-dark text-[13px] font-medium transition-all">
-        TikTok Hooks
+      <span class="text-[13px] font-medium text-dribbble-slate mr-2">Try Presets:</span>
+      <button onclick="loadExample(1)" class="px-4 py-1.5 rounded-full bg-dribbble-light hover:bg-dribbble-surface border border-dribbble-hairline hover:border-dribbble-dark text-dribbble-slate hover:text-dribbble-dark text-[13px] font-medium transition-all">
+        Tech / Coding Mistake
       </button>
-      <button onclick="applyTag('Animation')" class="px-4 py-1.5 rounded-full bg-dribbble-light hover:bg-dribbble-surface border border-dribbble-hairline hover:border-dribbble-dark text-dribbble-slate hover:text-dribbble-dark text-[13px] font-medium transition-all">
-        Animation
+      <button onclick="loadExample(2)" class="px-4 py-1.5 rounded-full bg-dribbble-light hover:bg-dribbble-surface border border-dribbble-hairline hover:border-dribbble-dark text-dribbble-slate hover:text-dribbble-dark text-[13px] font-medium transition-all">
+        Close Match (MarginGuard Tie)
       </button>
-      <button onclick="applyTag('Curiosity Loop')" class="px-4 py-1.5 rounded-full bg-dribbble-light hover:bg-dribbble-surface border border-dribbble-hairline hover:border-dribbble-dark text-dribbble-slate hover:text-dribbble-dark text-[13px] font-medium transition-all">
+      <button onclick="loadExample(3)" class="px-4 py-1.5 rounded-full bg-dribbble-light hover:bg-dribbble-surface border border-dribbble-hairline hover:border-dribbble-dark text-dribbble-slate hover:text-dribbble-dark text-[13px] font-medium transition-all">
+        E-Commerce Hook
+      </button>
+      <button onclick="loadExample(4)" class="px-4 py-1.5 rounded-full bg-dribbble-light hover:bg-dribbble-surface border border-dribbble-hairline hover:border-dribbble-dark text-dribbble-slate hover:text-dribbble-dark text-[13px] font-medium transition-all">
         Curiosity Loop
       </button>
-      <button onclick="applyTag('Mobile UI')" class="px-4 py-1.5 rounded-full bg-dribbble-light hover:bg-dribbble-surface border border-dribbble-hairline hover:border-dribbble-dark text-dribbble-slate hover:text-dribbble-dark text-[13px] font-medium transition-all">
-        Mobile UI
-      </button>
-      <button onclick="applyTag('SaaS Demo')" class="px-4 py-1.5 rounded-full bg-dribbble-light hover:bg-dribbble-surface border border-dribbble-hairline hover:border-dribbble-dark text-dribbble-slate hover:text-dribbble-dark text-[13px] font-medium transition-all">
-        SaaS Demo
-      </button>
-      <button onclick="applyTag('Branding')" class="px-4 py-1.5 rounded-full bg-dribbble-light hover:bg-dribbble-surface border border-dribbble-hairline hover:border-dribbble-dark text-dribbble-slate hover:text-dribbble-dark text-[13px] font-medium transition-all">
-        Branding
-      </button>
     </div>
   </section>
 
   <!-- ========================================================================= -->
-  <!-- 3. STICKY FILTER & CATEGORY BAR                                            -->
+  <!-- 3. THE A/B HOOK BATTLE ARENA (CORE FEATURE)                                -->
   <!-- ========================================================================= -->
-  <section class="sticky top-[92px] z-30 w-full bg-white/95 backdrop-blur-md border-b border-dribbble-hairline py-4">
-    <div class="max-w-[1520px] mx-auto px-6 md:px-10 flex items-center justify-between gap-4">
+  <section id="arena" class="max-w-[1400px] mx-auto px-6 md:px-10 py-8">
+    <div class="bg-white rounded-2xl border border-dribbble-hairline p-6 sm:p-8 md:p-10 shadow-sm">
       
-      <!-- Left: Outline Dropdown Button (Popular / New & Noteworthy) -->
-      <div class="relative flex-shrink-0">
-        <button id="sortDropdownBtn" onclick="toggleSortDropdown()" class="px-4 py-2.5 rounded-lg border border-dribbble-hairline hover:border-dribbble-dark text-dribbble-dark text-[14px] font-medium flex items-center gap-2 bg-white transition-colors">
-          <span id="currentSortLabel">Popular</span>
-          <svg class="w-4 h-4 text-dribbble-slate" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-        </button>
-        <!-- Sort Menu -->
-        <div id="sortMenu" class="hidden absolute left-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-dribbble-hairline py-2 z-50">
-          <button onclick="setSort('Popular')" class="w-full text-left px-4 py-2 text-[14px] text-dribbble-dark hover:bg-dribbble-light font-medium flex items-center justify-between">
-            <span>Popular</span>
-            <span class="text-dribbble-pink">✓</span>
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-dribbble-hairline">
+        <div>
+          <h2 class="text-2xl font-bold text-dribbble-dark tracking-tight">A/B Opening Hook Battle</h2>
+          <p class="text-[14px] text-dribbble-slate mt-0.5">Input two prospective opening lines. Our NLP model grades viewer drop-off resistance.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="clearHooks()" class="text-[13px] font-semibold text-dribbble-slate hover:text-dribbble-pink transition-colors px-3 py-1.5 rounded-lg border border-dribbble-hairline bg-white">
+            Clear Inputs
           </button>
-          <button onclick="setSort('New & Noteworthy')" class="w-full text-left px-4 py-2 text-[14px] text-dribbble-dark hover:bg-dribbble-light font-medium">
-            New & Noteworthy
-          </button>
-          <button onclick="setSort('Most Viral Potential')" class="w-full text-left px-4 py-2 text-[14px] text-dribbble-dark hover:bg-dribbble-light font-medium">
-            Most Viral Potential
-          </button>
-          <button onclick="setSort('Most Liked')" class="w-full text-left px-4 py-2 text-[14px] text-dribbble-dark hover:bg-dribbble-light font-medium">
-            Most Liked
+          <button onclick="swapHooks()" class="text-[13px] font-semibold text-dribbble-dark hover:text-dribbble-pink transition-colors px-3 py-1.5 rounded-lg border border-dribbble-hairline bg-dribbble-light flex items-center gap-1">
+            <span>⇄ Swap A / B</span>
           </button>
         </div>
       </div>
 
-      <!-- Center: Horizontally Scrollable Category Pills -->
-      <div class="flex-1 overflow-x-auto no-scrollbar flex items-center gap-2 px-2">
-        <button onclick="filterCategory('All')" class="cat-pill px-4 py-2 rounded-full text-[14px] font-semibold bg-dribbble-light text-dribbble-dark transition-all flex-shrink-0" data-cat="All">
-          Discover
-        </button>
-        <button onclick="filterCategory('Viral Hooks')" class="cat-pill px-4 py-2 rounded-full text-[14px] font-medium text-dribbble-slate hover:text-dribbble-dark hover:bg-dribbble-light transition-all flex-shrink-0" data-cat="Viral Hooks">
-          Viral Hooks
-        </button>
-        <button onclick="filterCategory('Animation')" class="cat-pill px-4 py-2 rounded-full text-[14px] font-medium text-dribbble-slate hover:text-dribbble-dark hover:bg-dribbble-light transition-all flex-shrink-0" data-cat="Animation">
-          Animation
-        </button>
-        <button onclick="filterCategory('Branding')" class="cat-pill px-4 py-2 rounded-full text-[14px] font-medium text-dribbble-slate hover:text-dribbble-dark hover:bg-dribbble-light transition-all flex-shrink-0" data-cat="Branding">
-          Branding
-        </button>
-        <button onclick="filterCategory('Illustration')" class="cat-pill px-4 py-2 rounded-full text-[14px] font-medium text-dribbble-slate hover:text-dribbble-dark hover:bg-dribbble-light transition-all flex-shrink-0" data-cat="Illustration">
-          Illustration
-        </button>
-        <button onclick="filterCategory('Mobile')" class="cat-pill px-4 py-2 rounded-full text-[14px] font-medium text-dribbble-slate hover:text-dribbble-dark hover:bg-dribbble-light transition-all flex-shrink-0" data-cat="Mobile">
-          Mobile
-        </button>
-        <button onclick="filterCategory('Product Design')" class="cat-pill px-4 py-2 rounded-full text-[14px] font-medium text-dribbble-slate hover:text-dribbble-dark hover:bg-dribbble-light transition-all flex-shrink-0" data-cat="Product Design">
-          Product Design
-        </button>
-        <button onclick="filterCategory('Typography')" class="cat-pill px-4 py-2 rounded-full text-[14px] font-medium text-dribbble-slate hover:text-dribbble-dark hover:bg-dribbble-light transition-all flex-shrink-0" data-cat="Typography">
-          Typography
-        </button>
-        <button onclick="filterCategory('Web Design')" class="cat-pill px-4 py-2 rounded-full text-[14px] font-medium text-dribbble-slate hover:text-dribbble-dark hover:bg-dribbble-light transition-all flex-shrink-0" data-cat="Web Design">
-          Web Design
-        </button>
-      </div>
-
-      <!-- Right: Filters Toggle Button with Slider Icon -->
-      <div class="flex-shrink-0">
-        <button id="filterToggleBtn" onclick="toggleFilterDrawer()" class="px-4 py-2.5 rounded-lg border border-dribbble-hairline hover:border-dribbble-dark text-dribbble-dark text-[14px] font-medium flex items-center gap-2 bg-white transition-colors">
-          <svg class="w-4 h-4 text-dribbble-dark" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
-          <span>Filters</span>
-          <span id="filterCountBadge" class="hidden w-2 h-2 rounded-full bg-dribbble-pink"></span>
-        </button>
-      </div>
-
-    </div>
-
-    <!-- Collapsible 4-Column Filter Drawer -->
-    <div id="filterDrawer" class="collapsed max-w-[1520px] mx-auto px-6 md:px-10 border-t border-dribbble-hairline mt-4">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 py-2">
+      <!-- Hook Editors Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 my-8">
         
-        <!-- Col 1: Tags & Archetypes -->
-        <div>
-          <h4 class="text-[13px] font-bold text-dribbble-dark uppercase tracking-wider mb-3">Hook Archetypes</h4>
-          <div class="flex flex-wrap gap-2">
-            <button onclick="toggleTagFilter(this, 'Curiosity Loop')" class="tag-filter-btn px-3 py-1.5 rounded-full border border-dribbble-hairline text-[12px] font-medium text-dribbble-slate hover:border-dribbble-dark transition-colors">Curiosity Loop</button>
-            <button onclick="toggleTagFilter(this, 'Direct Address')" class="tag-filter-btn px-3 py-1.5 rounded-full border border-dribbble-hairline text-[12px] font-medium text-dribbble-slate hover:border-dribbble-dark transition-colors">Direct Address</button>
-            <button onclick="toggleTagFilter(this, 'Loss Aversion')" class="tag-filter-btn px-3 py-1.5 rounded-full border border-dribbble-hairline text-[12px] font-medium text-dribbble-slate hover:border-dribbble-dark transition-colors">Loss Aversion</button>
-            <button onclick="toggleTagFilter(this, 'High Retaining')" class="tag-filter-btn px-3 py-1.5 rounded-full border border-dribbble-hairline text-[12px] font-medium text-dribbble-slate hover:border-dribbble-dark transition-colors">High Retaining</button>
-          </div>
-        </div>
-
-        <!-- Col 2: Color Hex Picker -->
-        <div>
-          <h4 class="text-[13px] font-bold text-dribbble-dark uppercase tracking-wider mb-3">Dominant Color</h4>
-          <div class="flex items-center gap-2.5 flex-wrap">
-            <button onclick="selectColor(this, '#EA4C89')" class="color-dot w-7 h-7 rounded-full bg-[#EA4C89] ring-offset-2 hover:scale-110 transition-transform" title="Dribbble Pink"></button>
-            <button onclick="selectColor(this, '#6366F1')" class="color-dot w-7 h-7 rounded-full bg-[#6366F1] ring-offset-2 hover:scale-110 transition-transform" title="Indigo"></button>
-            <button onclick="selectColor(this, '#10B981')" class="color-dot w-7 h-7 rounded-full bg-[#10B981] ring-offset-2 hover:scale-110 transition-transform" title="Emerald"></button>
-            <button onclick="selectColor(this, '#F59E0B')" class="color-dot w-7 h-7 rounded-full bg-[#F59E0B] ring-offset-2 hover:scale-110 transition-transform" title="Amber"></button>
-            <button onclick="selectColor(this, '#0D0C22')" class="color-dot w-7 h-7 rounded-full bg-[#0D0C22] ring-offset-2 hover:scale-110 transition-transform" title="Obsidian"></button>
-            <button onclick="selectColor(this, '#3B82F6')" class="color-dot w-7 h-7 rounded-full bg-[#3B82F6] ring-offset-2 hover:scale-110 transition-transform" title="Blue"></button>
-            <button onclick="selectColor(this, 'all')" class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-dribbble-light text-dribbble-slate hover:text-dribbble-dark">Clear</button>
-          </div>
-        </div>
-
-        <!-- Col 3: Timeframe -->
-        <div>
-          <h4 class="text-[13px] font-bold text-dribbble-dark uppercase tracking-wider mb-3">Timeframe</h4>
-          <div class="flex flex-col gap-1.5">
-            <label class="flex items-center gap-2 text-[13px] text-dribbble-dark cursor-pointer">
-              <input type="radio" name="timeframe" checked class="text-dribbble-pink focus:ring-dribbble-pink" />
-              <span>Now & Trending</span>
-            </label>
-            <label class="flex items-center gap-2 text-[13px] text-dribbble-slate hover:text-dribbble-dark cursor-pointer">
-              <input type="radio" name="timeframe" class="text-dribbble-pink focus:ring-dribbble-pink" />
-              <span>This Past Week</span>
-            </label>
-            <label class="flex items-center gap-2 text-[13px] text-dribbble-slate hover:text-dribbble-dark cursor-pointer">
-              <input type="radio" name="timeframe" class="text-dribbble-pink focus:ring-dribbble-pink" />
-              <span>This Past Month</span>
-            </label>
-            <label class="flex items-center gap-2 text-[13px] text-dribbble-slate hover:text-dribbble-dark cursor-pointer">
-              <input type="radio" name="timeframe" class="text-dribbble-pink focus:ring-dribbble-pink" />
-              <span>All Time Best</span>
-            </label>
-          </div>
-        </div>
-
-        <!-- Col 4: Tools & Models -->
-        <div>
-          <h4 class="text-[13px] font-bold text-dribbble-dark uppercase tracking-wider mb-3">Model & Tools</h4>
-          <div class="flex flex-wrap gap-2">
-            <span class="px-3 py-1 rounded-md bg-dribbble-light text-dribbble-slate text-[12px] font-medium border border-dribbble-hairline">Figma</span>
-            <span class="px-3 py-1 rounded-md bg-dribbble-light text-dribbble-slate text-[12px] font-medium border border-dribbble-hairline">After Effects</span>
-            <span class="px-3 py-1 rounded-md bg-dribbble-light text-dribbble-slate text-[12px] font-medium border border-dribbble-hairline">FastAPI ML</span>
-            <span class="px-3 py-1 rounded-md bg-dribbble-light text-dribbble-slate text-[12px] font-medium border border-dribbble-hairline">Blender</span>
-            <span class="px-3 py-1 rounded-md bg-dribbble-light text-dribbble-slate text-[12px] font-medium border border-dribbble-hairline">Cinema 4D</span>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================================================================= -->
-  <!-- 4. RESPONSIVE SHOWCASE CARD GRID (36px gaps)                               -->
-  <!-- ========================================================================= -->
-  <main class="max-w-[1520px] mx-auto px-6 md:px-10 py-10 min-h-[600px]">
-    
-    <!-- Active Filter Feedback Bar (when searching or filtering) -->
-    <div id="filterStatusContainer" class="hidden mb-6 flex items-center justify-between text-[14px]">
-      <div class="text-dribbble-slate font-medium">
-        Showing results for <span id="filterKeywordText" class="text-dribbble-dark font-bold">""</span>
-      </div>
-      <button onclick="resetFilters()" class="text-dribbble-pink hover:underline font-medium text-[13px]">
-        Reset all filters
-      </button>
-    </div>
-
-    <!-- The 4-Column Showcase Grid -->
-    <div id="shotsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[36px]">
-      <!-- Populated dynamically via JS -->
-    </div>
-
-    <!-- Empty State -->
-    <div id="emptyState" class="hidden text-center py-24">
-      <div class="w-16 h-16 rounded-full bg-dribbble-light text-dribbble-slate flex items-center justify-center mx-auto mb-4">
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-      </div>
-      <h3 class="text-xl font-bold text-dribbble-dark mb-1">No shots found</h3>
-      <p class="text-dribbble-slate text-[14px] mb-6">Try searching for other keywords like "TikTok", "Banking", or "Curiosity Loop".</p>
-      <button onclick="resetFilters()" class="px-5 py-2.5 rounded-full bg-dribbble-dark text-white text-[14px] font-semibold hover:bg-dribbble-dark-hover transition-colors">
-        Clear all filters
-      </button>
-    </div>
-
-    <!-- Infinite Scroll / Load More -->
-    <div class="text-center mt-16 mb-8">
-      <button onclick="loadMoreShots()" id="loadMoreBtn" class="px-8 py-3.5 rounded-full bg-dribbble-light hover:bg-dribbble-surface border border-dribbble-hairline hover:border-dribbble-dark text-dribbble-dark font-semibold text-[14px] transition-all hover:scale-105 active:scale-95 shadow-sm">
-        Load more work
-      </button>
-    </div>
-  </main>
-
-  <!-- ========================================================================= -->
-  <!-- 5. DETAIL LIGHTBOX MODAL EXPERIENCE                                        -->
-  <!-- ========================================================================= -->
-  <div id="shotDetailModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 sm:p-6 md:p-10">
-    <!-- Backdrop with blur -->
-    <div onclick="closeDetailModal()" class="absolute inset-0 bg-[#0D0C22]/60 backdrop-blur-md transition-opacity"></div>
-
-    <!-- Modal Card Container -->
-    <div class="relative w-full max-w-4xl max-h-[92vh] bg-white rounded-2xl shadow-2xl overflow-y-auto no-scrollbar z-10 modal-animate flex flex-col">
-      
-      <!-- Sticky Creator Header Bar inside Modal -->
-      <div class="sticky top-0 bg-white/95 backdrop-blur-md border-b border-dribbble-hairline px-6 sm:px-8 py-4 flex items-center justify-between z-20">
-        
-        <!-- Creator Info -->
-        <div class="flex items-center gap-3">
-          <img id="modalCreatorAvatar" src="" alt="Avatar" class="w-10 h-10 rounded-full object-cover ring-2 ring-dribbble-hairline" />
-          <div>
+        <!-- Hook A Editor -->
+        <div class="flex flex-col bg-dribbble-light rounded-xl p-6 border border-dribbble-hairline focus-within:border-dribbble-dark transition-all">
+          <div class="flex items-center justify-between mb-3">
             <div class="flex items-center gap-2">
-              <h3 id="modalShotTitle" class="text-[16px] font-bold text-dribbble-dark leading-tight">Project Title</h3>
-              <span id="modalCreatorBadge" class="px-1.5 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase badge-pro">PRO</span>
+              <span class="w-6 h-6 rounded-full bg-dribbble-dark text-white font-bold text-[11px] flex items-center justify-center">A</span>
+              <span class="font-bold text-[14px] text-dribbble-dark">Opening Hook A</span>
             </div>
-            <div class="flex items-center gap-2 text-[13px] text-dribbble-slate mt-0.5">
-              <span id="modalCreatorName" class="font-medium text-dribbble-dark">Creator Name</span>
-              <span>•</span>
-              <button class="text-dribbble-pink hover:underline font-semibold">Follow</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Action CTAs -->
-        <div class="flex items-center gap-3">
-          <button id="modalLikeBtn" onclick="toggleModalLike()" class="tactile-btn flex items-center gap-1.5 px-4 py-2 rounded-full border border-dribbble-hairline hover:border-dribbble-pink text-dribbble-dark text-[13px] font-semibold bg-white transition-all">
-            <svg id="modalLikeIcon" class="w-4 h-4 text-dribbble-slate" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-            <span id="modalLikeCount">1,240</span>
-          </button>
-          
-          <button id="modalSaveBtn" onclick="toggleModalSave()" class="tactile-btn hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-full border border-dribbble-hairline text-dribbble-dark text-[13px] font-semibold bg-white transition-all">
-            <svg class="w-4 h-4 text-dribbble-slate" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
-            <span>Save</span>
-          </button>
-
-          <button onclick="launchAeroComparisonFromModal()" class="px-4 py-2 rounded-full bg-dribbble-dark hover:bg-dribbble-dark-hover text-white text-[13px] font-semibold transition-all">
-            Test In A/B Arena
-          </button>
-
-          <!-- Close Modal Icon -->
-          <button onclick="closeDetailModal()" class="w-9 h-9 rounded-full bg-dribbble-light hover:bg-dribbble-surface flex items-center justify-center text-dribbble-slate hover:text-dribbble-dark transition-colors ml-1">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
-          </button>
-        </div>
-
-      </div>
-
-      <!-- Modal Body -->
-      <div class="px-6 sm:px-10 py-8">
-        
-        <!-- Oversized Centered Media Showcase -->
-        <div id="modalMediaContainer" class="w-full aspect-[16/10] rounded-xl overflow-hidden shadow-sm border border-dribbble-hairline relative flex items-center justify-center text-white mb-8">
-          <!-- Populated by JS -->
-        </div>
-
-        <!-- Description Prose & Backstory -->
-        <div class="max-w-2xl mx-auto mb-10">
-          <h2 id="modalHeadline" class="text-2xl font-bold text-dribbble-dark tracking-tight mb-4">Crafting the high-retention hook architecture</h2>
-          <p id="modalDescription" class="text-base text-dribbble-slate leading-relaxed mb-6 font-normal">
-            Designed to capture attention in the first 1.8 seconds. Utilizing curiosity gaps, high-contrast visual rhythm, and kinetic typography to maximize short-form viewer retention.
-          </p>
-
-          <!-- Color Palette Swatches -->
-          <div class="border-t border-b border-dribbble-hairline py-6 my-6">
-            <h4 class="text-[12px] font-bold text-dribbble-dark uppercase tracking-wider mb-3">Color Palette (Click to Copy Hex)</h4>
-            <div id="modalColorSwatches" class="flex items-center gap-3">
-              <!-- Swatches generated dynamically -->
-            </div>
+            <span id="charCountA" class="text-[12px] font-medium text-dribbble-slate">67 / 280</span>
           </div>
 
-          <!-- Tags -->
-          <div class="flex flex-wrap gap-2 mb-8" id="modalTagsContainer">
-            <!-- Populated by JS -->
-          </div>
-        </div>
-
-        <!-- More by this creator subgrid -->
-        <div class="border-t border-dribbble-hairline pt-8">
-          <div class="flex items-center justify-between mb-6">
-            <h3 class="text-[16px] font-bold text-dribbble-dark">More by <span id="modalMoreCreatorName">Creator</span></h3>
-            <a href="#viewProfile" class="text-[13px] font-semibold text-dribbble-pink hover:underline">View profile</a>
-          </div>
-
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="modalSubGrid">
-            <!-- 4 miniature shots -->
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ========================================================================= -->
-  <!-- 6. HIGH-CRAFT A/B HOOK ARENA MODAL (VIRALHOOK STUDIO ML CORE)             -->
-  <!-- ========================================================================= -->
-  <div id="hookBattleModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 sm:p-6 md:p-8">
-    <div onclick="closeHookBattleModal()" class="absolute inset-0 bg-[#0D0C22]/60 backdrop-blur-md"></div>
-    
-    <div class="relative w-full max-w-4xl max-h-[94vh] bg-white rounded-2xl shadow-2xl overflow-y-auto no-scrollbar z-10 modal-animate flex flex-col p-6 sm:p-8">
-      
-      <!-- Header -->
-      <div class="flex items-center justify-between pb-6 border-b border-dribbble-hairline">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-dribbble-pink flex items-center justify-center text-white font-bold text-lg shadow-sm">
-            ⚡
-          </div>
-          <div>
-            <h2 class="text-xl font-bold text-dribbble-dark tracking-tight flex items-center gap-2">
-              ViralHook A/B Battle Lab
-              <span class="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">
-                Trained ML Ready
-              </span>
-            </h2>
-            <p class="text-[13px] text-dribbble-slate">Test two opening video hooks before recording to maximize viewer retention.</p>
-          </div>
-        </div>
-        <button onclick="closeHookBattleModal()" class="w-8 h-8 rounded-full bg-dribbble-light hover:bg-dribbble-surface flex items-center justify-center text-dribbble-slate hover:text-dribbble-dark transition-colors">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
-      </div>
-
-      <!-- Presets Selector -->
-      <div class="flex items-center gap-2 py-4">
-        <span class="text-[12px] font-semibold text-dribbble-slate">Presets:</span>
-        <button onclick="loadHookPreset(1)" class="px-3 py-1 rounded-full text-[12px] font-medium bg-dribbble-light hover:bg-dribbble-surface border border-dribbble-hairline text-dribbble-dark transition-colors">
-          Tech / Coding Mistake
-        </button>
-        <button onclick="loadHookPreset(2)" class="px-3 py-1 rounded-full text-[12px] font-medium bg-dribbble-light hover:bg-dribbble-surface border border-dribbble-hairline text-dribbble-dark transition-colors">
-          Close Match (MarginGuard Tie)
-        </button>
-        <button onclick="loadHookPreset(3)" class="px-3 py-1 rounded-full text-[12px] font-medium bg-dribbble-light hover:bg-dribbble-surface border border-dribbble-hairline text-dribbble-dark transition-colors">
-          E-Commerce Hook
-        </button>
-      </div>
-
-      <!-- A/B Editors -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-2">
-        <!-- Hook A -->
-        <div class="bg-dribbble-light rounded-xl p-5 border border-dribbble-hairline relative">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-[12px] font-bold uppercase tracking-wider text-dribbble-dark flex items-center gap-1.5">
-              <span class="w-5 h-5 rounded-full bg-dribbble-dark text-white flex items-center justify-center text-[10px]">A</span>
-              Opening Hook A
-            </span>
-            <span id="charCountA" class="text-[11px] text-dribbble-slate font-medium">0 / 280</span>
-          </div>
           <textarea 
-            id="arenaHookA" 
+            id="hookA" 
             rows="4" 
             maxlength="280"
-            placeholder="Type your first opening line here..." 
-            class="w-full bg-white rounded-lg p-3 text-[14px] text-dribbble-dark border border-dribbble-hairline focus:outline-none focus:border-dribbble-pink transition-colors resize-none leading-relaxed"
-            oninput="updateArenaCharCount('A')"
+            placeholder="Type or paste your first opening video hook..."
+            class="w-full bg-white rounded-lg p-4 text-[15px] text-dribbble-dark border border-dribbble-hairline focus:outline-none focus:border-dribbble-pink transition-colors resize-none leading-relaxed"
+            oninput="handleInput('A')"
           >Stop scrolling if you code in Python, here are 5 critical mistakes.</textarea>
-          <div class="flex items-center justify-between mt-2 text-[11px] text-dribbble-slate">
+
+          <div class="flex items-center justify-between mt-3 text-[12px] text-dribbble-slate font-medium">
             <span id="wordCountA">11 words</span>
-            <span>Est. ~2.8s spoken</span>
+            <span id="spokenTimeA" class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
+              ~2.8s spoken (Sweet Spot)
+            </span>
           </div>
         </div>
 
-        <!-- Hook B -->
-        <div class="bg-dribbble-light rounded-xl p-5 border border-dribbble-hairline relative">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-[12px] font-bold uppercase tracking-wider text-dribbble-dark flex items-center gap-1.5">
-              <span class="w-5 h-5 rounded-full bg-dribbble-pink text-white flex items-center justify-center text-[10px]">B</span>
-              Opening Hook B
-            </span>
-            <span id="charCountB" class="text-[11px] text-dribbble-slate font-medium">0 / 280</span>
+        <!-- Hook B Editor -->
+        <div class="flex flex-col bg-dribbble-light rounded-xl p-6 border border-dribbble-hairline focus-within:border-dribbble-dark transition-all">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-dribbble-pink text-white font-bold text-[11px] flex items-center justify-center">B</span>
+              <span class="font-bold text-[14px] text-dribbble-dark">Opening Hook B</span>
+            </div>
+            <span id="charCountB" class="text-[12px] font-medium text-dribbble-slate">70 / 280</span>
           </div>
+
           <textarea 
-            id="arenaHookB" 
+            id="hookB" 
             rows="4" 
             maxlength="280"
-            placeholder="Type your second opening line here..." 
-            class="w-full bg-white rounded-lg p-3 text-[14px] text-dribbble-dark border border-dribbble-hairline focus:outline-none focus:border-dribbble-pink transition-colors resize-none leading-relaxed"
-            oninput="updateArenaCharCount('B')"
+            placeholder="Type or paste your second opening video hook..."
+            class="w-full bg-white rounded-lg p-4 text-[15px] text-dribbble-dark border border-dribbble-hairline focus:outline-none focus:border-dribbble-pink transition-colors resize-none leading-relaxed"
+            oninput="handleInput('B')"
           >Hello guys today in this video I will discuss some programming errors.</textarea>
-          <div class="flex items-center justify-between mt-2 text-[11px] text-dribbble-slate">
+
+          <div class="flex items-center justify-between mt-3 text-[12px] text-dribbble-slate font-medium">
             <span id="wordCountB">11 words</span>
-            <span>Est. ~2.8s spoken</span>
+            <span id="spokenTimeB" class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200">
+              ~2.8s spoken (Filler Detected)
+            </span>
           </div>
         </div>
+
       </div>
 
-      <!-- Action Button -->
-      <div class="flex items-center justify-center my-4">
-        <button id="runCompareBtn" onclick="runArenaComparison()" class="px-8 py-3 rounded-full bg-dribbble-pink hover:bg-dribbble-pink-hover text-white text-[14px] font-bold shadow-md hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
-          <span>⚔️ Run A/B Comparison</span>
+      <!-- Compare Action Button -->
+      <div class="flex flex-col items-center justify-center gap-3">
+        <button 
+          id="compareBtn" 
+          onclick="runComparison()" 
+          class="px-10 py-4 rounded-full bg-dribbble-pink hover:bg-dribbble-pink-hover text-white text-[16px] font-bold shadow-md hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+        >
+          <span>⚔️ Compare Hooks</span>
         </button>
+        <span class="text-[12px] text-dribbble-muted">Runs instant NLP & psycholinguistic inference locally on CPU</span>
       </div>
 
-      <!-- Error Notice -->
-      <div id="arenaError" class="hidden my-2 p-3 rounded-lg bg-rose-50 text-rose-600 text-[13px] border border-rose-200"></div>
+      <!-- Error Box -->
+      <div id="errorBox" class="hidden mt-6 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-[14px]"></div>
 
-      <!-- Comparison Outcome Container -->
-      <div id="arenaResults" class="hidden mt-4 pt-6 border-t border-dribbble-hairline">
+      <!-- ===================================================================== -->
+      <!-- COMPARISON OUTCOME CARD                                               -->
+      <!-- ===================================================================== -->
+      <div id="resultSection" class="mt-10 pt-10 border-t border-dribbble-hairline">
         
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl bg-dribbble-light border border-dribbble-hairline mb-6">
+        <!-- Large Outcome Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-2xl bg-dribbble-light border border-dribbble-hairline mb-8">
           <div>
-            <span class="text-[11px] font-bold uppercase tracking-wider text-dribbble-slate">Comparison Verdict</span>
-            <h3 id="verdictHeadline" class="text-2xl font-bold text-dribbble-dark tracking-tight mt-0.5">Hook A Leads</h3>
-            <p id="verdictExplanation" class="text-[13px] text-dribbble-slate mt-1 max-w-xl">
-              Hook A leads with an estimated 85.0% chance of high engagement vs 57.0% for Hook B.
+            <span class="text-[11px] font-bold uppercase tracking-wider text-dribbble-slate">Comparison Outcome</span>
+            <h3 id="verdictHeadline" class="text-3xl font-extrabold text-dribbble-dark tracking-tight mt-1">Hook A leads</h3>
+            <p id="explanationText" class="text-[14px] text-dribbble-slate mt-2 max-w-2xl leading-relaxed">
+              Hook A leads with an estimated 85.0% chance of high engagement vs 57.0% for Hook B (+28.0% lead), showing stronger linguistic signals for quick viewer retention.
             </p>
           </div>
-          <div class="flex items-center gap-2">
-            <span id="verdictBadge" class="px-4 py-1.5 rounded-full text-[13px] font-bold bg-dribbble-dark text-white shadow-sm">
+          <div class="flex sm:flex-col items-end gap-2">
+            <span id="leadBadge" class="px-5 py-2 rounded-full text-[14px] font-bold bg-dribbble-dark text-white shadow-sm">
               ⭐ Hook A Leads
             </span>
-            <span id="verdictDelta" class="px-3 py-1.5 rounded-full text-[13px] font-semibold bg-white border border-dribbble-hairline text-dribbble-dark">
+            <span id="diffBadge" class="px-3.5 py-1.5 rounded-full text-[13px] font-semibold bg-white border border-dribbble-hairline text-dribbble-dark">
               ΔP: 28.0%
             </span>
           </div>
         </div>
 
-        <!-- Probability Breakdown Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-          <div class="p-4 rounded-xl border border-dribbble-hairline bg-white">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-[13px] font-bold text-dribbble-dark">Hook A High Probability</span>
-              <span id="scoreHighA" class="text-[15px] font-bold text-dribbble-pink">85.0%</span>
-            </div>
-            <div class="w-full h-2 rounded-full bg-dribbble-light overflow-hidden">
-              <div id="barA" class="h-full bg-dribbble-pink rounded-full transition-all duration-500" style="width: 85%"></div>
-            </div>
-          </div>
-
-          <div class="p-4 rounded-xl border border-dribbble-hairline bg-white">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-[13px] font-bold text-dribbble-dark">Hook B High Probability</span>
-              <span id="scoreHighB" class="text-[15px] font-bold text-dribbble-slate">57.0%</span>
-            </div>
-            <div class="w-full h-2 rounded-full bg-dribbble-light overflow-hidden">
-              <div id="barB" class="h-full bg-dribbble-dark rounded-full transition-all duration-500" style="width: 57%"></div>
-            </div>
+        <!-- MarginGuard Banner (when applicable) -->
+        <div id="marginGuardBanner" class="hidden mb-8 p-5 rounded-xl bg-amber-50 border border-amber-200 flex items-start gap-3">
+          <span class="text-xl">⚖️</span>
+          <div>
+            <h4 class="font-bold text-amber-900 text-[14px]">Honest Margin Guard Enforced</h4>
+            <p class="text-[13px] text-amber-800 mt-0.5">
+              The predicted gap between Hook A and Hook B is under 8.0%. In statistical linguistic modeling, this represents a dead heat where real-world video delivery will matter more than wording.
+            </p>
           </div>
         </div>
 
-        <!-- Academic Disclaimer -->
-        <p class="text-[11px] text-dribbble-muted text-center max-w-xl mx-auto">
-          Notice: Model probabilities reflect historical text-based statistical association in the training dataset. They do not constitute a guarantee of video virality or algorithmic promotion.
-        </p>
+        <!-- Side-by-Side Probabilities -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          
+          <!-- Hook A Card -->
+          <div class="p-6 rounded-xl border border-dribbble-hairline bg-white">
+            <div class="flex items-center justify-between mb-3">
+              <span class="font-bold text-[15px] text-dribbble-dark">Hook A Breakdown</span>
+              <span id="classA" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase bg-dribbble-pink-light text-dribbble-pink border border-dribbble-pink/20">High</span>
+            </div>
+            <div class="flex items-center justify-between text-[13px] text-dribbble-slate mb-2">
+              <span>High Engagement Probability</span>
+              <span id="probHighA" class="font-bold text-[16px] text-dribbble-pink">85.0%</span>
+            </div>
+            <div class="w-full h-2.5 rounded-full bg-dribbble-light overflow-hidden mb-3">
+              <div id="barHighA" class="h-full bg-dribbble-pink rounded-full transition-all duration-500" style="width: 85%"></div>
+            </div>
+            <div class="flex items-center justify-between text-[12px] text-dribbble-slate font-medium">
+              <span id="metaA">11 words • 67 chars</span>
+              <span class="text-emerald-600 font-semibold">✨ Specificity & Curiosity Active</span>
+            </div>
+          </div>
+
+          <!-- Hook B Card -->
+          <div class="p-6 rounded-xl border border-dribbble-hairline bg-white">
+            <div class="flex items-center justify-between mb-3">
+              <span class="font-bold text-[15px] text-dribbble-dark">Hook B Breakdown</span>
+              <span id="classB" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase bg-dribbble-light text-dribbble-slate border border-dribbble-hairline">Medium</span>
+            </div>
+            <div class="flex items-center justify-between text-[13px] text-dribbble-slate mb-2">
+              <span>High Engagement Probability</span>
+              <span id="probHighB" class="font-bold text-[16px] text-dribbble-dark">57.0%</span>
+            </div>
+            <div class="w-full h-2.5 rounded-full bg-dribbble-light overflow-hidden mb-3">
+              <div id="barHighB" class="h-full bg-dribbble-dark rounded-full transition-all duration-500" style="width: 57%"></div>
+            </div>
+            <div class="flex items-center justify-between text-[12px] text-dribbble-slate font-medium">
+              <span id="metaB">11 words • 70 chars</span>
+              <span class="text-amber-600 font-semibold">⚠️ Contains Generic Intro Phrase</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- 4. PSYCHOLINGUISTIC SIGNAL MATRIX                                   -->
+        <!-- =================================================================== -->
+        <div id="matrix" class="p-6 sm:p-8 rounded-2xl bg-dribbble-light border border-dribbble-hairline mb-8">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h4 class="text-lg font-bold text-dribbble-dark">Psycholinguistic Signal Matrix</h4>
+              <p class="text-[13px] text-dribbble-slate mt-0.5">Side-by-side linguistic breakdown & retention mechanics</p>
+            </div>
+            <div class="flex items-center gap-4 text-[12px] font-semibold">
+              <span class="flex items-center gap-1.5 text-dribbble-dark"><span class="w-2.5 h-2.5 rounded-full bg-dribbble-dark"></span> Hook A</span>
+              <span class="flex items-center gap-1.5 text-dribbble-pink"><span class="w-2.5 h-2.5 rounded-full bg-dribbble-pink"></span> Hook B</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Hook A Signals -->
+            <div class="bg-white rounded-xl p-5 border border-dribbble-hairline">
+              <span class="text-[12px] font-bold uppercase tracking-wider text-dribbble-dark block mb-3">Hook A Signals</span>
+              <div class="grid grid-cols-2 gap-3 text-[12px]">
+                <div class="p-2.5 rounded-lg bg-emerald-50/60 border border-emerald-100 flex items-center justify-between">
+                  <div>
+                    <div class="font-bold text-dribbble-dark">Direct Address</div>
+                    <div class="text-[11px] text-dribbble-slate">Uses 'you / your'</div>
+                  </div>
+                  <span class="text-emerald-700 font-bold">Active</span>
+                </div>
+
+                <div class="p-2.5 rounded-lg bg-emerald-50/60 border border-emerald-100 flex items-center justify-between">
+                  <div>
+                    <div class="font-bold text-dribbble-dark">Curiosity Trigger</div>
+                    <div class="text-[11px] text-dribbble-slate">Pattern interrupt</div>
+                  </div>
+                  <span class="text-emerald-700 font-bold">Active</span>
+                </div>
+
+                <div class="p-2.5 rounded-lg bg-emerald-50/60 border border-emerald-100 flex items-center justify-between">
+                  <div>
+                    <div class="font-bold text-dribbble-dark">Specificity (Number)</div>
+                    <div class="text-[11px] text-dribbble-slate">Contains digit '5'</div>
+                  </div>
+                  <span class="text-emerald-700 font-bold">Active</span>
+                </div>
+
+                <div class="p-2.5 rounded-lg bg-emerald-50/60 border border-emerald-100 flex items-center justify-between">
+                  <div>
+                    <div class="font-bold text-dribbble-dark">Negative Frame</div>
+                    <div class="text-[11px] text-dribbble-slate">Uses 'mistake'</div>
+                  </div>
+                  <span class="text-emerald-700 font-bold">Active</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Hook B Signals -->
+            <div class="bg-white rounded-xl p-5 border border-dribbble-hairline">
+              <span class="text-[12px] font-bold uppercase tracking-wider text-dribbble-pink block mb-3">Hook B Signals</span>
+              <div class="grid grid-cols-2 gap-3 text-[12px]">
+                <div class="p-2.5 rounded-lg bg-rose-50/60 border border-rose-100 flex items-center justify-between">
+                  <div>
+                    <div class="font-bold text-dribbble-dark">Direct Address</div>
+                    <div class="text-[11px] text-dribbble-slate">Missing 'you'</div>
+                  </div>
+                  <span class="text-rose-700 font-bold">Missing</span>
+                </div>
+
+                <div class="p-2.5 rounded-lg bg-rose-50/60 border border-rose-100 flex items-center justify-between">
+                  <div>
+                    <div class="font-bold text-dribbble-dark">Curiosity Gap</div>
+                    <div class="text-[11px] text-dribbble-slate">Predictable intro</div>
+                  </div>
+                  <span class="text-rose-700 font-bold">Missing</span>
+                </div>
+
+                <div class="p-2.5 rounded-lg bg-amber-50/60 border border-amber-100 flex items-center justify-between">
+                  <div>
+                    <div class="font-bold text-dribbble-dark">Filler Phrase</div>
+                    <div class="text-[11px] text-dribbble-slate">'In this video'</div>
+                  </div>
+                  <span class="text-amber-700 font-bold">Flagged</span>
+                </div>
+
+                <div class="p-2.5 rounded-lg bg-emerald-50/60 border border-emerald-100 flex items-center justify-between">
+                  <div>
+                    <div class="font-bold text-dribbble-dark">Readability Grade</div>
+                    <div class="text-[11px] text-dribbble-slate">Flesch-Kincaid 5.2</div>
+                  </div>
+                  <span class="text-emerald-700 font-bold">Optimal</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Export Report Button -->
+          <div class="mt-6 flex items-center justify-between border-t border-dribbble-hairline pt-4">
+            <span class="text-[13px] text-dribbble-slate">Need to share these findings with your editing or script team?</span>
+            <button onclick="copyFullReport()" class="px-4 py-2 rounded-full border border-dribbble-hairline hover:border-dribbble-dark text-dribbble-dark text-[13px] font-semibold bg-white transition-all flex items-center gap-1.5">
+              <span>📋 Copy Full Diagnostic Report</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Academic & Ethical Disclaimer -->
+        <div class="p-4 rounded-xl bg-dribbble-surface border border-dribbble-hairline text-center">
+          <p id="disclaimerText" class="text-[12px] text-dribbble-slate max-w-3xl mx-auto leading-relaxed">
+            Academic Notice: The predicted engagement class is only an estimate based on historical text patterns in the dataset. It cannot and does not guarantee that a video will go viral. Real-world performance depends heavily on visual delivery, topic relevance, timing, and platform recommendation algorithms.
+          </p>
+        </div>
 
       </div>
 
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 4. VIRAL HOOK SHOWCASE & INSPIRATION LAB (DRIBBLE 4-COL GRID)              -->
+  <!-- ========================================================================= -->
+  <section id="inspiration" class="max-w-[1520px] mx-auto px-6 md:px-10 py-16">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-dribbble-light border border-dribbble-hairline text-dribbble-slate text-[12px] font-semibold mb-2">
+          <span>Inspiration Gallery</span>
+        </div>
+        <h2 class="text-3xl font-extrabold text-dribbble-dark tracking-tight">Viral Hook Inspiration Lab</h2>
+        <p class="text-[15px] text-dribbble-slate mt-1 max-w-2xl">
+          Curated opening hook cards calibrated for high short-form retention. Click any hook to inject it into your A/B battle arena.
+        </p>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+        <button onclick="filterCategory('All')" class="cat-pill px-4 py-2 rounded-full text-[13px] font-semibold bg-dribbble-dark text-white transition-all flex-shrink-0" data-cat="All">
+          All Archetypes
+        </button>
+        <button onclick="filterCategory('Curiosity Loop')" class="cat-pill px-4 py-2 rounded-full text-[13px] font-medium text-dribbble-slate hover:text-dribbble-dark hover:bg-dribbble-light transition-all flex-shrink-0" data-cat="Curiosity Loop">
+          Curiosity Loop
+        </button>
+        <button onclick="filterCategory('Loss Aversion')" class="cat-pill px-4 py-2 rounded-full text-[13px] font-medium text-dribbble-slate hover:text-dribbble-dark hover:bg-dribbble-light transition-all flex-shrink-0" data-cat="Loss Aversion">
+          Loss Aversion
+        </button>
+        <button onclick="filterCategory('Listicle & Specificity')" class="cat-pill px-4 py-2 rounded-full text-[13px] font-medium text-dribbble-slate hover:text-dribbble-dark hover:bg-dribbble-light transition-all flex-shrink-0" data-cat="Listicle & Specificity">
+          Listicle & Numbers
+        </button>
+        <button onclick="filterCategory('Direct Challenge')" class="cat-pill px-4 py-2 rounded-full text-[13px] font-medium text-dribbble-slate hover:text-dribbble-dark hover:bg-dribbble-light transition-all flex-shrink-0" data-cat="Direct Challenge">
+          Direct Challenge
+        </button>
+      </div>
+    </div>
+
+    <!-- The 4-Column Showcase Grid with 36px Gaps -->
+    <div id="shotsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[36px]">
+      <!-- Populated dynamically via JS -->
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 5. DETAIL LIGHTBOX MODAL                                                   -->
+  <!-- ========================================================================= -->
+  <div id="shotDetailModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 sm:p-6 md:p-10">
+    <div onclick="closeDetailModal()" class="absolute inset-0 bg-[#0D0C22]/60 backdrop-blur-md transition-opacity"></div>
+
+    <div class="relative w-full max-w-3xl max-h-[92vh] bg-white rounded-2xl shadow-2xl overflow-y-auto no-scrollbar z-10 modal-animate flex flex-col">
+      <div class="sticky top-0 bg-white/95 backdrop-blur-md border-b border-dribbble-hairline px-6 sm:px-8 py-4 flex items-center justify-between z-20">
+        <div class="flex items-center gap-3">
+          <img id="modalAvatar" src="" alt="" class="w-10 h-10 rounded-full object-cover ring-2 ring-dribbble-hairline" />
+          <div>
+            <h3 id="modalTitle" class="text-[16px] font-bold text-dribbble-dark leading-tight">Archetype Name</h3>
+            <span id="modalCreator" class="text-[13px] text-dribbble-slate font-medium">Curated by ViralHook Studio</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button onclick="injectActiveModal('A')" class="px-4 py-2 rounded-full bg-dribbble-dark hover:bg-dribbble-dark-hover text-white text-[13px] font-semibold transition-all">
+            Inject into Hook A
+          </button>
+          <button onclick="injectActiveModal('B')" class="px-4 py-2 rounded-full bg-dribbble-pink hover:bg-dribbble-pink-hover text-white text-[13px] font-semibold transition-all">
+            Inject into Hook B
+          </button>
+          <button onclick="closeDetailModal()" class="w-9 h-9 rounded-full bg-dribbble-light hover:bg-dribbble-surface flex items-center justify-center text-dribbble-slate">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="p-6 sm:p-8">
+        <div id="modalCardPreview" class="w-full aspect-[16/10] rounded-xl p-8 flex flex-col justify-between text-white shadow-sm mb-6">
+          <span id="modalArchetypeTag" class="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md w-max">
+            Curiosity Loop
+          </span>
+          <h2 id="modalHookQuote" class="text-2xl sm:text-3xl font-extrabold tracking-tight drop-shadow-md leading-snug">
+            "Hook preview line goes here"
+          </h2>
+          <span class="text-[12px] opacity-80">Estimated Spoken Cadence: ~2.6s</span>
+        </div>
+
+        <h4 class="text-[14px] font-bold text-dribbble-dark mb-2">Psychological Retention Mechanic</h4>
+        <p id="modalMechanic" class="text-[14px] text-dribbble-slate leading-relaxed mb-6">
+          Description of how this hook exploits psychological curiosity gaps or loss aversion.
+        </p>
+
+        <div class="border-t border-b border-dribbble-hairline py-4 my-4 flex items-center justify-between">
+          <span class="text-[13px] font-semibold text-dribbble-dark">Pacing Zone Target:</span>
+          <span class="px-3 py-1 rounded-full text-[12px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+            Green Zone (≤ 3.0s spoken at 2.75 wps)
+          </span>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- Toast Notification -->
   <div id="copyToast" class="fixed bottom-6 right-6 z-50 transform translate-y-12 opacity-0 pointer-events-none transition-all duration-300 bg-dribbble-dark text-white px-4 py-2.5 rounded-full text-[13px] font-medium shadow-xl flex items-center gap-2">
     <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-    <span id="toastMessage">Hex code copied to clipboard!</span>
+    <span id="toastMessage">Report copied to clipboard!</span>
   </div>
 
   <!-- ========================================================================= -->
-  <!-- 7. FOOTER                                                                  -->
+  <!-- 6. FOOTER (ACADEMIC ASSESSMENT & TEAM CREDITS)                            -->
   <!-- ========================================================================= -->
   <footer class="w-full border-t border-dribbble-hairline bg-white mt-16 py-12 px-6 md:px-10">
-    <div class="max-w-[1520px] mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-      <div class="flex items-center gap-4">
-        <span class="font-bold text-[22px] tracking-tightest text-dribbble-dark select-none">
-          dribbble
-          <span class="inline-block w-1.5 h-1.5 rounded-full bg-dribbble-pink ml-0.5"></span>
-        </span>
-        <span class="text-[13px] text-dribbble-slate">
-          © 2026 ViralHook Studio • Built for Creators & Design Teams
-        </span>
+    <div class="max-w-[1520px] mx-auto">
+      
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-dribbble-hairline">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-dribbble-dark flex items-center justify-center text-white font-bold text-sm">
+            ⚡
+          </div>
+          <div>
+            <h4 class="text-[15px] font-bold text-dribbble-dark">ViralHook Studio</h4>
+            <p class="text-[12px] text-dribbble-slate">Group M B.Tech Computer Science Project • 16–20 November 2026</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 text-[12px] text-dribbble-slate">
+          <span class="font-semibold text-dribbble-dark">Faculty Mentor:</span>
+          <span class="px-2.5 py-1 rounded-md bg-dribbble-light text-dribbble-dark font-medium border border-dribbble-hairline">
+            Prof. Megha Gupta
+          </span>
+        </div>
       </div>
 
-      <div class="flex items-center gap-6 text-[13px] font-medium text-dribbble-slate">
-        <a href="#shots" class="hover:text-dribbble-dark transition-colors">For designers</a>
-        <a href="#hire" class="hover:text-dribbble-dark transition-colors">Hire talent</a>
-        <a href="#inspiration" class="hover:text-dribbble-dark transition-colors">Inspiration</a>
-        <a href="#privacy" class="hover:text-dribbble-dark transition-colors">Privacy</a>
-        <a href="#terms" class="hover:text-dribbble-dark transition-colors">Terms</a>
+      <!-- Core Team Roster -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 pt-6">
+        <div>
+          <span class="text-[13px] font-bold text-dribbble-dark block">Rupak</span>
+          <span class="text-[12px] text-dribbble-slate">Project Lead / Backend</span>
+        </div>
+        <div>
+          <span class="text-[13px] font-bold text-dribbble-dark block">Tanvir</span>
+          <span class="text-[12px] text-dribbble-slate">ML & NLP Lead</span>
+        </div>
+        <div>
+          <span class="text-[13px] font-bold text-dribbble-dark block">Aditya</span>
+          <span class="text-[12px] text-dribbble-slate">Backend & API Lead</span>
+        </div>
+        <div>
+          <span class="text-[13px] font-bold text-dribbble-dark block">Samina</span>
+          <span class="text-[12px] text-dribbble-slate">Frontend Lead / Architecture</span>
+        </div>
+        <div>
+          <span class="text-[13px] font-bold text-dribbble-pink block">Meenmoy (You)</span>
+          <span class="text-[12px] text-dribbble-slate">Frontend Battle Arena & Visuals</span>
+        </div>
       </div>
+
     </div>
   </footer>
 
   <!-- ========================================================================= -->
-  <!-- 8. APPLICATION LOGIC & REALISTIC SHOT DATABASE                             -->
+  <!-- 7. APPLICATION SCRIPT (NLP GATEWAY & INSPIRATION LAB)                      -->
   <!-- ========================================================================= -->
   <script>
-    // Rich realistic Shot Database with authentic creators, colors, and metrics
-    const SHOTS_DATA = [
+    const INSPIRATION_HOOKS = [
       {
         id: 1,
-        title: "Nebula — AI Video Hook Generator",
-        category: "Viral Hooks",
-        tags: ["Curiosity Loop", "Viral Hooks", "TikTok Hooks", "SaaS Demo"],
-        color: "#EA4C89",
-        colors: ["#EA4C89", "#0D0C22", "#FDF2F7", "#6366F1"],
-        creator: {
-          name: "Studio Voxel",
-          avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
-          badge: "TEAM"
-        },
-        likes: 1842,
-        views: 24800,
-        liked: false,
-        saved: false,
-        bgGradient: "from-pink-500 via-rose-500 to-indigo-600",
-        headline: "High-retention storytelling for TikTok & Reels",
-        description: "Engineered specifically to solve the 2.5-second swipe cliff. Nebula pairs psychological pattern interrupts with clean minimalist micro-interactions."
+        title: "Curiosity Loop Archetype",
+        category: "Curiosity Loop",
+        quote: "Why 99% of software engineers secretly fail this 1 interview question (and how to ace it)",
+        mechanic: "Creates an open knowledge gap that compels the viewer to stay past the swipe cliff for the payoff.",
+        creator: "Tanvir & Rupak",
+        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
+        badge: "TEAM",
+        likes: 1240,
+        views: 18900,
+        bgGradient: "from-pink-500 via-rose-500 to-indigo-600"
       },
       {
         id: 2,
-        title: "Fintech Mobile Banking 3.0",
-        category: "Mobile",
-        tags: ["Mobile UI", "Product Design", "Direct Address"],
-        color: "#6366F1",
-        colors: ["#6366F1", "#10B981", "#0D0C22", "#F3F3F6"],
-        creator: {
-          name: "Antonina Croft",
-          avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80",
-          badge: "PRO"
-        },
-        likes: 2190,
-        views: 31200,
-        liked: false,
-        saved: false,
-        bgGradient: "from-blue-600 via-indigo-600 to-purple-800",
-        headline: "Next-gen personal wealth overview",
-        description: "Zero-latency banking interface with dynamic spending forecast widgets, biometric authorization, and dark-mode spatial depth."
+        title: "Loss Aversion Formula",
+        category: "Loss Aversion",
+        quote: "Stop doing this with your Python virtual environments right now or you will regret it",
+        mechanic: "Triggers the immediate psychological urge to prevent a catastrophe or wasted effort.",
+        creator: "Meenmoy Bhuyan",
+        avatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&auto=format&fit=crop&q=80",
+        badge: "PRO",
+        likes: 2180,
+        views: 34200,
+        bgGradient: "from-blue-600 via-indigo-600 to-purple-800"
       },
       {
         id: 3,
-        title: "Hyperdrive 3D Brand Identity",
-        category: "Branding",
-        tags: ["Branding", "Animation", "Curiosity Loop"],
-        color: "#10B981",
-        colors: ["#10B981", "#0D0C22", "#E7E7E9", "#3B82F6"],
-        creator: {
-          name: "Koto Motion",
-          avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
-          badge: "TEAM"
-        },
-        likes: 3410,
-        views: 48900,
-        liked: true,
-        saved: true,
-        bgGradient: "from-emerald-400 via-teal-600 to-slate-900",
-        headline: "Fluid spatial brand system for autonomous vehicles",
-        description: "A complete kinetic identity system designed in Cinema 4D and Blender, prioritizing high-velocity motion curves and tactile tactile feel."
+        title: "Listicle & Specificity",
+        category: "Listicle & Specificity",
+        quote: "3 simple developer habits that will save you 10 hours of debugging every single week",
+        mechanic: "Concrete numbers establish clear expectations and quantifiable perceived return on time.",
+        creator: "Samina",
+        avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80",
+        badge: "TEAM",
+        likes: 3120,
+        views: 45100,
+        bgGradient: "from-emerald-400 via-teal-600 to-slate-900"
       },
       {
         id: 4,
-        title: "Chronos — SaaS Analytics Dashboard",
-        category: "Product Design",
-        tags: ["Product Design", "SaaS Demo", "Loss Aversion"],
-        color: "#0D0C22",
-        colors: ["#0D0C22", "#EA4C89", "#F8F7F4", "#9E9EA7"],
-        creator: {
-          name: "Marcus Vance",
-          avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80",
-          badge: "PRO"
-        },
+        title: "Direct Audience Challenge",
+        category: "Direct Challenge",
+        quote: "You are probably making this major junior developer mistake without even realizing it",
+        mechanic: "Direct second-person address ('you') immediately commands scroll attention in the feed.",
+        creator: "Aditya",
+        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+        badge: "PRO",
         likes: 980,
-        views: 14200,
-        liked: false,
-        saved: false,
-        bgGradient: "from-slate-800 via-slate-900 to-black",
-        headline: "Real-time creator retention & LTV telemetry",
-        description: "Streamlined data density without visual clutter. Custom canvas rendering enables rendering 100,000 live data points at 60fps."
+        views: 12800,
+        bgGradient: "from-slate-800 via-slate-900 to-black"
       },
       {
         id: 5,
-        title: "Kinetic Typography & Sound Design",
-        category: "Typography",
-        tags: ["Typography", "Animation", "TikTok Hooks"],
-        color: "#F59E0B",
-        colors: ["#F59E0B", "#0D0C22", "#FFFFFF", "#EA4C89"],
-        creator: {
-          name: "Elena Rostova",
-          avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80",
-          badge: "PRO"
-        },
-        likes: 1450,
-        views: 19800,
-        liked: false,
-        saved: false,
-        bgGradient: "from-amber-400 via-orange-500 to-red-600",
-        headline: "Variable font weight choreography",
-        description: "Exploring musicality and speech cadence through variable typography weight modulation, paired with procedural audio reactive triggers."
+        title: "Contrarian Industry Myth",
+        category: "Curiosity Loop",
+        quote: "Everything you've been told about writing clean code in 2026 is completely backwards",
+        mechanic: "Directly contradicts widely accepted beliefs to generate disbelief and high comment debate.",
+        creator: "Tanvir",
+        avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80",
+        badge: "TEAM",
+        likes: 1890,
+        views: 29400,
+        bgGradient: "from-amber-400 via-orange-500 to-red-600"
       },
       {
         id: 6,
-        title: "Aether — Spatial Audio Interface",
-        category: "Animation",
-        tags: ["Animation", "Mobile UI", "Curiosity Loop"],
-        color: "#3B82F6",
-        colors: ["#3B82F6", "#8B5CF6", "#0D0C22", "#F3F3F6"],
-        creator: {
-          name: "Studio Lumina",
-          avatar: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=80",
-          badge: "TEAM"
-        },
-        likes: 2780,
-        views: 39100,
-        liked: false,
-        saved: false,
-        bgGradient: "from-cyan-400 via-blue-600 to-indigo-900",
-        headline: "Immersive soundscape navigation for visionOS",
-        description: "Translating 3D head-tracking coordinates into tactile, glowing sonic spheres. High-contrast white surfaces meet deep acoustic reflections."
+        title: "E-Commerce Warning Hook",
+        category: "Loss Aversion",
+        quote: "Do not buy this viral mechanical keyboard before checking this 1 fatal flaw",
+        mechanic: "Protective warning framing creates urgency before an impending consumer decision.",
+        creator: "Meenmoy Bhuyan",
+        avatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&auto=format&fit=crop&q=80",
+        badge: "PRO",
+        likes: 2750,
+        views: 38200,
+        bgGradient: "from-rose-500 via-fuchsia-600 to-indigo-700"
       },
       {
         id: 7,
-        title: "Viral Hook Blueprint: TikTok Edition",
-        category: "Viral Hooks",
-        tags: ["Viral Hooks", "TikTok Hooks", "Loss Aversion", "High Retaining"],
-        color: "#EA4C89",
-        colors: ["#EA4C89", "#F8F7F4", "#0D0C22", "#10B981"],
-        creator: {
-          name: "Meenmoy Bhuyan",
-          avatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&auto=format&fit=crop&q=80",
-          badge: "TEAM"
-        },
-        likes: 4120,
-        views: 62400,
-        liked: true,
-        saved: false,
-        bgGradient: "from-rose-500 via-fuchsia-600 to-indigo-700",
-        headline: "A/B Opening Hook Battle Architecture",
-        description: "Tested across 3,000 video openers. Combines 24 psycholinguistic features with logistic probability grading to predict drop-off curves."
+        title: "Speed Benchmark Hook",
+        category: "Listicle & Specificity",
+        quote: "I tested 10 VS Code extensions so you don't have to — here are the only 2 worth installing",
+        mechanic: "Offers compressed curation that saves the viewer weeks of trial and error.",
+        creator: "Rupak",
+        avatar: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=80",
+        badge: "TEAM",
+        likes: 3490,
+        views: 52100,
+        bgGradient: "from-cyan-400 via-blue-600 to-indigo-900"
       },
       {
         id: 8,
-        title: "Minimalist Editorial Layout System",
-        category: "Web Design",
-        tags: ["Web Design", "Typography", "Direct Address"],
-        color: "#0D0C22",
-        colors: ["#0D0C22", "#E7E7E9", "#FFFFFF", "#6E6D7A"],
-        creator: {
-          name: "Sophie Dubois",
-          avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80",
-          badge: "PRO"
-        },
-        likes: 1670,
-        views: 22300,
-        liked: false,
-        saved: false,
-        bgGradient: "from-neutral-200 via-stone-400 to-zinc-700",
-        headline: "Generous whitespace & asymmetric grid composition",
-        description: "An editorial publishing framework inspired by Swiss typography principles, featuring pure white primary canvas and subtle 1px hairlines."
+        title: "Micro Story Arc Hook",
+        category: "Direct Challenge",
+        quote: "Last year I failed 14 coding interviews before discovering this exact 3-step system",
+        mechanic: "Vulnerability combined with a triumphant resolution creates intense viewer empathy.",
+        creator: "Samina",
+        avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80",
+        badge: "PRO",
+        likes: 1650,
+        views: 23900,
+        bgGradient: "from-neutral-200 via-stone-400 to-zinc-700"
       }
     ];
 
     let currentCategory = "All";
-    let currentSort = "Popular";
-    let currentSearch = "";
-    let activeTags = [];
-    let activeColor = null;
-    let activeModalShot = null;
+    let activeModalItem = null;
 
-    // Render Showcase Grid
     function renderShots() {
       const grid = document.getElementById('shotsGrid');
-      const empty = document.getElementById('emptyState');
       grid.innerHTML = "";
 
-      let filtered = SHOTS_DATA.filter(shot => {
-        // Category Filter
-        if (currentCategory !== "All" && shot.category !== currentCategory) return false;
-        // Search Filter
-        if (currentSearch) {
-          const q = currentSearch.toLowerCase();
-          const matchTitle = shot.title.toLowerCase().includes(q);
-          const matchCreator = shot.creator.name.toLowerCase().includes(q);
-          const matchTags = shot.tags.some(t => t.toLowerCase().includes(q));
-          if (!matchTitle && !matchCreator && !matchTags) return false;
-        }
-        // Active Tags Filter
-        if (activeTags.length > 0) {
-          const hasTag = activeTags.some(t => shot.tags.includes(t));
-          if (!hasTag) return false;
-        }
-        // Color Filter
-        if (activeColor && activeColor !== 'all') {
-          if (shot.color !== activeColor) return false;
-        }
+      const filtered = INSPIRATION_HOOKS.filter(item => {
+        if (currentCategory !== "All" && item.category !== currentCategory) return false;
         return true;
       });
 
-      // Sort
-      if (currentSort === "Popular" || currentSort === "Most Liked") {
-        filtered.sort((a, b) => b.likes - a.likes);
-      } else if (currentSort === "New & Noteworthy") {
-        filtered.sort((a, b) => b.views - a.views);
-      } else if (currentSort === "Most Viral Potential") {
-        filtered.sort((a, b) => (b.tags.includes("High Retaining") ? 1 : 0) - (a.tags.includes("High Retaining") ? 1 : 0));
-      }
-
-      if (filtered.length === 0) {
-        empty.classList.remove('hidden');
-        return;
-      } else {
-        empty.classList.add('hidden');
-      }
-
-      filtered.forEach((shot, index) => {
+      filtered.forEach((item, index) => {
         const card = document.createElement('div');
         card.className = "group flex flex-col fade-in-card cursor-pointer";
         card.style.animationDelay = `${index * 50}ms`;
 
-        // Like & Save status styling
-        const likeFillClass = shot.liked ? 'text-dribbble-pink fill-dribbble-pink' : 'text-dribbble-dark';
-        const saveFillClass = shot.saved ? 'text-dribbble-pink fill-dribbble-pink' : 'text-dribbble-dark';
-
         card.innerHTML = `
-          <!-- Media Thumbnail (4:3 aspect ratio, rounded 8px, overflow hidden) -->
-          <div class="relative w-full aspect-[4/3] rounded-[8px] overflow-hidden bg-dribbble-light border border-dribbble-hairline/60 select-none" onclick="openDetailModal(${shot.id})">
+          <!-- 4:3 Aspect Ratio Card -->
+          <div class="relative w-full aspect-[4/3] rounded-[8px] overflow-hidden bg-dribbble-light border border-dribbble-hairline select-none" onclick="openModal(${item.id})">
             
-            <!-- Visual Content Preview -->
-            <div class="w-full h-full bg-gradient-to-br ${shot.bgGradient} p-6 flex flex-col justify-between text-white transition-transform duration-500 ease-out group-hover:scale-105">
+            <div class="w-full h-full bg-gradient-to-br ${item.bgGradient} p-6 flex flex-col justify-between text-white transition-transform duration-500 group-hover:scale-105">
               <div class="flex items-center justify-between">
-                <span class="px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md">
-                  ${shot.category}
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md">
+                  ${item.category}
                 </span>
-                <span class="w-3 h-3 rounded-full bg-white/40"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-white/40"></span>
               </div>
               <div>
-                <span class="text-[11px] uppercase tracking-wider font-semibold opacity-80">${shot.tags[0] || 'Concept'}</span>
-                <h4 class="text-xl font-extrabold tracking-tight leading-snug drop-shadow-sm">${shot.title}</h4>
+                <p class="text-[14px] font-bold leading-snug drop-shadow-sm mb-2">"${item.quote}"</p>
+                <span class="text-[11px] font-medium opacity-80">Click for retention mechanics</span>
               </div>
             </div>
 
-            <!-- Hover Overlay Scrim (200ms cubic-bezier bottom-to-top gradient) -->
-            <div class="shot-scrim absolute inset-0 opacity-0 group-hover:opacity-100 flex items-end justify-between p-4 z-10 pointer-events-none">
-              
-              <!-- Bottom-Left: Project Title in crisp white (15px, 600 weight) -->
-              <span class="text-white text-[15px] font-semibold tracking-tight truncate max-w-[65%] drop-shadow-sm">
-                ${shot.title}
+            <!-- Scrim Overlay -->
+            <div class="shot-scrim absolute inset-0 opacity-0 group-hover:opacity-100 flex items-end justify-between p-4 z-10 pointer-events-none transition-opacity duration-200">
+              <span class="text-white text-[13px] font-bold truncate max-w-[60%] drop-shadow-sm">
+                ${item.title}
               </span>
-
-              <!-- Bottom-Right: Circular White Icon Buttons (Save & Like) -->
               <div class="flex items-center gap-2 pointer-events-auto">
-                <!-- Save Button -->
-                <button 
-                  onclick="event.stopPropagation(); toggleSave(${shot.id}, this)" 
-                  class="tactile-btn w-9 h-9 rounded-full bg-white flex items-center justify-center text-dribbble-dark hover:text-dribbble-pink shadow-md"
-                  title="Save shot"
-                >
-                  <svg class="w-4 h-4 ${saveFillClass}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                <button onclick="event.stopPropagation(); injectHookDirect(${item.id}, 'A')" class="tactile-btn px-2.5 py-1.5 rounded-full bg-white text-dribbble-dark font-bold text-[11px] hover:text-dribbble-pink shadow-md" title="Inject into Hook A">
+                  + Hook A
                 </button>
-
-                <!-- Like Button with spring physics pop -->
-                <button 
-                  onclick="event.stopPropagation(); toggleLike(${shot.id}, this)" 
-                  class="tactile-btn w-9 h-9 rounded-full bg-white flex items-center justify-center ${likeFillClass} hover:text-dribbble-pink shadow-md"
-                  title="Like shot"
-                >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                <button onclick="event.stopPropagation(); injectHookDirect(${item.id}, 'B')" class="tactile-btn px-2.5 py-1.5 rounded-full bg-dribbble-pink text-white font-bold text-[11px] hover:bg-dribbble-pink-hover shadow-md" title="Inject into Hook B">
+                  + Hook B
                 </button>
               </div>
-
             </div>
 
           </div>
 
-          <!-- Minimal Footer Metadata (margin-top: 8px) -->
+          <!-- Footer Metadata -->
           <div class="mt-2 flex items-center justify-between text-[14px]">
-            
-            <!-- Left: Avatar + Creator Name + Badge -->
             <div class="flex items-center gap-2 truncate">
-              <img src="${shot.creator.avatar}" alt="${shot.creator.name}" class="w-6 h-6 rounded-full object-cover flex-shrink-0" />
-              <span class="font-medium text-dribbble-dark text-[14px] truncate hover:text-dribbble-pink transition-colors">
-                ${shot.creator.name}
-              </span>
-              <span class="badge-pro px-1.5 py-0.2 rounded text-[10px] font-bold tracking-wider uppercase flex-shrink-0">
-                ${shot.creator.badge}
-              </span>
+              <img src="${item.avatar}" alt="" class="w-6 h-6 rounded-full object-cover" />
+              <span class="font-medium text-dribbble-dark text-[13px] truncate">${item.creator}</span>
+              <span class="badge-pro px-1.5 py-0.2 rounded text-[10px] font-bold tracking-wider uppercase">${item.badge}</span>
             </div>
 
-            <!-- Right: Like & View Counts -->
-            <div class="flex items-center gap-3 text-[12px] text-dribbble-muted flex-shrink-0">
-              <span class="flex items-center gap-1 hover:text-dribbble-pink transition-colors">
-                <svg class="w-3.5 h-3.5 ${shot.liked ? 'text-dribbble-pink fill-dribbble-pink' : 'text-dribbble-muted'}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                <span id="cardLikeCount-${shot.id}">${shot.likes.toLocaleString()}</span>
+            <div class="flex items-center gap-3 text-[12px] text-dribbble-muted">
+              <span class="flex items-center gap-1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                <span>${item.likes.toLocaleString()}</span>
               </span>
               <span class="flex items-center gap-1">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                <span>${(shot.views / 1000).toFixed(1)}k</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span>${(item.views / 1000).toFixed(1)}k</span>
               </span>
             </div>
-
           </div>
         `;
-
         grid.appendChild(card);
       });
     }
 
-    // Like Toggle with Spring Physics Pop
-    function toggleLike(id, btnElement) {
-      const shot = SHOTS_DATA.find(s => s.id === id);
-      if (!shot) return;
-
-      shot.liked = !shot.liked;
-      shot.likes += shot.liked ? 1 : -1;
-
-      // Trigger spring pop animation
-      btnElement.classList.add('animate-heart-pop');
-      setTimeout(() => btnElement.classList.remove('animate-heart-pop'), 350);
-
-      const svg = btnElement.querySelector('svg');
-      if (shot.liked) {
-        svg.classList.add('text-dribbble-pink', 'fill-dribbble-pink');
-        svg.classList.remove('text-dribbble-dark');
-        showToast("Added to your Liked Shots ❤️");
-      } else {
-        svg.classList.remove('text-dribbble-pink', 'fill-dribbble-pink');
-        svg.classList.add('text-dribbble-dark');
-      }
-
-      // Update card footer counter
-      const counter = document.getElementById(`cardLikeCount-${id}`);
-      if (counter) counter.textContent = shot.likes.toLocaleString();
-
-      // If open in modal, update modal state
-      if (activeModalShot && activeModalShot.id === id) {
-        updateModalLikeState(shot);
-      }
-    }
-
-    // Save Toggle
-    function toggleSave(id, btnElement) {
-      const shot = SHOTS_DATA.find(s => s.id === id);
-      if (!shot) return;
-
-      shot.saved = !shot.saved;
-      const svg = btnElement.querySelector('svg');
-      if (shot.saved) {
-        svg.classList.add('text-dribbble-pink', 'fill-dribbble-pink');
-        showToast("Saved to your Collection 📌");
-      } else {
-        svg.classList.remove('text-dribbble-pink', 'fill-dribbble-pink');
-        showToast("Removed from Collection");
-      }
-    }
-
-    // Category Pill Filtering
     function filterCategory(cat) {
       currentCategory = cat;
       document.querySelectorAll('.cat-pill').forEach(btn => {
         if (btn.getAttribute('data-cat') === cat) {
-          btn.className = "cat-pill px-4 py-2 rounded-full text-[14px] font-semibold bg-dribbble-light text-dribbble-dark transition-all flex-shrink-0";
+          btn.className = "cat-pill px-4 py-2 rounded-full text-[13px] font-semibold bg-dribbble-dark text-white transition-all flex-shrink-0";
         } else {
-          btn.className = "cat-pill px-4 py-2 rounded-full text-[14px] font-medium text-dribbble-slate hover:text-dribbble-dark hover:bg-dribbble-light transition-all flex-shrink-0";
+          btn.className = "cat-pill px-4 py-2 rounded-full text-[13px] font-medium text-dribbble-slate hover:text-dribbble-dark hover:bg-dribbble-light transition-all flex-shrink-0";
         }
       });
       renderShots();
     }
 
-    // Trending Tag Apply
-    function applyTag(tag) {
-      currentSearch = tag;
-      document.getElementById('searchInput').value = tag;
-      updateFilterStatus();
-      renderShots();
-    }
+    function handleInput(which) {
+      const el = document.getElementById(`hook${which}`);
+      const val = el.value;
+      document.getElementById(`charCount${which}`).textContent = `${val.length} / 280`;
+      
+      const words = val.trim() ? val.trim().split(/\s+/).length : 0;
+      document.getElementById(`wordCount${which}`).textContent = `${words} words`;
 
-    // Live Search
-    function handleSearch(val) {
-      currentSearch = val.trim();
-      updateFilterStatus();
-      renderShots();
-    }
-
-    function triggerSearch() {
-      const val = document.getElementById('searchInput').value;
-      handleSearch(val);
-    }
-
-    function updateFilterStatus() {
-      const container = document.getElementById('filterStatusContainer');
-      const text = document.getElementById('filterKeywordText');
-      if (currentSearch || activeTags.length > 0 || (activeColor && activeColor !== 'all')) {
-        container.classList.remove('hidden');
-        text.textContent = `"${currentSearch || activeTags.join(', ') || activeColor}"`;
+      // Spoken pace calculator (2.75 words per sec)
+      const secs = (words / 2.75).toFixed(1);
+      const paceEl = document.getElementById(`spokenTime${which}`);
+      if (secs <= 3.0) {
+        paceEl.textContent = `~${secs}s spoken (Sweet Spot)`;
+        paceEl.className = "px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200";
+      } else if (secs <= 4.5) {
+        paceEl.textContent = `~${secs}s spoken (Moderate)`;
+        paceEl.className = "px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200";
       } else {
-        container.classList.add('hidden');
+        paceEl.textContent = `~${secs}s spoken (Swipe Cliff Risk)`;
+        paceEl.className = "px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 border border-rose-200";
       }
     }
 
-    function resetFilters() {
-      currentSearch = "";
-      document.getElementById('searchInput').value = "";
-      currentCategory = "All";
-      activeTags = [];
-      activeColor = null;
-      document.querySelectorAll('.tag-filter-btn').forEach(b => b.classList.remove('bg-dribbble-dark', 'text-white'));
-      updateFilterStatus();
-      filterCategory('All');
-    }
-
-    // Sort Dropdown
-    function toggleSortDropdown() {
-      const menu = document.getElementById('sortMenu');
-      menu.classList.toggle('hidden');
-    }
-
-    function setSort(label) {
-      currentSort = label;
-      document.getElementById('currentSortLabel').textContent = label;
-      document.getElementById('sortMenu').classList.add('hidden');
-      renderShots();
-    }
-
-    // Filter Drawer Accordion
-    function toggleFilterDrawer() {
-      const drawer = document.getElementById('filterDrawer');
-      const btn = document.getElementById('filterToggleBtn');
-      if (drawer.classList.contains('collapsed')) {
-        drawer.classList.remove('collapsed');
-        drawer.classList.add('expanded');
-        btn.classList.add('border-dribbble-dark', 'bg-dribbble-light');
-      } else {
-        drawer.classList.remove('expanded');
-        drawer.classList.add('collapsed');
-        btn.classList.remove('border-dribbble-dark', 'bg-dribbble-light');
+    function loadExample(idx) {
+      if (idx === 1) {
+        document.getElementById('hookA').value = "Stop scrolling if you code in Python, here are 5 critical mistakes.";
+        document.getElementById('hookB').value = "Hello guys today in this video I will discuss some programming errors.";
+      } else if (idx === 2) {
+        document.getElementById('hookA').value = "Why 99% of developers struggle with memory leaks in web applications.";
+        document.getElementById('hookB').value = "The real reason software developers run into memory issues in web apps.";
+      } else if (idx === 3) {
+        document.getElementById('hookA').value = "Don't buy this viral wireless microphone until you see this audio test.";
+        document.getElementById('hookB').value = "Reviewing the top wireless microphone that I purchased on sale recently.";
+      } else if (idx === 4) {
+        document.getElementById('hookA').value = "The secret CSS layout trick that senior frontend devs never share with juniors.";
+        document.getElementById('hookB').value = "Here is a useful CSS trick that can help you align items horizontally.";
       }
+      handleInput('A');
+      handleInput('B');
+      runComparison();
     }
 
-    function toggleTagFilter(btn, tag) {
-      if (activeTags.includes(tag)) {
-        activeTags = activeTags.filter(t => t !== tag);
-        btn.classList.remove('bg-dribbble-dark', 'text-white');
-      } else {
-        activeTags.push(tag);
-        btn.classList.add('bg-dribbble-dark', 'text-white');
-      }
-      updateFilterStatus();
-      renderShots();
+    function clearHooks() {
+      document.getElementById('hookA').value = "";
+      document.getElementById('hookB').value = "";
+      handleInput('A');
+      handleInput('B');
     }
 
-    function selectColor(btn, hex) {
-      activeColor = hex;
-      document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('ring-4', 'ring-dribbble-dark'));
-      if (hex !== 'all') {
-        btn.classList.add('ring-4', 'ring-dribbble-dark');
-      }
-      updateFilterStatus();
-      renderShots();
+    function swapHooks() {
+      const a = document.getElementById('hookA').value;
+      const b = document.getElementById('hookB').value;
+      document.getElementById('hookA').value = b;
+      document.getElementById('hookB').value = a;
+      handleInput('A');
+      handleInput('B');
+      runComparison();
     }
 
-    // Detail Lightbox Modal
-    function openDetailModal(id) {
-      const shot = SHOTS_DATA.find(s => s.id === id);
-      if (!shot) return;
-      activeModalShot = shot;
+    function injectHookDirect(id, which) {
+      const item = INSPIRATION_HOOKS.find(i => i.id === id);
+      if (!item) return;
+      document.getElementById(`hook${which}`).value = item.quote;
+      handleInput(which);
+      showToast(`Injected into Hook ${which}!`);
+      document.getElementById('arena').scrollIntoView({ behavior: 'smooth' });
+    }
 
-      // Populate details
-      document.getElementById('modalCreatorAvatar').src = shot.creator.avatar;
-      document.getElementById('modalCreatorName').textContent = shot.creator.name;
-      document.getElementById('modalShotTitle').textContent = shot.title;
-      document.getElementById('modalHeadline').textContent = shot.headline;
-      document.getElementById('modalDescription').textContent = shot.description;
-      document.getElementById('modalCreatorBadge').textContent = shot.creator.badge;
-      document.getElementById('modalMoreCreatorName').textContent = shot.creator.name;
+    function openModal(id) {
+      const item = INSPIRATION_HOOKS.find(i => i.id === id);
+      if (!item) return;
+      activeModalItem = item;
 
-      // Media container showcase
-      const media = document.getElementById('modalMediaContainer');
-      media.innerHTML = `
-        <div class="w-full h-full bg-gradient-to-br ${shot.bgGradient} p-8 sm:p-12 flex flex-col justify-between">
-          <div class="flex items-center justify-between">
-            <span class="px-3 py-1 rounded-full text-[12px] font-bold tracking-wider uppercase bg-white/20 backdrop-blur-md">
-              ${shot.category}
-            </span>
-            <span class="text-[13px] font-medium opacity-80">60 FPS Render</span>
-          </div>
-          <div class="max-w-xl">
-            <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-2 drop-shadow-md">${shot.title}</h1>
-            <p class="text-white/80 text-[15px] font-normal">${shot.headline}</p>
-          </div>
-        </div>
-      `;
+      document.getElementById('modalAvatar').src = item.avatar;
+      document.getElementById('modalTitle').textContent = item.title;
+      document.getElementById('modalCreator').textContent = `Curated by ${item.creator} • ${item.badge}`;
+      document.getElementById('modalArchetypeTag').textContent = item.category;
+      document.getElementById('modalHookQuote').textContent = `"${item.quote}"`;
+      document.getElementById('modalMechanic').textContent = item.mechanic;
 
-      // Swatches
-      const swatches = document.getElementById('modalColorSwatches');
-      swatches.innerHTML = "";
-      shot.colors.forEach(col => {
-        const sw = document.createElement('button');
-        sw.className = "w-8 h-8 rounded-full border border-dribbble-hairline hover:scale-110 active:scale-95 transition-transform shadow-sm";
-        sw.style.backgroundColor = col;
-        sw.title = `Click to copy ${col}`;
-        sw.onclick = () => copyHexCode(col);
-        swatches.appendChild(sw);
-      });
-
-      // Tags
-      const tagsContainer = document.getElementById('modalTagsContainer');
-      tagsContainer.innerHTML = "";
-      shot.tags.forEach(t => {
-        const pill = document.createElement('span');
-        pill.className = "px-3 py-1 rounded-full text-[12px] font-medium bg-dribbble-light text-dribbble-slate border border-dribbble-hairline";
-        pill.textContent = t;
-        tagsContainer.appendChild(pill);
-      });
-
-      // Subgrid "More by this creator"
-      const subGrid = document.getElementById('modalSubGrid');
-      subGrid.innerHTML = "";
-      const otherShots = SHOTS_DATA.filter(s => s.id !== shot.id).slice(0, 4);
-      otherShots.forEach(other => {
-        const mini = document.createElement('div');
-        mini.className = "aspect-[4/3] rounded-lg overflow-hidden bg-gradient-to-br " + other.bgGradient + " p-3 flex items-end cursor-pointer hover:scale-105 transition-transform text-white text-[12px] font-bold";
-        mini.innerHTML = `<span class="truncate drop-shadow-sm">${other.title}</span>`;
-        mini.onclick = () => openDetailModal(other.id);
-        subGrid.appendChild(mini);
-      });
-
-      updateModalLikeState(shot);
+      const preview = document.getElementById('modalCardPreview');
+      preview.className = `w-full aspect-[16/10] rounded-xl p-8 flex flex-col justify-between text-white shadow-sm mb-6 bg-gradient-to-br ${item.bgGradient}`;
 
       document.getElementById('shotDetailModal').classList.remove('hidden');
-      document.body.style.overflow = "hidden";
-    }
-
-    function updateModalLikeState(shot) {
-      const countEl = document.getElementById('modalLikeCount');
-      const iconEl = document.getElementById('modalLikeIcon');
-      countEl.textContent = shot.likes.toLocaleString();
-      if (shot.liked) {
-        iconEl.classList.add('text-dribbble-pink', 'fill-dribbble-pink');
-      } else {
-        iconEl.classList.remove('text-dribbble-pink', 'fill-dribbble-pink');
-      }
-    }
-
-    function toggleModalLike() {
-      if (!activeModalShot) return;
-      const likeBtn = document.getElementById('modalLikeBtn');
-      toggleLike(activeModalShot.id, likeBtn);
-    }
-
-    function toggleModalSave() {
-      if (!activeModalShot) return;
-      const saveBtn = document.getElementById('modalSaveBtn');
-      toggleSave(activeModalShot.id, saveBtn);
     }
 
     function closeDetailModal() {
       document.getElementById('shotDetailModal').classList.add('hidden');
-      document.body.style.overflow = "auto";
-      activeModalShot = null;
+      activeModalItem = null;
     }
 
-    // Launch A/B comparison prefilled from modal shot
-    function launchAeroComparisonFromModal() {
-      if (!activeModalShot) return;
+    function injectActiveModal(which) {
+      if (!activeModalItem) return;
+      document.getElementById(`hook${which}`).value = activeModalItem.quote;
+      handleInput(which);
       closeDetailModal();
-      openHookBattleModal();
-      document.getElementById('arenaHookA').value = activeModalShot.headline;
-      document.getElementById('arenaHookB').value = "Hey guys in this video I will show you how to do this.";
-      updateArenaCharCount('A');
-      updateArenaCharCount('B');
+      showToast(`Injected into Hook ${which}!`);
+      document.getElementById('arena').scrollIntoView({ behavior: 'smooth' });
     }
 
-    // A/B Hook Battle Modal
-    function openHookBattleModal() {
-      document.getElementById('hookBattleModal').classList.remove('hidden');
-      document.body.style.overflow = "hidden";
-      updateArenaCharCount('A');
-      updateArenaCharCount('B');
-    }
-
-    function closeHookBattleModal() {
-      document.getElementById('hookBattleModal').classList.add('hidden');
-      document.body.style.overflow = "auto";
-    }
-
-    function updateArenaCharCount(id) {
-      const val = document.getElementById(`arenaHook${id}`).value;
-      document.getElementById(`charCount${id}`).textContent = `${val.length} / 280`;
-      const words = val.trim() ? val.trim().split(/\s+/).length : 0;
-      document.getElementById(`wordCount${id}`).textContent = `${words} words`;
-    }
-
-    function loadHookPreset(index) {
-      if (index === 1) {
-        document.getElementById('arenaHookA').value = "Stop scrolling if you code in Python, here are 5 critical mistakes.";
-        document.getElementById('arenaHookB').value = "Hello guys today in this video I will discuss some programming errors.";
-      } else if (index === 2) {
-        document.getElementById('arenaHookA').value = "Why 99% of creators secretly fail at TikTok retention.";
-        document.getElementById('arenaHookB').value = "The real reason why most creator videos never reach the FYP.";
-      } else if (index === 3) {
-        document.getElementById('arenaHookA').value = "Don't buy this viral skincare product until you hear this warning.";
-        document.getElementById('arenaHookB').value = "Reviewing the top skincare products that I purchased recently.";
-      }
-      updateArenaCharCount('A');
-      updateArenaCharCount('B');
-    }
-
-    async function runArenaComparison() {
-      const hookA = document.getElementById('arenaHookA').value.trim();
-      const hookB = document.getElementById('arenaHookB').value.trim();
-      const errBox = document.getElementById('arenaError');
-      const results = document.getElementById('arenaResults');
-      const btn = document.getElementById('runCompareBtn');
+    async function runComparison() {
+      const hookA = document.getElementById('hookA').value.trim();
+      const hookB = document.getElementById('hookB').value.trim();
+      const errBox = document.getElementById('errorBox');
+      const btn = document.getElementById('compareBtn');
 
       errBox.classList.add('hidden');
 
       if (!hookA || !hookB) {
-        errBox.textContent = "Please enter both Hook A and Hook B before comparing.";
+        errBox.textContent = "Please fill in both Hook A and Hook B before running comparison.";
         errBox.classList.remove('hidden');
         return;
       }
@@ -1399,21 +1021,15 @@
         if (res.ok) {
           data = await res.json();
         } else {
-          // Heuristic Fallback calculation
           data = computeLocalFallback(hookA, hookB);
         }
-
-        renderArenaResults(data);
-        results.classList.remove('hidden');
-        results.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        renderResults(data);
       } catch (e) {
-        // Run heuristic fallback when backend is offline
         const data = computeLocalFallback(hookA, hookB);
-        renderArenaResults(data);
-        results.classList.remove('hidden');
+        renderResults(data);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<span>⚔️ Run A/B Comparison</span>`;
+        btn.innerHTML = `<span>⚔️ Compare Hooks</span>`;
       }
     }
 
@@ -1435,43 +1051,72 @@
         score_difference: diff,
         is_close_result: isClose,
         explanation: `${verdict}: Statistical linguistic patterns show ${leading ? 'Hook ' + leading : 'neither hook'} has a decisive lead (ΔP = ${(diff * 100).toFixed(1)}%).`,
-        hook_a: { probabilities: { High: pA } },
-        hook_b: { probabilities: { High: pB } }
+        hook_a: { probabilities: { High: pA }, predicted_class: pA > 0.65 ? "High" : "Medium", word_count: hookA.split(/\s+/).length, character_count: hookA.length },
+        hook_b: { probabilities: { High: pB }, predicted_class: pB > 0.65 ? "High" : "Medium", word_count: hookB.split(/\s+/).length, character_count: hookB.length },
+        disclaimer: "Notice: The predicted engagement class is only an estimate based on historical text patterns in the dataset. It cannot and does not guarantee that a video will go viral."
       };
     }
 
-    function renderArenaResults(data) {
+    function renderResults(data) {
       document.getElementById('verdictHeadline').textContent = data.verdict;
-      document.getElementById('verdictExplanation').textContent = data.explanation;
+      document.getElementById('explanationText').textContent = data.explanation;
 
-      const badge = document.getElementById('verdictBadge');
+      const leadBadge = document.getElementById('leadBadge');
+      const marginBanner = document.getElementById('marginGuardBanner');
+
       if (data.is_close_result) {
-        badge.textContent = "⚖️ Close Result (≤ 8% diff)";
-        badge.className = "px-4 py-1.5 rounded-full text-[13px] font-bold bg-amber-500 text-white shadow-sm";
+        leadBadge.textContent = "⚖️ Close Match (Dead Heat)";
+        leadBadge.className = "px-5 py-2 rounded-full text-[14px] font-bold bg-amber-500 text-white shadow-sm";
+        marginBanner.classList.remove('hidden');
       } else if (data.leading_hook === "A") {
-        badge.textContent = "⭐ Hook A Leads";
-        badge.className = "px-4 py-1.5 rounded-full text-[13px] font-bold bg-dribbble-pink text-white shadow-sm";
+        leadBadge.textContent = "⭐ Hook A Leads";
+        leadBadge.className = "px-5 py-2 rounded-full text-[14px] font-bold bg-dribbble-pink text-white shadow-sm";
+        marginBanner.classList.add('hidden');
       } else {
-        badge.textContent = "⭐ Hook B Leads";
-        badge.className = "px-4 py-1.5 rounded-full text-[13px] font-bold bg-dribbble-dark text-white shadow-sm";
+        leadBadge.textContent = "⭐ Hook B Leads";
+        leadBadge.className = "px-5 py-2 rounded-full text-[14px] font-bold bg-dribbble-dark text-white shadow-sm";
+        marginBanner.classList.add('hidden');
       }
 
-      document.getElementById('verdictDelta').textContent = `ΔP: ${(data.score_difference * 100).toFixed(1)}%`;
-      
+      document.getElementById('diffBadge').textContent = `ΔP: ${(data.score_difference * 100).toFixed(1)}%`;
+
       const pA = (data.hook_a.probabilities.High * 100).toFixed(1);
       const pB = (data.hook_b.probabilities.High * 100).toFixed(1);
 
-      document.getElementById('scoreHighA').textContent = `${pA}%`;
-      document.getElementById('barA').style.width = `${pA}%`;
+      document.getElementById('classA').textContent = data.hook_a.predicted_class || "High";
+      document.getElementById('probHighA').textContent = `${pA}%`;
+      document.getElementById('barHighA').style.width = `${pA}%`;
+      document.getElementById('metaA').textContent = `${data.hook_a.word_count} words • ${data.hook_a.character_count} chars`;
 
-      document.getElementById('scoreHighB').textContent = `${pB}%`;
-      document.getElementById('barB').style.width = `${pB}%`;
+      document.getElementById('classB').textContent = data.hook_b.predicted_class || "Medium";
+      document.getElementById('probHighB').textContent = `${pB}%`;
+      document.getElementById('barHighB').style.width = `${pB}%`;
+      document.getElementById('metaB').textContent = `${data.hook_b.word_count} words • ${data.hook_b.character_count} chars`;
+
+      if (data.disclaimer) {
+        document.getElementById('disclaimerText').textContent = data.disclaimer;
+      }
     }
 
-    // Copy Hex code helper
-    function copyHexCode(hex) {
-      navigator.clipboard.writeText(hex);
-      showToast(`Copied ${hex} to clipboard!`);
+    function copyFullReport() {
+      const hookA = document.getElementById('hookA').value;
+      const hookB = document.getElementById('hookB').value;
+      const verdict = document.getElementById('verdictHeadline').textContent;
+      const pA = document.getElementById('probHighA').textContent;
+      const pB = document.getElementById('probHighB').textContent;
+
+      const report = `VIRALHOOK STUDIO DIAGNOSTIC REPORT\n` +
+        `-----------------------------------\n` +
+        `Verdict: ${verdict}\n\n` +
+        `Hook A: "${hookA}"\n` +
+        `High Engagement Probability: ${pA}\n\n` +
+        `Hook B: "${hookB}"\n` +
+        `High Engagement Probability: ${pB}\n\n` +
+        `Pacing Tempo Target: 2.75 wps (Green Zone <= 3.0s)\n` +
+        `Platform: Group M Pre-Production Lab (FastAPI & ML NLP)`;
+
+      navigator.clipboard.writeText(report);
+      showToast("Diagnostic report copied to clipboard! 📋");
     }
 
     function showToast(msg) {
@@ -1483,24 +1128,9 @@
       }, 2400);
     }
 
-    // Keyboard ESC listener
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeDetailModal();
-        closeHookBattleModal();
-      }
-    });
-
-    function loadMoreShots() {
-      const btn = document.getElementById('loadMoreBtn');
-      btn.textContent = "Loading more...";
-      setTimeout(() => {
-        btn.textContent = "You've reached the end of current shots";
-        btn.disabled = true;
-      }, 600);
-    }
-
-    // Initialize Page
+    // Init
+    handleInput('A');
+    handleInput('B');
     renderShots();
   </script>
 </body>
