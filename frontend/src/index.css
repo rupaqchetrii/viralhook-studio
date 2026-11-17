@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+@theme {
+  --color-studio-bg: #11121B;
+  --color-studio-panel: #202238;
+  --color-studio-panel-elevated: #282a45;
+  --color-studio-border: #2e3152;
+  --color-studio-accent: #A78BFA;
+  --color-studio-accent-hover: #9065f7;
+  --color-studio-accent-subtle: rgba(167, 139, 250, 0.15);
+  --color-studio-text: #F1F5F9;
+  --color-studio-muted: #94A3B8;
+  --color-studio-subtle: #64748B;
+  --color-studio-success: #10B981;
+  --color-studio-warning: #F59E0B;
+  --color-studio-danger: #EF4444;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background-color: #11121B;
+  color: #F1F5F9;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbar for dark studio interface */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #11121B;
+}
+::-webkit-scrollbar-thumb {
+  background: #2e3152;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #A78BFA;
+}
