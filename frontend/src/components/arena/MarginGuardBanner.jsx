@@ -1,5 +1,5 @@
 import React from 'react';
-import { Scale, Trophy, ShieldAlert, CheckCircle2 } from 'lucide-react';
+import { Scale, Trophy } from 'lucide-react';
 import { Badge } from '../ui/Badge';
 
 export function MarginGuardBanner({ marginGuard }) {

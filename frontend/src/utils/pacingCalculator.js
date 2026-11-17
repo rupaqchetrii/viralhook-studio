@@ -66,3 +66,32 @@ export function getPacingZone(spokenSeconds) {
     description: 'High swipe-away risk. Viewers will likely drop before you finish.',
   };
 }
+
+/**
+ * Extract notable question words, action verbs, and psychological triggers (FR-06).
+ */
+export const NOTABLE_WORD_CATEGORIES = [
+  { category: 'Question', color: 'border-cyan-500/30 text-cyan-300 bg-cyan-950/20', words: ['why', 'how', 'what', 'when', 'who', 'where', 'which'] },
+  { category: 'Action', color: 'border-rose-500/30 text-rose-300 bg-rose-950/20', words: ['stop', "don't", 'dont', 'never', 'watch', 'avoid', 'quit', 'start', 'try'] },
+  { category: 'Curiosity', color: 'border-purple-500/30 text-purple-300 bg-purple-950/20', words: ['secret', 'mistake', 'mistakes', 'truth', 'hack', 'hidden', 'trick', 'reason', 'nobody'] },
+  { category: 'Direct Address', color: 'border-amber-500/30 text-amber-300 bg-amber-950/20', words: ['you', 'your', 'yours', 'yourself'] },
+];
+
+export function extractNotableWords(text) {
+  if (!text || typeof text !== 'string') return [];
+  const lower = text.toLowerCase();
+  const tokens = lower.match(/\b[\w'-]+\b/g) || [];
+  const tokenSet = new Set(tokens);
+  const found = [];
+
+  NOTABLE_WORD_CATEGORIES.forEach(({ category, color, words }) => {
+    words.forEach((w) => {
+      if (tokenSet.has(w)) {
+        found.push({ word: w, category, color });
+      }
+    });
+  });
+
+  return found;
+}
+
