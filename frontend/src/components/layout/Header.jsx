@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Flame, History, HelpCircle, Layers, Sparkles, RefreshCw, Cpu, Wifi } from 'lucide-react';
+import { Flame, History, HelpCircle, RefreshCw, Cpu, Sparkles, ChevronDown } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { useHookStore } from '../../store/useHookStore';
@@ -29,113 +29,116 @@ export function Header() {
   const isTrained = healthStatus?.inference_mode === 'trained_model';
 
   return (
-    <header className="border-b border-[#2e3152] bg-[#11121B]/90 backdrop-blur-md sticky top-0 z-40">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+    <header className="sticky top-4 z-40 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full transition-all">
+      <div className="glass-panel rounded-2xl px-4 sm:px-6 h-16 flex items-center justify-between gap-4 border border-white/10 shadow-2xl shadow-black/40">
         {/* Brand / Logo */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#A78BFA] to-[#6366F1] flex items-center justify-center shadow-lg shadow-[#A78BFA]/20">
-            <Flame className="w-5 h-5 text-[#11121B] fill-current" />
+          <div className="relative group cursor-pointer">
+            <div className="absolute -inset-1 bg-gradient-to-r from-violet-600 to-indigo-600 rounded-xl blur-md opacity-70 group-hover:opacity-100 transition duration-300"></div>
+            <div className="relative w-10 h-10 rounded-xl bg-[#0F111D] border border-white/10 flex items-center justify-center">
+              <Flame className="w-5 h-5 text-violet-400 fill-violet-400/20" />
+            </div>
           </div>
+
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-extrabold text-lg text-[#F1F5F9] tracking-tight">
-                ViralHook <span className="text-[#A78BFA]">Studio</span>
+              <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
+                ViralHook <span className="bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent font-black">Studio</span>
               </span>
-              <Badge variant="accent" size="xs">
-                v1.0 Lab
-              </Badge>
-              {healthStatus && (
-                <span
-                  className={`hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono border ${
-                    isModelLive
-                      ? 'bg-emerald-950/40 text-emerald-300 border-emerald-500/30'
-                      : 'bg-amber-950/40 text-amber-300 border-amber-500/30'
-                  }`}
-                >
-                  <span className={`w-1.5 h-1.5 rounded-full ${isModelLive ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
-                  {isTrained ? 'Trained Model' : isModelLive ? 'API Live' : 'Offline'}
-                </span>
-              )}
+              <span className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono tracking-wide bg-violet-500/10 text-violet-300 border border-violet-500/20 font-semibold">
+                <Sparkles className="w-3 h-3 text-violet-400" />
+                v1.0 AI
+              </span>
             </div>
-            <p className="text-[11px] text-[#94A3B8] hidden sm:block">
-              Creator A/B Hook Lab & Virality Predictor
-            </p>
           </div>
         </div>
 
-        {/* Center Controls: Platform & Niche Selection */}
-        <div className="hidden md:flex items-center gap-2">
+        {/* Center: Platform Segmented Controls + Niche Selector */}
+        <div className="hidden lg:flex items-center gap-3">
           {/* Platform Switcher */}
-          <div className="flex items-center p-1 rounded-xl bg-[#202238] border border-[#2e3152]">
+          <div className="flex items-center p-1 rounded-xl bg-black/40 border border-white/[0.06] backdrop-blur-md">
             {[
-              { id: 'tiktok', label: 'TikTok' },
-              { id: 'reels', label: 'IG Reels' },
-              { id: 'shorts', label: 'Shorts' },
+              { id: 'tiktok', label: 'TikTok', icon: '🎵' },
+              { id: 'reels', label: 'Reels', icon: '📸' },
+              { id: 'shorts', label: 'Shorts', icon: '⚡' },
             ].map((p) => (
               <button
                 key={p.id}
                 onClick={() => setPlatform(p.id)}
-                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
                   platform === p.id
-                    ? 'bg-[#A78BFA] text-[#11121B] shadow-sm font-bold'
-                    : 'text-[#94A3B8] hover:text-[#F1F5F9]'
+                    ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-violet-500/25 font-semibold'
+                    : 'text-zinc-400 hover:text-white hover:bg-white/[0.04]'
                 }`}
               >
-                {p.label}
+                <span>{p.icon}</span>
+                <span>{p.label}</span>
               </button>
             ))}
           </div>
 
           {/* Niche Selector */}
-          <select
-            value={niche}
-            onChange={(e) => setNiche(e.target.value)}
-            className="bg-[#202238] border border-[#2e3152] text-xs font-medium text-[#F1F5F9] rounded-xl px-3 py-1.5 focus:outline-none focus:border-[#A78BFA]"
-          >
-            <option value="tech">💻 Tech & Coding</option>
-            <option value="finance">📈 Finance & Business</option>
-            <option value="fitness">🏋️ Fitness & Health</option>
-            <option value="education">📚 How-To & Education</option>
-            <option value="lifestyle">✨ Lifestyle / Story</option>
-          </select>
+          <div className="relative">
+            <select
+              value={niche}
+              onChange={(e) => setNiche(e.target.value)}
+              className="appearance-none bg-black/40 border border-white/[0.06] text-xs font-medium text-zinc-300 rounded-xl pl-3 pr-8 py-2 focus:outline-none focus:border-violet-500/50 hover:border-white/20 transition-all cursor-pointer"
+            >
+              <option value="tech">💻 Tech & AI</option>
+              <option value="finance">📈 Finance & Business</option>
+              <option value="fitness">🏋️ Fitness & Health</option>
+              <option value="education">📚 How-To & Tutorials</option>
+              <option value="lifestyle">✨ Lifestyle & Stories</option>
+            </select>
+            <ChevronDown className="w-3.5 h-3.5 text-zinc-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          </div>
         </div>
 
-        {/* Right Actions: Swap, Onboarding & History */}
+        {/* Right Actions & Status */}
         <div className="flex items-center gap-2.5">
-          <Button
-            size="sm"
-            variant="outline"
+          {/* Live Status Pill */}
+          {healthStatus && (
+            <div
+              className={`hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono border backdrop-blur-md transition-all ${
+                isModelLive
+                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-sm shadow-emerald-500/10'
+                  : 'bg-amber-500/10 text-amber-300 border-amber-500/20'
+              }`}
+            >
+              <span className={`w-2 h-2 rounded-full ${isModelLive ? 'bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse' : 'bg-amber-400'}`} />
+              <span className="font-medium">{isTrained ? 'Dual-Tower ML' : isModelLive ? 'Gateway Live' : 'Offline'}</span>
+            </div>
+          )}
+
+          <button
             onClick={swapHooks}
             title="Swap Hook A and Hook B"
-            className="hidden sm:inline-flex"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] text-zinc-300 hover:text-white border border-white/[0.06] hover:border-white/20 text-xs font-medium transition-all"
           >
-            <RefreshCw className="w-3.5 h-3.5 mr-1" />
-            Swap
-          </Button>
+            <RefreshCw className="w-3.5 h-3.5" />
+            <span>Swap</span>
+          </button>
 
-          <Button
-            size="sm"
-            variant="ghost"
+          <button
             onClick={() => setOnboardingOpen(true)}
-            title="How it Works"
+            title="How Scoring Works"
+            className="p-2 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] text-zinc-400 hover:text-white border border-white/[0.06] transition-all"
           >
-            <HelpCircle className="w-4 h-4 text-[#94A3B8]" />
-          </Button>
+            <HelpCircle className="w-4 h-4" />
+          </button>
 
-          <Button
-            size="sm"
-            variant="secondary"
+          <button
             onClick={() => setHistoryDrawerOpen(true)}
-            className="relative"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-violet-600/20 to-indigo-600/20 hover:from-violet-600/30 hover:to-indigo-600/30 text-violet-200 border border-violet-500/30 text-xs font-medium transition-all shadow-sm"
           >
-            <History className="w-4 h-4 mr-1 text-[#A78BFA]" />
-            <span>Library</span>
+            <History className="w-4 h-4 text-violet-400" />
+            <span className="font-semibold">Library</span>
             {battleHistory.length > 0 && (
-              <span className="ml-1 px-1.5 py-0.2 rounded-full bg-[#A78BFA] text-[#11121B] text-[10px] font-bold">
+              <span className="ml-1 px-1.5 py-0.2 rounded-full bg-violet-500 text-white text-[10px] font-bold">
                 {battleHistory.length}
               </span>
             )}
-          </Button>
+          </button>
         </div>
       </div>
     </header>
