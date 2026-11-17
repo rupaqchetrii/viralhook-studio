@@ -6,6 +6,8 @@ from fastapi.staticfiles import StaticFiles
 from backend.app.config import get_settings
 from backend.app.api.compare import router as compare_router
 from backend.app.api.analyze import router as analyze_router
+from backend.app.api.library import router as library_router
+from backend.app.api.remix import router as remix_router
 from backend.app.services.prediction_gateway import gateway
 
 settings = get_settings()
@@ -34,6 +36,8 @@ app.add_middleware(
 # Include API Routers
 app.include_router(compare_router, prefix=settings.API_V1_PREFIX)
 app.include_router(analyze_router, prefix=settings.API_V1_PREFIX)
+app.include_router(library_router, prefix=settings.API_V1_PREFIX)
+app.include_router(remix_router, prefix=settings.API_V1_PREFIX)
 
 # Mount Vite Assets directory if built
 if FRONTEND_DIST.exists() and (FRONTEND_DIST / "assets").exists():
