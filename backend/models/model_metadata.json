@@ -3,16 +3,15 @@
   "training_dataset": "TM-HIC (Tri-Modal Hook Intelligence Corpus)",
   "dataset_path": "data\\processed\\tm_hic_dataset.csv",
   "num_records": 3000,
-  "classes": [
-    "Low",
-    "Medium",
-    "High"
-  ],
-  "pipeline_classes": [
-    "High",
-    "Low",
-    "Medium"
-  ],
+  "model_version": "v2.0.0-dual-tower",
+  "created_at": "2026-11-17T14:47:33.955858",
+  "architecture": "DualTower-LR-L1-IsotonicCalibration",
+  "dense_tower_enabled": false,
+  "tfidf_max_features": 2000,
+  "tfidf_ngram_range": [1, 3],
+  "psycholinguistic_dims": 24,
+  "classes": ["Low", "Medium", "High"],
+  "pipeline_classes": ["High", "Low", "Medium"],
   "cv_macro_f1_mean": 0.9977,
   "cv_macro_f1_std": 0.0013,
   "cv_folds": 5,
@@ -46,5 +45,13 @@
   "tfidf_vocab_size": 1029,
   "sha256": "affccdd350ae67016690a071d1d889eccbe5abfa215d6c9139e272ee64f3e835",
   "disclaimer": "Result is an estimate based on historical synthetic data, not a guarantee of virality.",
-  "close_result_margin": 0.08
+  "close_result_margin": 0.08,
+  "training_rows": 3000,
+  "cv_log_loss": 0.0882,
+  "test_macro_f1": 0.9966,
+  "test_log_loss": 0.0621,
+  "test_brier_score_high": 0.0155,
+  "test_balanced_accuracy": 0.9964,
+  "leakage_creators": 0,
+  "checksum_sha256": "249f9bfc47331f39064dd76882fc19c7d4b38eb69d8eed56cf4a76388095d437"
 }
