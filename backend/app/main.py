@@ -1,10 +1,16 @@
+from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from backend.app.config import get_settings
 from backend.app.api.compare import router as compare_router
+from backend.app.api.analyze import router as analyze_router
 from backend.app.services.prediction_gateway import gateway
 
 settings = get_settings()
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+FRONTEND_INDEX = BASE_DIR / "frontend" / "index.html"
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -21,24 +27,30 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include API Routers on both /api and /api/v1 for seamless compatibility
-app.include_router(compare_router, prefix="/api")
-app.include_router(compare_router, prefix="/api/v1")
+# Include API Routers on primary prefix and /api/v1 alias for compatibility
+app.include_router(compare_router, prefix=settings.API_V1_PREFIX)
+app.include_router(analyze_router, prefix=settings.API_V1_PREFIX)
+if settings.API_V1_PREFIX != "/api/v1":
+    app.include_router(compare_router, prefix="/api/v1")
+    app.include_router(analyze_router, prefix="/api/v1")
 
 
-@app.get("/", tags=["Root"])
-def root():
+@app.get("/", tags=["UI"], summary="Serve ViralHook Studio Web Interface")
+def serve_ui():
+    """Serves the single-page creator UI if available, else API information."""
+    if FRONTEND_INDEX.exists():
+        return FileResponse(FRONTEND_INDEX)
     return {
         "project": settings.PROJECT_NAME,
         "version": settings.VERSION,
         "docs_url": "/docs",
-        "health_check": "/api/health",
-        "compare_endpoint": "/api/compare",
+        "health_check": f"{settings.API_V1_PREFIX}/health",
+        "compare_endpoint": f"{settings.API_V1_PREFIX}/compare",
     }
 
 
-@app.get("/api/health", tags=["Health"])
-@app.get("/api/v1/health", tags=["Health"])
+@app.get(f"{settings.API_V1_PREFIX}/health", tags=["Health"], summary="System & Model Health Check")
+@app.get("/api/v1/health", tags=["Health"], summary="System & Model Health Check (v1 alias)")
 def health_check():
     return {
         "status": "healthy",
@@ -49,7 +61,7 @@ def health_check():
     }
 
 
-@app.get("/api/model/info", tags=["Model"])
+@app.get(f"{settings.API_V1_PREFIX}/model/info", tags=["Model"])
 @app.get("/api/v1/model/info", tags=["Model"])
 def model_info():
     return {

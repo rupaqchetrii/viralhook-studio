@@ -1,66 +1,50 @@
 {
-  "model_name": "TF-IDF + Multinomial Logistic Regression",
-  "version": "1.0.0",
-  "trained_at": "2026-11-17T08:52:53.066732+00:00",
-  "dataset": "TM-HIC (Tri-Modal Hook Intelligence Corpus)",
-  "sample_size": 3000,
-  "train_samples": 2394,
-  "test_samples": 606,
+  "model_type": "TF-IDF (1-2gram, 3k) + 24 Psycholinguistic Features + Logistic Regression",
+  "training_dataset": "TM-HIC (Tri-Modal Hook Intelligence Corpus)",
+  "dataset_path": "data\\processed\\tm_hic_dataset.csv",
+  "num_records": 3000,
   "classes": [
     "Low",
     "Medium",
     "High"
   ],
-  "vocabulary_size": 1065,
-  "metrics": {
-    "accuracy": 0.9983,
-    "macro_f1": 0.9983,
-    "per_class": {
-      "Low": {
-        "precision": 1.0,
-        "recall": 1.0,
-        "f1_score": 1.0,
-        "support": 216
-      },
-      "Medium": {
-        "precision": 1.0,
-        "recall": 0.9952,
-        "f1_score": 0.9976,
-        "support": 209
-      },
-      "High": {
-        "precision": 0.9945,
-        "recall": 1.0,
-        "f1_score": 0.9972,
-        "support": 181
-      }
-    },
-    "confusion_matrix": {
-      "Low": {
-        "Low": 216,
-        "Medium": 0,
-        "High": 0
-      },
-      "Medium": {
-        "Low": 0,
-        "Medium": 208,
-        "High": 1
-      },
-      "High": {
-        "Low": 0,
-        "Medium": 0,
-        "High": 181
-      }
-    }
-  },
-  "parameters": {
-    "ngram_range": [
-      1,
-      2
-    ],
-    "min_df": 2,
-    "max_features": 3000,
-    "close_result_margin": 0.08
-  },
-  "disclaimer": "Model probabilities reflect text-based statistical association in the training dataset. They do not constitute a guarantee of video virality or algorithmic promotion."
+  "pipeline_classes": [
+    "High",
+    "Low",
+    "Medium"
+  ],
+  "cv_macro_f1_mean": 0.9977,
+  "cv_macro_f1_std": 0.0013,
+  "cv_folds": 5,
+  "train_macro_f1": 0.9977,
+  "feature_names_psycho": [
+    "duration_seconds",
+    "word_count",
+    "char_count",
+    "avg_word_length",
+    "syllable_count",
+    "syllable_density",
+    "pacing_zone_is_green",
+    "pacing_zone_is_red",
+    "flesch_reading_ease",
+    "flesch_kincaid_grade",
+    "direct_address_count",
+    "has_direct_address",
+    "curiosity_gap_score",
+    "has_curiosity_gap",
+    "is_question",
+    "question_count",
+    "exclamation_count",
+    "ellipsis_count",
+    "has_ellipsis",
+    "has_digit",
+    "digit_count",
+    "has_superlative",
+    "has_negative_hook",
+    "power_words_count"
+  ],
+  "tfidf_vocab_size": 1029,
+  "sha256": "affccdd350ae67016690a071d1d889eccbe5abfa215d6c9139e272ee64f3e835",
+  "disclaimer": "Result is an estimate based on historical synthetic data, not a guarantee of virality.",
+  "close_result_margin": 0.08
 }
