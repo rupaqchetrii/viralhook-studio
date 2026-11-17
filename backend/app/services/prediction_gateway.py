@@ -6,6 +6,7 @@ from pathlib import Path
 # Try importing joblib safely
 try:
     import joblib
+    import ml.dual_tower_model  # Register classes for unpickling
 except ImportError:
     joblib = None
 
@@ -30,11 +31,23 @@ class PredictionGateway:
 
     def _get_model_full_path(self) -> Path:
         base_dir = Path(__file__).resolve().parent.parent.parent
-        return base_dir / settings.MODEL_PATH
+        cand = base_dir / settings.MODEL_PATH
+        if cand.exists():
+            return cand
+        cand_root = base_dir.parent / settings.MODEL_PATH
+        if cand_root.exists():
+            return cand_root
+        return cand
 
     def _get_metadata_full_path(self) -> Path:
         base_dir = Path(__file__).resolve().parent.parent.parent
-        return base_dir / settings.METADATA_PATH
+        cand = base_dir / settings.METADATA_PATH
+        if cand.exists():
+            return cand
+        cand_root = base_dir.parent / settings.METADATA_PATH
+        if cand_root.exists():
+            return cand_root
+        return cand
 
     def _load_model_if_available(self):
         model_path = self._get_model_full_path()
@@ -75,9 +88,16 @@ class PredictionGateway:
 
     def _predict_with_real_model(self, text: str) -> Tuple[str, Dict[str, float], bool]:
         try:
-            # Assumes model output classes: ['Low', 'Medium', 'High']
-            probs = self.model.predict_proba([text])[0]
-            classes = list(getattr(self.model, "classes_", ["Low", "Medium", "High"]))
+            # Handles dictionary bundles (with builder and clf) or sklearn Estimator objects
+            if isinstance(self.model, dict):
+                builder = self.model["builder"]
+                clf = self.model["clf"]
+                X = builder.transform([text])
+                probs = clf.predict_proba(X)[0]
+                classes = list(self.model.get("classes", getattr(clf, "classes_", ["Low", "Medium", "High"])))
+            else:
+                probs = self.model.predict_proba([text])[0]
+                classes = list(getattr(self.model, "classes_", ["Low", "Medium", "High"]))
 
             prob_dict = {
                 "Low": round(float(probs[classes.index("Low")]), 4) if "Low" in classes else 0.33,
