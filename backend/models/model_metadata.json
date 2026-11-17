@@ -1,0 +1,66 @@
+{
+  "model_name": "TF-IDF + Multinomial Logistic Regression",
+  "version": "1.0.0",
+  "trained_at": "2026-11-17T08:52:53.066732+00:00",
+  "dataset": "TM-HIC (Tri-Modal Hook Intelligence Corpus)",
+  "sample_size": 3000,
+  "train_samples": 2394,
+  "test_samples": 606,
+  "classes": [
+    "Low",
+    "Medium",
+    "High"
+  ],
+  "vocabulary_size": 1065,
+  "metrics": {
+    "accuracy": 0.9983,
+    "macro_f1": 0.9983,
+    "per_class": {
+      "Low": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "support": 216
+      },
+      "Medium": {
+        "precision": 1.0,
+        "recall": 0.9952,
+        "f1_score": 0.9976,
+        "support": 209
+      },
+      "High": {
+        "precision": 0.9945,
+        "recall": 1.0,
+        "f1_score": 0.9972,
+        "support": 181
+      }
+    },
+    "confusion_matrix": {
+      "Low": {
+        "Low": 216,
+        "Medium": 0,
+        "High": 0
+      },
+      "Medium": {
+        "Low": 0,
+        "Medium": 208,
+        "High": 1
+      },
+      "High": {
+        "Low": 0,
+        "Medium": 0,
+        "High": 181
+      }
+    }
+  },
+  "parameters": {
+    "ngram_range": [
+      1,
+      2
+    ],
+    "min_df": 2,
+    "max_features": 3000,
+    "close_result_margin": 0.08
+  },
+  "disclaimer": "Model probabilities reflect text-based statistical association in the training dataset. They do not constitute a guarantee of video virality or algorithmic promotion."
+}

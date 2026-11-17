@@ -21,8 +21,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include API Routers
-app.include_router(compare_router, prefix=settings.API_V1_PREFIX)
+# Include API Routers on both /api and /api/v1 for seamless compatibility
+app.include_router(compare_router, prefix="/api")
+app.include_router(compare_router, prefix="/api/v1")
 
 
 @app.get("/", tags=["Root"])
@@ -31,12 +32,13 @@ def root():
         "project": settings.PROJECT_NAME,
         "version": settings.VERSION,
         "docs_url": "/docs",
-        "health_check": f"{settings.API_V1_PREFIX}/health",
-        "compare_endpoint": f"{settings.API_V1_PREFIX}/compare",
+        "health_check": "/api/health",
+        "compare_endpoint": "/api/compare",
     }
 
 
-@app.get(f"{settings.API_V1_PREFIX}/health", tags=["Health"])
+@app.get("/api/health", tags=["Health"])
+@app.get("/api/v1/health", tags=["Health"])
 def health_check():
     return {
         "status": "healthy",
@@ -44,6 +46,18 @@ def health_check():
         "model_loaded": gateway.is_loaded,
         "inference_mode": "trained_model" if gateway.is_loaded else "heuristic_fallback",
         "close_result_margin": settings.CLOSE_RESULT_MARGIN,
+    }
+
+
+@app.get("/api/model/info", tags=["Model"])
+@app.get("/api/v1/model/info", tags=["Model"])
+def model_info():
+    return {
+        "is_loaded": gateway.is_loaded,
+        "metadata": gateway.metadata,
+        "classes": list(getattr(gateway.model, "classes_", ["Low", "Medium", "High"])),
+        "close_result_margin": settings.CLOSE_RESULT_MARGIN,
+        "disclaimer": settings.DISCLAIMER,
     }
 
 
