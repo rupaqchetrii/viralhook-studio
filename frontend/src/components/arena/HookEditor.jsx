@@ -94,7 +94,16 @@ export const HookEditor = memo(function HookEditor({
   };
 
   return (
-    <Card className="flex flex-col h-full border-[#E7E7E9] hover:border-[#0D0C22] shadow-[0_2px_12px_rgba(13,12,34,0.04)] hover:shadow-md transition-all">
+    <Card className={`flex flex-col h-full rounded-3xl border-[#E7E7E9] dark:border-white/10 shadow-[0_8px_30px_rgba(13,12,34,0.05)] hover:shadow-[0_18px_45px_rgba(13,12,34,0.1)] tactile-hover relative overflow-hidden transition-all duration-300 ${
+      badgeVariant === 'accent' ? 'hover:border-[#EA4C89]/60' : 'hover:border-[#0D0C22]/60'
+    }`}>
+      {/* Top Gradient Accent Bar */}
+      <div className={`h-1.5 w-full bg-gradient-to-r ${
+        badgeVariant === 'accent'
+          ? 'from-[#EA4C89] via-pink-400 to-purple-600'
+          : 'from-[#0D0C22] via-indigo-900 to-indigo-600'
+      }`} />
+
       {/* Hidden file input */}
       <input
         ref={fileInputRef}

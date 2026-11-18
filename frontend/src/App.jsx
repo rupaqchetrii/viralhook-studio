@@ -21,7 +21,6 @@ import { RemixLab } from './components/arena/RemixLab';
 import { UniversalHookLab } from './components/universal/UniversalHookLab';
 import { OutcomeModal } from './components/analytics/OutcomeModal';
 import { AnalyticsModal } from './components/analytics/AnalyticsModal';
-import { Button } from './components/ui/Button';
 import { Card, CardBody } from './components/ui/Card';
 import { OAuthModal } from './components/oauth/OAuthModal';
 import { useHookStore } from './store/useHookStore';
@@ -149,7 +148,11 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#0F0F1A] text-[#0D0C22] dark:text-white flex flex-col font-sans selection:bg-[#EA4C89] selection:text-white transition-colors duration-300">
+    <div className="min-h-screen bg-white dark:bg-[#0F0F1A] text-[#0D0C22] dark:text-white flex flex-col font-sans selection:bg-[#EA4C89] selection:text-white transition-colors duration-300 relative overflow-x-hidden">
+      {/* World-Class Ambient Background Glow Elements */}
+      <div className="fixed top-20 left-1/2 -translate-x-1/2 w-[1100px] h-[500px] bg-gradient-to-tr from-[#EA4C89]/10 via-purple-600/8 to-indigo-500/8 rounded-full blur-[130px] pointer-events-none -z-10" />
+      <div className="fixed -top-40 -right-40 w-96 h-96 bg-cyan-400/8 rounded-full blur-[100px] pointer-events-none -z-10" />
+
       {/* Top Navbar */}
       <Header
         onOpenAnalytics={() => setIsAnalyticsOpen(true)}
@@ -184,15 +187,19 @@ export function App() {
 
             {/* Quick Preset Chips (Dribbble Pill Style) */}
             <div className="flex items-center gap-2 flex-wrap text-xs">
-              <span className="text-[#6E6D7A] font-semibold mr-1">Presets:</span>
+              <span className="text-[#6E6D7A] dark:text-zinc-400 font-bold mr-1 flex items-center gap-1">
+                <Sparkles className="w-3.5 h-3.5 text-[#EA4C89]" />
+                Presets:
+              </span>
               {PRESETS.map((p, idx) => (
                 <button
                   key={idx}
                   type="button"
                   onClick={() => loadPreset(p)}
-                  className="px-3.5 py-1.5 rounded-full bg-[#F8F7F4] hover:bg-[#F3F3F6] border border-[#E7E7E9] hover:border-[#0D0C22] text-[#0D0C22] font-semibold transition-all shadow-sm active:scale-95"
+                  className="px-4 py-2 rounded-full bg-[#F8F7F4] hover:bg-white dark:bg-white/5 dark:hover:bg-white/10 border border-[#E7E7E9] hover:border-[#EA4C89] dark:border-white/10 dark:hover:border-[#EA4C89] text-[#0D0C22] dark:text-white font-bold transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 active:scale-95 text-xs flex items-center gap-1.5 cursor-pointer group"
                 >
-                  {p.label}
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#EA4C89] group-hover:scale-125 transition-transform" />
+                  <span>{p.label}</span>
                 </button>
               ))}
             </div>
@@ -306,21 +313,27 @@ export function App() {
             />
           </div>
 
-          {/* Action Trigger Bar: Run Battle */}
-          <div className="flex flex-col items-center justify-center gap-3 py-4">
-            <Button
-              size="lg"
-              variant="accent"
+          {/* Action Trigger Bar: World-Class Electrifying Battle Button */}
+          <div className="flex flex-col items-center justify-center gap-3 py-6 relative">
+            {/* Ambient Background Glow Orb */}
+            <div className="absolute w-72 h-20 bg-gradient-to-r from-[#EA4C89]/40 via-purple-600/30 to-[#EA4C89]/40 rounded-full blur-2xl pointer-events-none -z-10" />
+
+            <button
+              type="button"
               onClick={runComparison}
               disabled={isComparing}
-              className="w-full sm:w-auto px-10 shadow-lg shadow-[#EA4C89]/25 group font-extrabold text-sm sm:text-base hover:scale-105 transition-all"
+              className="relative px-12 py-4 rounded-full text-white font-extrabold text-base sm:text-lg bg-gradient-to-r from-[#EA4C89] via-[#f05a96] to-[#0D0C22] shadow-[0_12px_36px_rgba(234,76,137,0.45)] hover:shadow-[0_18px_50px_rgba(234,76,137,0.7)] battle-glow-btn hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 group cursor-pointer disabled:opacity-50 select-none"
             >
-              <Swords className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform" />
-              {isComparing ? 'Running Dual-Tower Inference...' : 'Run A/B Hook Battle'}
-            </Button>
-            <span className="text-xs text-[#6E6D7A] font-medium">
-              Evaluates 24 psycholinguistic features with calibrated ML inference
-            </span>
+              <Swords className={`w-5 h-5 text-white ${isComparing ? 'animate-spin' : 'group-hover:rotate-45 group-hover:scale-125 transition-transform duration-300'}`} />
+              <span className="tracking-wide">
+                {isComparing ? 'Running Dual-Tower Inference...' : 'Run A/B Hook Battle'}
+              </span>
+              <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
+            </button>
+            <div className="flex items-center gap-2 text-xs text-[#6E6D7A] dark:text-zinc-400 font-semibold">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>24 Psycholinguistic Signals &bull; 384-Dim Transformer Latent Space &bull; &lt;50ms</span>
+            </div>
           </div>
 
           {/* Comparison Arena: Results, Margin Guard & Donut Charts */}
