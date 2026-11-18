@@ -18,6 +18,8 @@ export function Header() {
     setSettingsPanelOpen,
     theme,
     userName,
+    isLoggedIn,
+    logout,
   } = useHookStore();
 
   const [healthStatus, setHealthStatus] = useState(null);
@@ -133,20 +135,29 @@ export function Header() {
           {/* Settings Button */}
           <button
             onClick={() => setSettingsPanelOpen(true)}
-            className="w-9 h-9 rounded-full border border-[#E7E7E9] hover:border-[#0D0C22] bg-white hover:bg-[#F8F7F4] flex items-center justify-center text-[#6E6D7A] hover:text-[#0D0C22] transition-all shadow-sm active:scale-95 group relative"
+            className="w-9 h-9 rounded-full border border-[#E7E7E9] dark:border-white/10 hover:border-[#0D0C22] bg-white dark:bg-white/5 hover:bg-[#F8F7F4] dark:hover:bg-white/10 flex items-center justify-center text-[#6E6D7A] dark:text-[#9E9EA7] hover:text-[#0D0C22] dark:hover:text-white transition-all shadow-sm active:scale-95 group relative"
             title="Settings"
           >
             <Settings className="w-4 h-4 group-hover:rotate-45 transition-transform duration-300" />
           </button>
 
-          {/* User Avatar Chip */}
-          <button
-            onClick={() => setSettingsPanelOpen(true)}
-            className="w-9 h-9 rounded-full bg-gradient-to-br from-[#EA4C89] to-[#0D0C22] flex items-center justify-center text-white font-black text-sm shadow-sm hover:shadow-md hover:scale-105 transition-all active:scale-95 select-none"
-            title={`${userName} — Settings`}
-          >
-            {(userName || 'C')[0].toUpperCase()}
-          </button>
+          {/* User Avatar / Login Action Button */}
+          {isLoggedIn ? (
+            <button
+              onClick={() => setSettingsPanelOpen(true)}
+              className="w-9 h-9 rounded-full bg-gradient-to-br from-[#EA4C89] to-[#0D0C22] flex items-center justify-center text-white font-black text-sm shadow-sm hover:shadow-md hover:scale-105 transition-all active:scale-95 select-none"
+              title={`${userName} — Settings`}
+            >
+              {(userName || 'C')[0].toUpperCase()}
+            </button>
+          ) : (
+            <button
+              onClick={() => logout()}
+              className="px-4 py-2 rounded-full bg-[#EA4C89] hover:bg-[#F082AC] text-white font-bold text-xs shadow-sm transition-all active:scale-95"
+            >
+              Sign In
+            </button>
+          )}
         </div>
       </div>
     </header>

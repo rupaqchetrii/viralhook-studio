@@ -5,6 +5,7 @@ import { Footer } from './components/layout/Footer';
 import { OnboardingModal } from './components/layout/OnboardingModal';
 import { HistoryDrawer } from './components/history/HistoryDrawer';
 import { SettingsPanel } from './components/settings/SettingsPanel';
+import { LoginPage } from './components/auth/LoginPage';
 import { HookEditor } from './components/arena/HookEditor';
 import { ComparisonArena } from './components/arena/ComparisonArena';
 import { RemixLab } from './components/arena/RemixLab';
@@ -97,28 +98,9 @@ export function App() {
       {/* Top Navbar */}
       <Header />
 
-      {/* Logged-Out Screen */}
+      {/* Logged-Out / Auth State */}
       {!isLoggedIn ? (
-        <main className="flex-1 flex items-center justify-center px-4 py-20">
-          <div className="max-w-md w-full text-center space-y-6">
-            <div className="w-16 h-16 rounded-2xl bg-[#EA4C89]/10 flex items-center justify-center mx-auto">
-              <Swords className="w-8 h-8 text-[#EA4C89]" />
-            </div>
-            <h2 className="text-2xl font-extrabold text-[#0D0C22] dark:text-white tracking-tight">
-              You've been logged out
-            </h2>
-            <p className="text-sm text-[#6E6D7A] dark:text-[#9E9EA7] leading-relaxed">
-              Your session has ended. Click below to jump back into the studio.
-            </p>
-            <button
-              onClick={loginBack}
-              className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-[#EA4C89] hover:bg-[#F082AC] text-white font-bold text-sm shadow-lg shadow-[#EA4C89]/30 transition-all active:scale-95"
-            >
-              <Sparkles className="w-4 h-4" />
-              Back to Studio
-            </button>
-          </div>
-        </main>
+        <LoginPage />
       ) : (
         /* Main Studio Workspace */
         <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
