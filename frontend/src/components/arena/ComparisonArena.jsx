@@ -3,6 +3,7 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } fro
 import { Zap, ShieldCheck, BarChart3, TrendingUp, Info, Cpu, Sparkles } from 'lucide-react';
 import { MarginGuardBanner } from './MarginGuardBanner';
 import { SignalsComparison } from './SignalsComparison';
+import { SemanticRadarCard } from './SemanticRadarCard';
 import { ExportBanner } from './ExportBanner';
 
 export function ComparisonArena({ result, onOpenOutcome }) {
@@ -222,7 +223,10 @@ export function ComparisonArena({ result, onOpenOutcome }) {
         </div>
       </div>
 
-      {/* 4. Day 2 Psycholinguistic Signals Breakdown */}
+      {/* 4. Dual-Tower 384-Dim Transformer Semantic Embedding Analysis */}
+      <SemanticRadarCard hookA={hook_a.text} hookB={hook_b.text} />
+
+      {/* 5. Day 2 Psycholinguistic Signals Breakdown */}
       <SignalsComparison hookA={hook_a} hookB={hook_b} />
 
       {/* 5. Day 3 Export & Share Banner */}

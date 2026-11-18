@@ -4,7 +4,8 @@ import { LinterHighlighter } from './LinterHighlighter';
 import { countWords, countCharacters } from '../../utils/pacingCalculator';
 import { lintHook } from '../../utils/linterRules';
 import { transcribeAudioAPI } from '../../services/api';
-import { Mic, MicOff, Upload, Loader2, Sparkles } from 'lucide-react';
+import { AudioWaveformVisualizer } from '../audio/AudioWaveformVisualizer';
+import { Mic, MicOff, Upload, Loader2, Sparkles, Activity } from 'lucide-react';
 
 export const HookEditor = memo(function HookEditor({
   label, // 'Hook Option A' | 'Hook Option B'
@@ -22,6 +23,7 @@ export const HookEditor = memo(function HookEditor({
 
   const [isRecording, setIsRecording] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [showWaveform, setShowWaveform] = useState(false);
   const fileInputRef = useRef(null);
   const recognitionRef = useRef(null);
 
@@ -154,6 +156,20 @@ export const HookEditor = memo(function HookEditor({
             <span className="hidden sm:inline">{isUploading ? 'Whisper...' : 'Audio'}</span>
           </button>
 
+          {/* Waveform visualizer toggle */}
+          <button
+            type="button"
+            onClick={() => setShowWaveform(!showWaveform)}
+            title="Toggle 0-5s Audio Waveform Spectrogram"
+            className={`p-1 rounded-md border text-[11px] transition-all ${
+              showWaveform || isRecording
+                ? 'bg-violet-500/20 text-violet-300 border-violet-500/40'
+                : 'bg-white/[0.04] text-zinc-400 border-white/[0.08] hover:text-white'
+            }`}
+          >
+            <Activity className="w-3.5 h-3.5" />
+          </button>
+
           <span className="px-2 py-0.5 rounded-md bg-white/[0.04] text-zinc-300 border border-white/[0.06]">
             <strong className="text-white font-bold">{wordCount}</strong> w
           </span>
@@ -182,6 +198,15 @@ export const HookEditor = memo(function HookEditor({
             className="w-full bg-black/30 text-white placeholder-zinc-500 text-sm sm:text-base rounded-xl p-4 border border-white/[0.08] focus:border-white/30 focus:outline-none resize-none transition-all duration-200 leading-relaxed font-sans shadow-inner"
           />
         </div>
+
+        {/* 0-5s Spoken Audio Waveform Spectrogram Visualizer */}
+        {(showWaveform || isRecording) && (
+          <AudioWaveformVisualizer
+            isRecording={isRecording}
+            wordsCount={wordCount}
+            spokenDuration={Math.max(1.2, wordCount / 2.75)}
+          />
+        )}
 
         {/* 3s Spoken Delivery Pace Barometer */}
         <PacingBarometer wordCount={wordCount} />

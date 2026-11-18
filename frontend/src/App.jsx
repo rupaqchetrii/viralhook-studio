@@ -23,6 +23,7 @@ import { ComparisonArena } from './components/arena/ComparisonArena';
 import { RemixLab } from './components/arena/RemixLab';
 import { OutcomeModal } from './components/analytics/OutcomeModal';
 import { AnalyticsModal } from './components/analytics/AnalyticsModal';
+import { OAuthModal } from './components/oauth/OAuthModal';
 import { useHookStore } from './store/useHookStore';
 import { ingestSocialUrlAPI } from './services/api';
 
@@ -48,6 +49,7 @@ export function App() {
   // Modals state
   const [isOutcomeOpen, setIsOutcomeOpen] = useState(false);
   const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false);
+  const [isOAuthOpen, setIsOAuthOpen] = useState(false);
 
   // Social Ingestion state
   const [showIngestInput, setShowIngestInput] = useState(false);
@@ -128,8 +130,11 @@ export function App() {
       <div className="absolute top-[40%] -left-32 w-[400px] h-[400px] bg-fuchsia-600/10 blur-[130px] pointer-events-none rounded-full z-0" />
       <div className="absolute top-[60%] -right-32 w-[450px] h-[450px] bg-indigo-600/10 blur-[130px] pointer-events-none rounded-full z-0" />
 
-      {/* Top Floating Navbar with Analytics Button */}
-      <Header onOpenAnalytics={() => setIsAnalyticsOpen(true)} />
+      {/* Top Floating Navbar with Analytics & Channels Buttons */}
+      <Header
+        onOpenAnalytics={() => setIsAnalyticsOpen(true)}
+        onOpenOAuth={() => setIsOAuthOpen(true)}
+      />
 
       {/* Main Studio Workspace */}
       <main className="relative z-10 flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
@@ -334,6 +339,12 @@ export function App() {
       <AnalyticsModal
         isOpen={isAnalyticsOpen}
         onClose={() => setIsAnalyticsOpen(false)}
+      />
+
+      {/* Direct Social OAuth Integration Modal */}
+      <OAuthModal
+        isOpen={isOAuthOpen}
+        onClose={() => setIsOAuthOpen(false)}
       />
 
       {/* Refined Footer */}

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Flame, History, HelpCircle, RefreshCw, Cpu, Sparkles, ChevronDown, BarChart3 } from 'lucide-react';
+import { Flame, History, HelpCircle, RefreshCw, Cpu, Sparkles, ChevronDown, BarChart3, Share2 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { useHookStore } from '../../store/useHookStore';
 import { checkBackendHealth } from '../../services/api';
 
-export function Header({ onOpenAnalytics }) {
+export function Header({ onOpenAnalytics, onOpenOAuth }) {
   const {
     platform,
     setPlatform,
@@ -126,6 +126,17 @@ export function Header({ onOpenAnalytics }) {
           >
             <HelpCircle className="w-4 h-4" />
           </button>
+
+          {onOpenOAuth && (
+            <button
+              onClick={onOpenOAuth}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/30 text-xs font-semibold transition-all shadow-sm"
+              title="Connected Social Channels (TikTok & Instagram OAuth)"
+            >
+              <Share2 className="w-3.5 h-3.5 text-cyan-400" />
+              <span className="hidden sm:inline">Channels</span>
+            </button>
+          )}
 
           {onOpenAnalytics && (
             <button
