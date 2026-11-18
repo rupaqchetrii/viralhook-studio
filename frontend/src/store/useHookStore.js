@@ -32,7 +32,7 @@ export const useHookStore = create(
       fontSize: 'medium',   // 'small' | 'medium' | 'large'
       userName: 'Creator',
       userEmail: 'creator@viralhook.studio',
-      isLoggedIn: true,
+      isLoggedIn: false,
 
       // Persisted Battle Library History
       battleHistory: [],
@@ -59,6 +59,7 @@ export const useHookStore = create(
         topic: '',
       }),
       loginBack: () => set({ isLoggedIn: true }),
+      showLoginPage: () => set({ isLoggedIn: false }),
 
       // Swap Hook A and Hook B
       swapHooks: () => {
@@ -181,6 +182,7 @@ export const useHookStore = create(
         fontSize: state.fontSize,
         userName: state.userName,
         userEmail: state.userEmail,
+        isLoggedIn: state.isLoggedIn,
       }),
     }
   )

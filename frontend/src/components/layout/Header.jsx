@@ -153,9 +153,9 @@ export function Header() {
           ) : (
             <button
               onClick={() => logout()}
-              className="px-4 py-2 rounded-full bg-[#EA4C89] hover:bg-[#F082AC] text-white font-bold text-xs shadow-sm transition-all active:scale-95"
+              className="px-4 py-2 rounded-full bg-[#0D0C22] hover:bg-[#3D3D4E] dark:bg-white dark:hover:bg-gray-100 text-white dark:text-[#0D0C22] font-bold text-xs shadow-sm transition-all active:scale-95"
             >
-              Sign In
+              Log in
             </button>
           )}
         </div>
