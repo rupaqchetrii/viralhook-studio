@@ -1,304 +1,201 @@
 import React from 'react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from 'recharts';
-import {
-  ShieldCheck,
-  ShieldAlert,
-  BarChart3,
-} from 'lucide-react';
+import { Zap, ShieldCheck, BarChart3, TrendingUp, Info, Cpu, Sparkles } from 'lucide-react';
 import { MarginGuardBanner } from './MarginGuardBanner';
-import { extractNotableWords } from '../../utils/pacingCalculator';
+import { SignalsComparison } from './SignalsComparison';
+import { ExportBanner } from './ExportBanner';
 
 export function ComparisonArena({ result }) {
   if (!result) return null;
 
-  const { hook_a, hook_b, margin_guard, disclaimer } = result;
+  const { hook_a, hook_b, margin_guard, disclaimer, isMockModel } = result;
 
-  // Extract notable words
-  const notableWordsA = extractNotableWords(hook_a.text);
-  const notableWordsB = extractNotableWords(hook_b.text);
-
-  // Normalize probability values
-  const pLowA = hook_a.probabilities.low ?? hook_a.probabilities.Low ?? 0.33;
-  const pMedA = hook_a.probabilities.medium ?? hook_a.probabilities.Medium ?? 0.33;
-  const pHighA = hook_a.probabilities.high ?? hook_a.probabilities.High ?? 0.34;
-
-  const pLowB = hook_b.probabilities.low ?? hook_b.probabilities.Low ?? 0.33;
-  const pMedB = hook_b.probabilities.medium ?? hook_b.probabilities.Medium ?? 0.33;
-  const pHighB = hook_b.probabilities.high ?? hook_b.probabilities.High ?? 0.34;
-
-  // Prepare chart data for Recharts
   const chartData = [
     {
-      tier: 'Low Retention',
-      HookA: Math.round(pLowA * 100),
-      HookB: Math.round(pLowB * 100),
+      tier: 'Low Engagement',
+      HookA: Math.round(hook_a.probabilities.low * 100),
+      HookB: Math.round(hook_b.probabilities.low * 100),
     },
     {
-      tier: 'Average Retention',
-      HookA: Math.round(pMedA * 100),
-      HookB: Math.round(pMedB * 100),
+      tier: 'Medium Engagement',
+      HookA: Math.round(hook_a.probabilities.medium * 100),
+      HookB: Math.round(hook_b.probabilities.medium * 100),
     },
     {
-      tier: 'High Retention (Viral)',
-      HookA: Math.round(pHighA * 100),
-      HookB: Math.round(pHighB * 100),
+      tier: 'High Engagement (Viral)',
+      HookA: Math.round(hook_a.probabilities.high * 100),
+      HookB: Math.round(hook_b.probabilities.high * 100),
     },
   ];
 
+  const isWinnerA = margin_guard.winner === 'HOOK_A';
+  const isWinnerB = margin_guard.winner === 'HOOK_B';
+
   return (
-    <div className="space-y-6 pt-2">
-      {/* 1. Comparison Verdict / Winner Banner */}
+    <div className="space-y-6 pt-4 animate-fade-in-up">
+      {/* 1. Margin Guard Decision Support Banner */}
       <MarginGuardBanner marginGuard={margin_guard} />
 
-      {/* 2. Side-by-Side Hook Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        {/* ===================== HOOK A CARD ===================== */}
+      {/* Model Mode Indicator Pill */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs px-2 text-zinc-400 gap-2">
+        <div className="flex items-center gap-2">
+          <Cpu className="w-3.5 h-3.5 text-violet-400" />
+          <span>Inference Engine:</span>
+          <span className="font-semibold text-white">
+            {isMockModel ? 'Heuristic Rules Fallback' : 'Trained Hybrid ML Model (TF-IDF + 24 Features)'}
+          </span>
+        </div>
+        <div className="text-[11px] font-mono text-zinc-500">
+          Decision Margin: ΔP = {(margin_guard.delta_p * 100).toFixed(1)}% (Threshold: 8.0%)
+        </div>
+      </div>
+
+      {/* 2. Side-by-Side Engagement & FNVM Metric Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Hook A Metrics Card */}
         <div
-          className={`rounded-2xl bg-[#13141C] border transition-all flex flex-col justify-between p-5 space-y-4 ${
-            margin_guard.winner === 'HOOK_A'
-              ? 'border-violet-500/40 ring-1 ring-violet-500/20'
-              : 'border-[#222432]'
+          className={`glass-panel rounded-2xl p-6 border transition-all duration-300 ${
+            isWinnerA
+              ? 'border-violet-500/50 shadow-2xl shadow-violet-950/30'
+              : 'border-white/[0.08]'
           }`}
         >
-          <div className="space-y-4">
-            {/* Header: Label + Winner pill */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-sm text-[#F1F5F9] px-2.5 py-1 rounded-lg bg-[#202230] border border-[#2e3144]">
-                  Hook A
-                </span>
-                {margin_guard.winner === 'HOOK_A' && (
-                  <span className="text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
-                    Stronger opening
-                  </span>
-                )}
-                {margin_guard.is_dead_heat && (
-                  <span className="text-xs font-medium text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
-                    Even match
-                  </span>
-                )}
-              </div>
-              <div className="text-right">
-                <span className="text-[11px] text-[#64748B]">Virality score: </span>
-                <strong className="text-sm font-mono text-[#A78BFA]">{hook_a.fnvmScore ?? '2.5'}x</strong>
-              </div>
+          <div className="flex items-center justify-between pb-4 border-b border-white/[0.06] mb-5">
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-1 rounded-lg text-xs font-bold font-mono bg-violet-500/15 text-violet-300 border border-violet-500/30">
+                Hook A
+              </span>
+              <span className="text-xs text-zinc-400 truncate max-w-[200px]">"{hook_a.text}"</span>
             </div>
-
-            {/* Hook text */}
-            <p className="text-sm sm:text-base text-[#F1F5F9] font-medium leading-relaxed bg-[#0B0C10] p-4 rounded-xl border border-[#1E202C]">
-              "{hook_a.text}"
-            </p>
-
-            {/* Hook Anatomy / Structural checks */}
-            <div className="p-3.5 rounded-xl bg-[#0B0C10] border border-[#1E202C] space-y-2.5 text-xs">
-              <div className="flex items-center justify-between text-[#8E90A0]">
-                <span className="font-medium text-[#EDEDEF]">Opening anatomy</span>
-                <span className="font-mono text-[#A78BFA]">~{hook_a.spokenTime ?? '2.5'}s spoken tempo</span>
-              </div>
-
-              <div className="flex items-center gap-4 text-[#8E90A0] text-xs">
-                <span>Words: <strong className="text-[#EDEDEF] font-mono">{hook_a.word_count}</strong></span>
-                <span>•</span>
-                <span>Length: <strong className="text-[#EDEDEF] font-mono">{hook_a.character_count}</strong>/280 chars</span>
-              </div>
-
-              {/* Notable words detected */}
-              <div className="pt-2 border-t border-[#1C1D28] flex items-center gap-1.5 flex-wrap">
-                <span className="text-[11px] text-[#64748B]">Triggers detected:</span>
-                {notableWordsA.length > 0 ? (
-                  notableWordsA.map((nw, idx) => (
-                    <span
-                      key={idx}
-                      className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-[#1C1E2B] text-[#EDEDEF] border border-[#2B2E40]"
-                    >
-                      {nw.word}
-                    </span>
-                  ))
-                ) : (
-                  <span className="text-[11px] text-[#64748B]">None detected</span>
-                )}
-              </div>
-            </div>
-
-            {/* Retention Probability Tiers */}
-            <div className="space-y-2">
-              <div className="text-[11px] font-medium text-[#8E90A0]">
-                Predicted audience retention
-              </div>
-              <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                <div className="p-2.5 rounded-xl bg-[#0B0C10] border border-[#1E202C]">
-                  <div className="text-[10px] text-[#64748B] uppercase">Low</div>
-                  <div className="text-sm font-bold font-mono text-[#8E90A0] mt-0.5">
-                    {(pLowA * 100).toFixed(0)}%
-                  </div>
-                </div>
-                <div className="p-2.5 rounded-xl bg-[#0B0C10] border border-[#1E202C]">
-                  <div className="text-[10px] text-[#64748B] uppercase">Average</div>
-                  <div className="text-sm font-bold font-mono text-amber-400 mt-0.5">
-                    {(pMedA * 100).toFixed(0)}%
-                  </div>
-                </div>
-                <div className="p-2.5 rounded-xl bg-emerald-950/20 border border-emerald-500/30">
-                  <div className="text-[10px] text-emerald-400 font-semibold uppercase">Viral</div>
-                  <div className="text-sm font-bold font-mono text-emerald-400 mt-0.5">
-                    {(pHighA * 100).toFixed(0)}%
-                  </div>
-                </div>
-              </div>
+            <div className="text-right">
+              <span className="text-xs text-zinc-400">Virality Multiplier: </span>
+              <strong className="text-sm font-mono font-bold text-violet-400">{hook_a.fnvmScore}x</strong>
             </div>
           </div>
 
-          {/* Topic Consistency */}
-          <div className="pt-3 border-t border-[#1E202C] flex items-center justify-between text-xs text-[#8E90A0]">
-            <span className="flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#A78BFA]" />
-              Topic match:
-            </span>
-            <span
-              className={`font-semibold font-mono ${
-                hook_a.clickbaitWarning ? 'text-rose-400' : 'text-emerald-400'
-              }`}
-            >
-              {Math.round((hook_a.topicAlignment ?? 0.85) * 100)}%
-              {hook_a.clickbaitWarning && ' (Off-topic warning)'}
-            </span>
+          <div className="space-y-4">
+            <div className="grid grid-cols-3 gap-2.5 text-center">
+              <div className="p-3 rounded-xl bg-black/40 border border-white/[0.06]">
+                <div className="text-[10px] uppercase font-bold text-zinc-500">Low</div>
+                <div className="text-base font-bold font-mono text-slate-300 mt-0.5">
+                  {(hook_a.probabilities.low * 100).toFixed(0)}%
+                </div>
+              </div>
+              <div className="p-3 rounded-xl bg-black/40 border border-white/[0.06]">
+                <div className="text-[10px] uppercase font-bold text-amber-500/80">Medium</div>
+                <div className="text-base font-bold font-mono text-amber-400 mt-0.5">
+                  {(hook_a.probabilities.medium * 100).toFixed(0)}%
+                </div>
+              </div>
+              <div className="p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/30 shadow-inner">
+                <div className="text-[10px] uppercase font-bold text-emerald-400">High (Viral)</div>
+                <div className="text-lg font-extrabold font-mono text-emerald-400 mt-0.5">
+                  {(hook_a.probabilities.high * 100).toFixed(0)}%
+                </div>
+              </div>
+            </div>
+
+            {/* Clickbait Semantic Alignment */}
+            <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs">
+              <span className="text-zinc-400 flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-violet-400" />
+                Hook-to-Promise Match:
+              </span>
+              <span
+                className={`font-semibold font-mono px-2 py-0.5 rounded-md ${
+                  hook_a.clickbaitWarning
+                    ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+                    : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                }`}
+              >
+                {(hook_a.topicAlignment * 100).toFixed(0)}%
+                {hook_a.clickbaitWarning && ' (⚠️ Clickbait Risk)'}
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* ===================== HOOK B CARD ===================== */}
+        {/* Hook B Metrics Card */}
         <div
-          className={`rounded-2xl bg-[#13141C] border transition-all flex flex-col justify-between p-5 space-y-4 ${
-            margin_guard.winner === 'HOOK_B'
-              ? 'border-violet-500/40 ring-1 ring-violet-500/20'
-              : 'border-[#222432]'
+          className={`glass-panel rounded-2xl p-6 border transition-all duration-300 ${
+            isWinnerB
+              ? 'border-cyan-500/50 shadow-2xl shadow-cyan-950/30'
+              : 'border-white/[0.08]'
           }`}
         >
-          <div className="space-y-4">
-            {/* Header: Label + Winner pill */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-sm text-[#F1F5F9] px-2.5 py-1 rounded-lg bg-[#202230] border border-[#2e3144]">
-                  Hook B
-                </span>
-                {margin_guard.winner === 'HOOK_B' && (
-                  <span className="text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
-                    Stronger opening
-                  </span>
-                )}
-                {margin_guard.is_dead_heat && (
-                  <span className="text-xs font-medium text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
-                    Even match
-                  </span>
-                )}
-              </div>
-              <div className="text-right">
-                <span className="text-[11px] text-[#64748B]">Virality score: </span>
-                <strong className="text-sm font-mono text-[#A78BFA]">{hook_b.fnvmScore ?? '2.5'}x</strong>
-              </div>
+          <div className="flex items-center justify-between pb-4 border-b border-white/[0.06] mb-5">
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-1 rounded-lg text-xs font-bold font-mono bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
+                Hook B
+              </span>
+              <span className="text-xs text-zinc-400 truncate max-w-[200px]">"{hook_b.text}"</span>
             </div>
-
-            {/* Hook text */}
-            <p className="text-sm sm:text-base text-[#F1F5F9] font-medium leading-relaxed bg-[#0B0C10] p-4 rounded-xl border border-[#1E202C]">
-              "{hook_b.text}"
-            </p>
-
-            {/* Hook Anatomy / Structural checks */}
-            <div className="p-3.5 rounded-xl bg-[#0B0C10] border border-[#1E202C] space-y-2.5 text-xs">
-              <div className="flex items-center justify-between text-[#8E90A0]">
-                <span className="font-medium text-[#EDEDEF]">Opening anatomy</span>
-                <span className="font-mono text-[#A78BFA]">~{hook_b.spokenTime ?? '2.5'}s spoken tempo</span>
-              </div>
-
-              <div className="flex items-center gap-4 text-[#8E90A0] text-xs">
-                <span>Words: <strong className="text-[#EDEDEF] font-mono">{hook_b.word_count}</strong></span>
-                <span>•</span>
-                <span>Length: <strong className="text-[#EDEDEF] font-mono">{hook_b.character_count}</strong>/280 chars</span>
-              </div>
-
-              {/* Notable words detected */}
-              <div className="pt-2 border-t border-[#1C1D28] flex items-center gap-1.5 flex-wrap">
-                <span className="text-[11px] text-[#64748B]">Triggers detected:</span>
-                {notableWordsB.length > 0 ? (
-                  notableWordsB.map((nw, idx) => (
-                    <span
-                      key={idx}
-                      className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-[#1C1E2B] text-[#EDEDEF] border border-[#2B2E40]"
-                    >
-                      {nw.word}
-                    </span>
-                  ))
-                ) : (
-                  <span className="text-[11px] text-[#64748B]">None detected</span>
-                )}
-              </div>
-            </div>
-
-            {/* Retention Probability Tiers */}
-            <div className="space-y-2">
-              <div className="text-[11px] font-medium text-[#8E90A0]">
-                Predicted audience retention
-              </div>
-              <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                <div className="p-2.5 rounded-xl bg-[#0B0C10] border border-[#1E202C]">
-                  <div className="text-[10px] text-[#64748B] uppercase">Low</div>
-                  <div className="text-sm font-bold font-mono text-[#8E90A0] mt-0.5">
-                    {(pLowB * 100).toFixed(0)}%
-                  </div>
-                </div>
-                <div className="p-2.5 rounded-xl bg-[#0B0C10] border border-[#1E202C]">
-                  <div className="text-[10px] text-[#64748B] uppercase">Average</div>
-                  <div className="text-sm font-bold font-mono text-amber-400 mt-0.5">
-                    {(pMedB * 100).toFixed(0)}%
-                  </div>
-                </div>
-                <div className="p-2.5 rounded-xl bg-emerald-950/20 border border-emerald-500/30">
-                  <div className="text-[10px] text-emerald-400 font-semibold uppercase">Viral</div>
-                  <div className="text-sm font-bold font-mono text-emerald-400 mt-0.5">
-                    {(pHighB * 100).toFixed(0)}%
-                  </div>
-                </div>
-              </div>
+            <div className="text-right">
+              <span className="text-xs text-zinc-400">Virality Multiplier: </span>
+              <strong className="text-sm font-mono font-bold text-cyan-400">{hook_b.fnvmScore}x</strong>
             </div>
           </div>
 
-          {/* Topic Consistency */}
-          <div className="pt-3 border-t border-[#1E202C] flex items-center justify-between text-xs text-[#8E90A0]">
-            <span className="flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#A78BFA]" />
-              Topic match:
-            </span>
-            <span
-              className={`font-semibold font-mono ${
-                hook_b.clickbaitWarning ? 'text-rose-400' : 'text-emerald-400'
-              }`}
-            >
-              {Math.round((hook_b.topicAlignment ?? 0.85) * 100)}%
-              {hook_b.clickbaitWarning && ' (Off-topic warning)'}
-            </span>
+          <div className="space-y-4">
+            <div className="grid grid-cols-3 gap-2.5 text-center">
+              <div className="p-3 rounded-xl bg-black/40 border border-white/[0.06]">
+                <div className="text-[10px] uppercase font-bold text-zinc-500">Low</div>
+                <div className="text-base font-bold font-mono text-slate-300 mt-0.5">
+                  {(hook_b.probabilities.low * 100).toFixed(0)}%
+                </div>
+              </div>
+              <div className="p-3 rounded-xl bg-black/40 border border-white/[0.06]">
+                <div className="text-[10px] uppercase font-bold text-amber-500/80">Medium</div>
+                <div className="text-base font-bold font-mono text-amber-400 mt-0.5">
+                  {(hook_b.probabilities.medium * 100).toFixed(0)}%
+                </div>
+              </div>
+              <div className="p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/30 shadow-inner">
+                <div className="text-[10px] uppercase font-bold text-emerald-400">High (Viral)</div>
+                <div className="text-lg font-extrabold font-mono text-emerald-400 mt-0.5">
+                  {(hook_b.probabilities.high * 100).toFixed(0)}%
+                </div>
+              </div>
+            </div>
+
+            {/* Clickbait Semantic Alignment */}
+            <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs">
+              <span className="text-zinc-400 flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
+                Hook-to-Promise Match:
+              </span>
+              <span
+                className={`font-semibold font-mono px-2 py-0.5 rounded-md ${
+                  hook_b.clickbaitWarning
+                    ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+                    : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                }`}
+              >
+                {(hook_b.topicAlignment * 100).toFixed(0)}%
+                {hook_b.clickbaitWarning && ' (⚠️ Clickbait Risk)'}
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* 3. Recharts Visual Chart */}
-      <div className="rounded-2xl bg-[#13141C] border border-[#222432] p-5 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-          <div>
-            <h3 className="text-sm font-semibold text-[#EDEDEF] flex items-center gap-2">
-              <BarChart3 className="w-4 h-4 text-[#A78BFA]" />
-              Side-by-side engagement distribution
+      {/* 3. Recharts Probability Distribution Bars */}
+      <div className="glass-panel rounded-2xl p-6 border border-white/[0.08] shadow-2xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-white/[0.06] mb-5 gap-2">
+          <div className="flex items-center gap-2">
+            <BarChart3 className="w-4 h-4 text-violet-400" />
+            <h3 className="text-sm font-bold text-white tracking-tight">
+              Calibrated Engagement Tier Distribution
             </h3>
-            <p className="text-xs text-[#8E90A0] mt-0.5">
-              Comparative retention probability across both variants
-            </p>
           </div>
-          <span className="text-[11px] font-mono text-[#64748B]">
-            Normalized probability sum: 100%
+          <span className="text-xs text-zinc-400 font-mono">
+            TF-IDF + 24 Psychological Features (P sum = 1.000)
           </span>
         </div>
 
-        <div className="h-60 w-full pt-2">
+        <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} margin={{ top: 10, right: 20, left: -10, bottom: 5 }}>
+            <BarChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 5 }}>
               <XAxis dataKey="tier" stroke="#64748B" fontSize={12} tickLine={false} />
               <YAxis
                 stroke="#64748B"
@@ -308,40 +205,37 @@ export function ComparisonArena({ result }) {
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#13141C',
-                  borderColor: '#262838',
-                  borderRadius: '0.75rem',
-                  color: '#EDEDEF',
+                  backgroundColor: '#0F111D',
+                  borderColor: 'rgba(255,255,255,0.1)',
+                  borderRadius: '1rem',
+                  color: '#F8FAFC',
                   fontSize: '12px',
+                  boxShadow: '0 20px 30px -10px rgba(0,0,0,0.8)',
                 }}
                 formatter={(value) => [`${value}%`, '']}
               />
-              <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '8px' }} />
-              <Bar dataKey="HookA" name="Hook A" fill="#818CF8" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="HookB" name="Hook B" fill="#C084FC" radius={[4, 4, 0, 0]} />
+              <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
+              <Bar dataKey="HookA" name="Hook A" fill="#818CF8" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="HookB" name="Hook B" fill="#38BDF8" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
 
-      {/* 4. Creator Note / Ethical Disclaimer */}
-      <div className="rounded-xl p-4 sm:p-5 border border-[#222432] bg-[#0E0F15] text-xs text-[#8E90A0] space-y-2">
-        <div className="flex items-center gap-2 text-xs font-semibold text-[#EDEDEF]">
-          <ShieldAlert className="w-4 h-4 text-[#A78BFA] shrink-0" />
-          <span>A creator note on virality</span>
-        </div>
-        <p className="leading-relaxed text-[#8E90A0]">
-          {disclaimer || (
-            "A punchy opening buys you the first 3 seconds — but long retention depends on your visual pacing, " +
-            "audio quality, and authentic value. These scores reflect linguistic trends learned from 3,000 real viral " +
-            "videos across TikTok, Reels, and Shorts. No algorithm guarantees views."
-          )}
+      {/* 4. Day 2 Psycholinguistic Signals Breakdown */}
+      <SignalsComparison hookA={hook_a} hookB={hook_b} />
+
+      {/* 5. Day 3 Export & Share Banner */}
+      <ExportBanner result={result} />
+
+      {/* 6. Mandatory Ethical Disclaimer (Faculty Mentor Requirement) */}
+      <div className="p-4 rounded-xl bg-black/40 border border-white/[0.08] flex items-start gap-3 text-xs text-zinc-400">
+        <Info className="w-4 h-4 text-violet-400 shrink-0 mt-0.5" />
+        <p className="leading-relaxed">
+          <strong className="text-zinc-200">Academic & Creator Disclaimer:</strong>{' '}
+          {disclaimer ||
+            'Notice: The predicted engagement class is only an estimate based on historical text patterns in the dataset. It cannot and does not guarantee that a video will go viral. Real-world performance depends heavily on visual delivery, topic relevance, timing, and platform recommendation algorithms.'}
         </p>
-        <div className="pt-2 border-t border-[#1C1D26] flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-[#64748B]">
-          <span>Model: TF-IDF + Multinomial Logistic Regression</span>
-          <span>Sample size: 3,000 verified short videos</span>
-          <span>Significance threshold: ΔP ≤ 0.08 (8%)</span>
-        </div>
       </div>
     </div>
   );

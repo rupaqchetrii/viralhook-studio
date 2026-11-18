@@ -1,9 +1,9 @@
-import React, { memo, useState } from 'react';
-import { Copy, Check } from 'lucide-react';
+import React, { memo } from 'react';
 import { PacingBarometer } from './PacingBarometer';
 import { LinterHighlighter } from './LinterHighlighter';
 import { countWords, countCharacters } from '../../utils/pacingCalculator';
 import { lintHook } from '../../utils/linterRules';
+import { Sparkles, Type } from 'lucide-react';
 
 export const HookEditor = memo(function HookEditor({
   label, // 'Hook Option A' | 'Hook Option B'
@@ -11,101 +11,76 @@ export const HookEditor = memo(function HookEditor({
   value,
   onChange,
   onApplyFix,
+  badgeVariant = 'accent',
+  accentColor = '#A78BFA',
 }) {
-  const [copied, setCopied] = useState(false);
   const wordCount = countWords(value);
   const charCount = countCharacters(value);
   const linterFlags = lintHook(value);
 
-  const handleCopy = async () => {
-    if (!value) return;
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1600);
-    } catch {
-      setCopied(false);
-    }
-  };
-
-  const charPercent = Math.min(100, Math.round((charCount / 280) * 100));
-  const isNearLimit = charCount >= 240;
-  const isAtLimit = charCount >= 280;
+  const isHookA = label.includes('A');
 
   return (
-    <div className="flex flex-col h-full rounded-2xl bg-[#13141C] border border-[#222432] hover:border-[#2D3042] transition-colors p-4 sm:p-5 space-y-4">
-      {/* Editor Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-[#EDEDEF] px-2.5 py-1 rounded-lg bg-[#202230] border border-[#2e3144]">
+    <div
+      className={`glass-panel rounded-2xl p-5 sm:p-6 flex flex-col h-full border transition-all duration-300 hover:border-white/20 hover:shadow-2xl hover:shadow-violet-950/20 ${
+        isHookA
+          ? 'focus-within:border-violet-500/50 focus-within:ring-2 focus-within:ring-violet-500/20'
+          : 'focus-within:border-cyan-500/50 focus-within:ring-2 focus-within:ring-cyan-500/20'
+      }`}
+    >
+      {/* Header bar */}
+      <div className="flex items-center justify-between pb-4 border-b border-white/[0.06] mb-4">
+        <div className="flex items-center gap-2.5">
+          <span
+            className={`px-2.5 py-1 rounded-lg text-xs font-bold font-mono tracking-wide ${
+              isHookA
+                ? 'bg-violet-500/15 text-violet-300 border border-violet-500/30'
+                : 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30'
+            }`}
+          >
             {label}
           </span>
-          <span className="text-xs text-[#8E90A0] hidden sm:inline">{tagline}</span>
+          <span className="text-xs text-zinc-400 hidden sm:inline">{tagline}</span>
         </div>
 
-        <div className="flex items-center gap-2 text-xs">
-          <button
-            type="button"
-            onClick={handleCopy}
-            disabled={!value}
-            className="text-xs text-[#8E90A0] hover:text-[#EDEDEF] transition-colors px-2 py-1 rounded-md hover:bg-[#1E202C] disabled:opacity-30 disabled:pointer-events-none flex items-center gap-1 font-mono"
-            title="Copy opening line"
-          >
-            {copied ? (
-              <>
-                <Check className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="text-[11px] text-emerald-400">Copied</span>
-              </>
-            ) : (
-              <>
-                <Copy className="w-3.5 h-3.5" />
-                <span className="text-[11px] hidden sm:inline">Copy</span>
-              </>
-            )}
-          </button>
-
-          <span className="text-[#3A3D50]">·</span>
-
-          <span className="text-[#8E90A0] font-mono text-[11px]">
-            <strong className="text-[#EDEDEF]">{wordCount}</strong> words
+        {/* Word and Char count badge */}
+        <div className="flex items-center gap-2 text-xs font-mono">
+          <span className="px-2 py-0.5 rounded-md bg-white/[0.04] text-zinc-300 border border-white/[0.06]">
+            <strong className="text-white font-bold">{wordCount}</strong> words
           </span>
-
-          <span className="text-[#3A3D50]">·</span>
-
-          <span className={`font-mono text-[11px] ${isAtLimit ? 'text-rose-400 font-bold' : isNearLimit ? 'text-amber-400' : 'text-[#8E90A0]'}`}>
+          <span
+            className={`px-2 py-0.5 rounded-md border text-[11px] ${
+              charCount > 280
+                ? 'bg-rose-500/20 text-rose-300 border-rose-500/30 font-bold'
+                : 'bg-white/[0.04] text-zinc-400 border border-white/[0.06]'
+            }`}
+          >
             {charCount}/280
           </span>
         </div>
       </div>
 
-      {/* Input Textarea */}
-      <div className="space-y-1">
-        <textarea
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          rows={4}
-          maxLength={280}
-          placeholder={`Write ${label.toLowerCase()}... e.g. "Stop scrolling if you want to fix your code"`}
-          className="w-full bg-[#0B0C10] text-[#EDEDEF] placeholder-[#55586D] text-sm sm:text-base rounded-xl p-4 border border-[#1E202C] focus:border-[#A78BFA] focus:ring-1 focus:ring-[#A78BFA]/30 focus:outline-none resize-none transition-all leading-relaxed font-sans"
-        />
-
-        {/* Subtle character progress bar */}
-        <div className="w-full h-1 bg-[#181924] rounded-full overflow-hidden">
-          <div
-            className={`h-full transition-all duration-200 ${
-              isAtLimit ? 'bg-rose-500' : isNearLimit ? 'bg-amber-400' : 'bg-[#A78BFA]'
-            }`}
-            style={{ width: `${charPercent}%` }}
+      {/* Editor Body */}
+      <div className="flex-1 flex flex-col gap-4">
+        {/* Sleek Text Area */}
+        <div className="relative">
+          <textarea
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            rows={4}
+            maxLength={350}
+            placeholder={`Enter ${label} (e.g. your opening 1-5 second hook line)...`}
+            className="w-full bg-black/30 text-white placeholder-zinc-500 text-sm sm:text-base rounded-xl p-4 border border-white/[0.08] focus:border-white/30 focus:outline-none resize-none transition-all duration-200 leading-relaxed font-sans shadow-inner"
           />
         </div>
-      </div>
 
-      {/* Pacing Speed Indicator */}
-      <PacingBarometer wordCount={wordCount} />
+        {/* 3s Spoken Delivery Pace Barometer */}
+        <PacingBarometer wordCount={wordCount} />
 
-      {/* Writing suggestions */}
-      <div className="pt-2 border-t border-[#1C1D28]">
-        <LinterHighlighter flags={linterFlags} onApplyFix={onApplyFix} />
+        {/* Real-time Phrase Linter Diagnostics */}
+        <div className="pt-2 border-t border-white/[0.06]">
+          <LinterHighlighter flags={linterFlags} onApplyFix={onApplyFix} />
+        </div>
       </div>
     </div>
   );
