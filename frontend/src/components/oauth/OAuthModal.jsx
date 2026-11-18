@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Share2, CheckCircle2, RefreshCw, Plus, Trash2, ShieldCheck, Zap, Video, ExternalLink } from 'lucide-react';
+import { X, Share2, RefreshCw, Plus, Trash2, ShieldCheck, Zap } from 'lucide-react';
 import {
   getOAuthAccountsAPI,
   connectOAuthAccountAPI,
@@ -8,10 +8,8 @@ import {
 } from '../../services/api';
 
 export function OAuthModal({ isOpen, onClose, onSyncComplete }) {
-  if (!isOpen) return null;
-
   const [accounts, setAccounts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncResult, setSyncResult] = useState(null);
 
@@ -24,14 +22,23 @@ export function OAuthModal({ isOpen, onClose, onSyncComplete }) {
 
   const fetchAccounts = async () => {
     setLoading(true);
-    const data = await getOAuthAccountsAPI();
-    setAccounts(data?.accounts || []);
-    setLoading(false);
+    try {
+      const data = await getOAuthAccountsAPI();
+      setAccounts(data?.accounts || []);
+    } catch {
+      // ignore
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    fetchAccounts();
+    if (isOpen) {
+      fetchAccounts();
+    }
   }, [isOpen]);
+
+  if (!isOpen) return null;
 
   const handleConnect = async (e) => {
     e.preventDefault();
@@ -42,7 +49,7 @@ export function OAuthModal({ isOpen, onClose, onSyncComplete }) {
       await connectOAuthAccountAPI({
         platform,
         handle: handle.trim(),
-        followers: parseInt(followers) || 100000,
+        followers: parseInt(followers, 10) || 100000,
       });
       setHandle('');
       setIsAdding(false);
@@ -75,42 +82,42 @@ export function OAuthModal({ isOpen, onClose, onSyncComplete }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in-up">
-      <div className="glass-panel-elevated rounded-3xl max-w-xl w-full p-6 sm:p-8 border border-white/10 shadow-2xl space-y-6 relative max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0D0C22]/60 backdrop-blur-sm animate-fade-in-up">
+      <div className="bg-white dark:bg-[#1A1A2E] rounded-3xl max-w-xl w-full p-6 sm:p-8 border border-[#E7E7E9] dark:border-white/10 shadow-2xl space-y-6 relative max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-xl bg-white/[0.04] text-zinc-400 hover:text-white transition-all"
+          className="absolute top-5 right-5 p-2 rounded-xl bg-[#F8F7F4] dark:bg-white/5 text-[#6E6D7A] hover:text-[#0D0C22] dark:hover:text-white transition-all"
         >
           <X className="w-4 h-4" />
         </button>
 
         {/* Title */}
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
-            <Share2 className="w-3.5 h-3.5 text-cyan-400" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-cyan-50 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800/40">
+            <Share2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
             <span>Direct Social OAuth 2.0 Integration</span>
           </div>
-          <h3 className="text-xl font-bold text-white tracking-tight">Connected Creator Channels</h3>
-          <p className="text-xs text-zinc-400">
+          <h3 className="text-xl font-bold text-[#0D0C22] dark:text-white tracking-tight">Connected Creator Channels</h3>
+          <p className="text-xs text-[#6E6D7A] dark:text-zinc-400">
             Authenticated via TikTok Creator Marketplace & Instagram Graph APIs for 1-click video retention sync.
           </p>
         </div>
 
         {/* 1-Click Sync Banner */}
-        <div className="p-4 rounded-2xl bg-gradient-to-r from-violet-950/40 via-indigo-950/30 to-black/40 border border-violet-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
+        <div className="p-4 rounded-2xl bg-[#F8F7F4] dark:bg-white/5 border border-[#E7E7E9] dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
           <div className="space-y-0.5">
-            <div className="text-xs font-bold text-white flex items-center gap-2">
-              <Zap className="w-3.5 h-3.5 text-amber-400" />
+            <div className="text-xs font-bold text-[#0D0C22] dark:text-white flex items-center gap-2">
+              <Zap className="w-3.5 h-3.5 text-[#EA4C89]" />
               <span>1-Click Video Analytics Pull</span>
             </div>
-            <div className="text-[11px] text-zinc-400">
+            <div className="text-[11px] text-[#6E6D7A] dark:text-zinc-400">
               Fetch latest post metrics & 3s retention rate into Performance Tracker
             </div>
           </div>
           <button
             onClick={handleSyncLatest}
             disabled={isSyncing || accounts.length === 0}
-            className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50 flex items-center justify-center gap-1.5 transition-all shadow-md shrink-0"
+            className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#0D0C22] hover:bg-[#3D3D4E] dark:bg-[#EA4C89] dark:hover:bg-[#d63d76] disabled:opacity-50 flex items-center justify-center gap-1.5 transition-all shadow-sm shrink-0"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
             <span>{isSyncing ? 'Syncing Channel...' : 'Sync Latest Videos'}</span>
@@ -119,21 +126,22 @@ export function OAuthModal({ isOpen, onClose, onSyncComplete }) {
 
         {/* Sync Success Notification */}
         {syncResult && (
-          <div className="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/30 text-xs text-emerald-200 flex items-center gap-2.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-            <div>
-              Successfully imported <strong>{syncResult.videos_imported} latest videos</strong> from {syncResult.channel} into the SQLite Performance Tracker!
-            </div>
+          <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-500/30 text-xs text-emerald-800 dark:text-emerald-300 flex items-center justify-between">
+            <span>✅ Synced <strong>{syncResult.videos_synced}</strong> recent videos from channel!</span>
+            <span className="font-mono text-[10px] text-emerald-600 dark:text-emerald-400">Avg Retention: {syncResult.average_retention_3s}%</span>
           </div>
         )}
 
-        {/* Connected Accounts List */}
+        {/* Connected Channels List */}
         <div className="space-y-3">
-          <div className="flex items-center justify-between text-xs font-bold text-zinc-300">
-            <span>Active Channels ({accounts.length})</span>
+          <div className="flex items-center justify-between text-xs font-bold text-[#0D0C22] dark:text-white">
+            <div className="flex items-center gap-2">
+              <span>Authorized Profiles ({accounts.length})</span>
+              {loading && <RefreshCw className="w-3 h-3 animate-spin text-[#EA4C89]" />}
+            </div>
             <button
               onClick={() => setIsAdding(!isAdding)}
-              className="text-cyan-400 hover:text-cyan-300 flex items-center gap-1"
+              className="text-[#EA4C89] hover:underline flex items-center gap-1 font-semibold"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>{isAdding ? 'Cancel' : 'Connect New Channel'}</span>
@@ -142,15 +150,15 @@ export function OAuthModal({ isOpen, onClose, onSyncComplete }) {
 
           {/* New Connection Form */}
           {isAdding && (
-            <form onSubmit={handleConnect} className="p-4 rounded-2xl bg-black/50 border border-cyan-500/30 space-y-3 text-xs animate-fade-in-up">
-              <div className="font-semibold text-white">OAuth 2.0 Account Authorization</div>
+            <form onSubmit={handleConnect} className="p-4 rounded-2xl bg-[#F8F7F4] dark:bg-white/5 border border-[#E7E7E9] dark:border-white/10 space-y-3 text-xs animate-fade-in-up">
+              <div className="font-semibold text-[#0D0C22] dark:text-white">OAuth 2.0 Account Authorization</div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-zinc-400 block mb-1">Platform</label>
+                  <label className="text-[#6E6D7A] dark:text-zinc-400 block mb-1">Platform</label>
                   <select
                     value={platform}
                     onChange={(e) => setPlatform(e.target.value)}
-                    className="w-full bg-[#11121B] border border-white/[0.08] text-white rounded-xl p-2 focus:border-cyan-400"
+                    className="w-full bg-white dark:bg-[#11121B] border border-[#E7E7E9] dark:border-white/[0.08] text-[#0D0C22] dark:text-white rounded-xl p-2 focus:border-[#EA4C89]"
                   >
                     <option value="TikTok">TikTok Creator</option>
                     <option value="Instagram">Instagram Professional</option>
@@ -158,14 +166,14 @@ export function OAuthModal({ isOpen, onClose, onSyncComplete }) {
                   </select>
                 </div>
                 <div>
-                  <label className="text-zinc-400 block mb-1">Handle</label>
+                  <label className="text-[#6E6D7A] dark:text-zinc-400 block mb-1">Handle</label>
                   <input
                     type="text"
                     required
                     placeholder="@yourhandle"
                     value={handle}
                     onChange={(e) => setHandle(e.target.value)}
-                    className="w-full bg-[#11121B] border border-white/[0.08] text-white rounded-xl p-2 focus:border-cyan-400"
+                    className="w-full bg-white dark:bg-[#11121B] border border-[#E7E7E9] dark:border-white/[0.08] text-[#0D0C22] dark:text-white rounded-xl p-2 focus:border-[#EA4C89]"
                   />
                 </div>
               </div>
@@ -173,14 +181,14 @@ export function OAuthModal({ isOpen, onClose, onSyncComplete }) {
                 <button
                   type="button"
                   onClick={() => setIsAdding(false)}
-                  className="px-3 py-1.5 rounded-lg bg-white/[0.04] text-zinc-400 hover:text-white"
+                  className="px-3 py-1.5 rounded-lg bg-white dark:bg-white/5 border border-[#E7E7E9] dark:border-white/10 text-[#6E6D7A] hover:text-[#0D0C22] dark:hover:text-white"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-4 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black font-bold"
+                  className="px-4 py-1.5 rounded-lg bg-[#EA4C89] hover:bg-[#d63d76] text-white font-bold"
                 >
                   {isSubmitting ? 'Authorizing...' : 'Authorize via OAuth'}
                 </button>
@@ -193,20 +201,20 @@ export function OAuthModal({ isOpen, onClose, onSyncComplete }) {
             {accounts.map((acc) => (
               <div
                 key={acc.id}
-                className="p-3.5 rounded-2xl bg-black/40 border border-white/[0.06] flex items-center justify-between gap-3 text-xs"
+                className="p-3.5 rounded-2xl bg-[#F8F7F4] dark:bg-white/5 border border-[#E7E7E9] dark:border-white/[0.06] flex items-center justify-between gap-3 text-xs"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-violet-600/30 to-cyan-500/30 border border-white/10 flex items-center justify-center text-sm font-bold text-white">
+                  <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/40 border border-purple-200 dark:border-purple-800/40 flex items-center justify-center text-sm font-bold text-purple-700 dark:text-purple-300">
                     {acc.platform === 'TikTok' ? '🎵' : acc.platform === 'Instagram' ? '📸' : '⚡'}
                   </div>
                   <div>
-                    <div className="font-bold text-white flex items-center gap-2">
+                    <div className="font-bold text-[#0D0C22] dark:text-white flex items-center gap-2">
                       <span>{acc.handle}</span>
-                      <span className="px-1.5 py-0.2 rounded text-[10px] font-mono bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                      <span className="px-1.5 py-0.2 rounded text-[10px] font-mono bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30">
                         OAuth Active
                       </span>
                     </div>
-                    <div className="text-[11px] text-zinc-400">
+                    <div className="text-[11px] text-[#6E6D7A] dark:text-zinc-400">
                       {acc.platform} &bull; {(acc.followers || 0).toLocaleString()} followers
                     </div>
                   </div>
@@ -216,7 +224,7 @@ export function OAuthModal({ isOpen, onClose, onSyncComplete }) {
                   <button
                     onClick={() => handleDisconnect(acc.id)}
                     title="Disconnect Account"
-                    className="p-1.5 rounded-lg bg-white/[0.03] hover:bg-rose-500/20 text-zinc-400 hover:text-rose-300 transition-all"
+                    className="p-1.5 rounded-lg bg-white dark:bg-white/5 hover:bg-rose-50 dark:hover:bg-rose-500/20 text-[#6E6D7A] hover:text-rose-600 border border-[#E7E7E9] dark:border-white/10 transition-all"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -227,8 +235,8 @@ export function OAuthModal({ isOpen, onClose, onSyncComplete }) {
         </div>
 
         {/* Security & Token Info */}
-        <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] text-[11px] text-zinc-400 flex items-start gap-2.5">
-          <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+        <div className="p-3 rounded-xl bg-[#F8F7F4] dark:bg-white/5 border border-[#E7E7E9] dark:border-white/10 text-[11px] text-[#6E6D7A] dark:text-zinc-400 flex items-start gap-2.5">
+          <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
           <div>
             Tokens are encrypted and stored locally in your SQLite database. Scopes granted are strictly read-only for video performance and engagement metrics.
           </div>
