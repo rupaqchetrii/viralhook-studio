@@ -54,6 +54,16 @@ if (FRONTEND_DIST / "assets").exists():
     app.mount("/assets", StaticFiles(directory=FRONTEND_DIST / "assets"), name="assets")
 
 
+@app.get("/favicon.svg", include_in_schema=False)
+def serve_favicon():
+    favicon_path = FRONTEND_DIST / "favicon.svg"
+    if not favicon_path.exists():
+        favicon_path = BASE_DIR / "frontend" / "public" / "favicon.svg"
+    if favicon_path.exists():
+        return FileResponse(favicon_path, media_type="image/svg+xml")
+    return FileResponse(DAY1_STATIC_INDEX)
+
+
 @app.get("/", tags=["UI"], summary="Serve ViralHook Studio Web Interface")
 @app.get("/day2", tags=["UI"], summary="Serve Day 2 Prototype Web Interface")
 def serve_ui():

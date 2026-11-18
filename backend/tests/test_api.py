@@ -4,6 +4,7 @@ Covers Day 1 (T1.1–T1.4) + Day 2 (T2.2 explainer, T2.5 linter, T2.6 analyze en
 All tests are synchronous — no pytest-asyncio required.
 """
 import asyncio
+import inspect
 import pytest
 
 # ---------------------------------------------------------------------------
@@ -71,7 +72,7 @@ class TestHealthEndpoint:
 
     def test_health_check_keys(self):
         from backend.app.main import health_check
-        result = asyncio.run(health_check()) if asyncio.iscoroutinefunction(health_check) else health_check()
+        result = asyncio.run(health_check()) if inspect.iscoroutinefunction(health_check) else health_check()
         assert result["status"] == "healthy"
         assert "inference_mode" in result
         assert "model_loaded" in result
