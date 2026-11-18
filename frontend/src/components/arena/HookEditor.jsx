@@ -15,6 +15,7 @@ export const HookEditor = memo(function HookEditor({
   tagline,
   value,
   onChange,
+  onApplyFix,
   badgeVariant = 'primary',
   wpm,
 }) {
@@ -195,10 +196,10 @@ export const HookEditor = memo(function HookEditor({
         )}
 
         {/* 1. Spoken Pacing Barometer (Dual Mode: Target Range Indicator) */}
-        <PacingBarometer text={value} userWpm={wpm} />
+        <PacingBarometer wordCount={wordCount} />
 
         {/* 2. Interactive Linguistic Linter Highlighter (Day 2 Pre-flight Linter) */}
-        <LinterHighlighter flags={linterFlags} text={value} />
+        <LinterHighlighter flags={linterFlags} onApplyFix={onApplyFix} />
       </CardBody>
     </Card>
   );

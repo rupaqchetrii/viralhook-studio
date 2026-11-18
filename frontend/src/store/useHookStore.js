@@ -40,7 +40,7 @@ export const useHookStore = create(
       fontSize: 'medium',   // 'small' | 'medium' | 'large'
       userName: 'Creator',
       userEmail: 'creator@viralhook.studio',
-      isLoggedIn: false,
+      isLoggedIn: true,
 
       // Persisted Battle Library History
       battleHistory: [],

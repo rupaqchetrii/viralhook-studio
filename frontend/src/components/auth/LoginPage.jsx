@@ -228,6 +228,18 @@ export function LoginPage() {
                 <>Sign In to Studio <ArrowRight className="w-4 h-4" /></>
               )}
             </button>
+
+            {/* Quick Demo Bypass */}
+            <button
+              type="button"
+              onClick={() => {
+                setUserName('Creator Guest');
+                loginBack();
+              }}
+              className="w-full py-2.5 rounded-full border border-[#E7E7E9] dark:border-white/10 text-xs font-bold text-[#6E6D7A] dark:text-zinc-300 hover:text-[#0D0C22] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-all cursor-pointer"
+            >
+              🚀 Instant Demo Studio Access (One-Click) &rarr;
+            </button>
           </form>
 
           {/* Privacy note */}
