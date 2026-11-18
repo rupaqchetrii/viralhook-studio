@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Flame, History, HelpCircle, RefreshCw, Cpu, Sparkles, ChevronDown } from 'lucide-react';
+import { Flame, History, HelpCircle, RefreshCw, Cpu, Sparkles, ChevronDown, BarChart3 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { useHookStore } from '../../store/useHookStore';
 import { checkBackendHealth } from '../../services/api';
 
-export function Header() {
+export function Header({ onOpenAnalytics }) {
   const {
     platform,
     setPlatform,
@@ -126,6 +126,17 @@ export function Header() {
           >
             <HelpCircle className="w-4 h-4" />
           </button>
+
+          {onOpenAnalytics && (
+            <button
+              onClick={onOpenAnalytics}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 text-xs font-semibold transition-all shadow-sm"
+              title="Channel Accuracy & Outcome Analytics"
+            >
+              <BarChart3 className="w-4 h-4 text-emerald-400" />
+              <span className="hidden sm:inline">Analytics</span>
+            </button>
+          )}
 
           <button
             onClick={() => setHistoryDrawerOpen(true)}

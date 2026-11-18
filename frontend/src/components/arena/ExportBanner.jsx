@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Copy, Check, Share2, Download, FileText } from 'lucide-react';
+import { Copy, Check, FileText, TrendingUp, Sparkles } from 'lucide-react';
 import { Button } from '../ui/Button';
 
-export function ExportBanner({ result }) {
+export function ExportBanner({ result, onOpenOutcome }) {
   const [copied, setCopied] = useState(false);
 
   if (!result) return null;
@@ -36,38 +36,46 @@ export function ExportBanner({ result }) {
   };
 
   return (
-    <div className="p-4 rounded-2xl bg-[#191a2c]/60 border border-[#2e3152] flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div className="glass-panel rounded-2xl p-4 sm:p-5 border border-white/[0.08] shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
       <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-xl bg-[#A78BFA]/10 border border-[#A78BFA]/20 flex items-center justify-center text-[#A78BFA]">
-          <FileText className="w-4 h-4" />
+        <div className="w-10 h-10 rounded-xl bg-violet-500/15 border border-violet-500/30 flex items-center justify-center text-violet-400">
+          <FileText className="w-5 h-5" />
         </div>
         <div>
-          <h5 className="text-xs font-bold text-[#F1F5F9]">Export Creator Diagnostic Report</h5>
-          <p className="text-[11px] text-[#94A3B8]">
-            Copy full side-by-side metrics, probabilities, and pacing notes for your script.
+          <h5 className="text-xs font-bold text-white tracking-tight">Creator Export & 48h Outcome Loop</h5>
+          <p className="text-[11px] text-zinc-400">
+            Copy diagnostics for your script or record real views after publishing.
           </p>
         </div>
       </div>
 
-      <div className="flex items-center gap-2 shrink-0">
-        <Button
-          size="sm"
-          variant="outline"
+      <div className="flex items-center gap-2.5 shrink-0">
+        {onOpenOutcome && (
+          <button
+            onClick={onOpenOutcome}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-violet-600/20 hover:bg-violet-600/30 text-violet-300 border border-violet-500/30 text-xs font-semibold transition-all shadow-sm"
+          >
+            <TrendingUp className="w-3.5 h-3.5" />
+            <span>Log 48h Outcome</span>
+          </button>
+        )}
+
+        <button
           onClick={handleCopyReport}
-          className="text-xs"
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-zinc-200 border border-white/[0.08] text-xs font-semibold transition-all"
         >
           {copied ? (
             <>
-              <Check className="w-3.5 h-3.5 mr-1 text-emerald-400" />
+              <Check className="w-3.5 h-3.5 text-emerald-400" />
               <span className="text-emerald-400">Copied to Clipboard!</span>
             </>
           ) : (
             <>
-              <Copy className="w-3.5 h-3.5 mr-1" />
+              <Copy className="w-3.5 h-3.5" />
               <span>Copy Full Report</span>
             </>
           )}
-        </Button>
+        </button>
       </div>
     </div>
   );

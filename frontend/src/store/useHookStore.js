@@ -13,6 +13,7 @@ import {
   deleteLibraryItemFromDatabase,
   recordPerformanceOutcome,
   fetchPerformanceHistory,
+  saveBattleToDbAPI,
 } from '../services/api';
 import { lintHook } from '../utils/linterRules';
 
@@ -156,6 +157,8 @@ export const useHookStore = create(
         }).then(() => {
           get().syncDatabaseLibrary();
         }).catch((e) => console.warn('SQLite persistence error:', e));
+
+        saveBattleToDbAPI(newEntry);
       },
 
       // Sync with SQLite backend library

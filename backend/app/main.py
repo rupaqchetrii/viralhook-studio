@@ -8,6 +8,9 @@ from backend.app.api.compare import router as compare_router
 from backend.app.api.analyze import router as analyze_router
 from backend.app.api.library import router as library_router
 from backend.app.api.remix import router as remix_router
+from backend.app.api.history_db import router as history_db_router
+from backend.app.api.audio import router as audio_router
+from backend.app.api.ingest import router as ingest_router
 from backend.app.services.prediction_gateway import gateway
 
 settings = get_settings()
@@ -38,6 +41,9 @@ app.include_router(compare_router, prefix=settings.API_V1_PREFIX)
 app.include_router(analyze_router, prefix=settings.API_V1_PREFIX)
 app.include_router(library_router, prefix=settings.API_V1_PREFIX)
 app.include_router(remix_router, prefix=settings.API_V1_PREFIX)
+app.include_router(history_db_router, prefix=settings.API_V1_PREFIX)
+app.include_router(audio_router, prefix=settings.API_V1_PREFIX)
+app.include_router(ingest_router, prefix=settings.API_V1_PREFIX)
 
 if (FRONTEND_DIST / "assets").exists():
     app.mount("/assets", StaticFiles(directory=FRONTEND_DIST / "assets"), name="assets")
@@ -78,6 +84,14 @@ def health_check():
         "model_loaded": gateway.is_loaded,
         "inference_mode": "trained_model" if gateway.is_loaded else "heuristic_fallback",
         "close_result_margin": settings.CLOSE_RESULT_MARGIN,
+        "features": {
+            "whisper_audio": True,
+            "cloud_db": True,
+            "social_ingest": True,
+            "feedback_loop_48h": True,
+            "hook_library": True,
+            "remix_lab": True
+        }
     }
 
 

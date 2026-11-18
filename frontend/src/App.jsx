@@ -1,5 +1,19 @@
-import React, { useEffect, useCallback } from 'react';
-import { Swords, Sparkles, HelpCircle, AlertCircle, RefreshCw, Zap, Search } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  Swords,
+  Sparkles,
+  HelpCircle,
+  AlertCircle,
+  RefreshCw,
+  Zap,
+  Search,
+  Link2,
+  Share2,
+  Video,
+  ArrowRight,
+  CheckCircle,
+  ExternalLink,
+} from 'lucide-react';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
 import { OnboardingModal } from './components/layout/OnboardingModal';
@@ -7,16 +21,21 @@ import { HistoryDrawer } from './components/history/HistoryDrawer';
 import { HookEditor } from './components/arena/HookEditor';
 import { ComparisonArena } from './components/arena/ComparisonArena';
 import { RemixLab } from './components/arena/RemixLab';
+import { OutcomeModal } from './components/analytics/OutcomeModal';
+import { AnalyticsModal } from './components/analytics/AnalyticsModal';
 import { useHookStore } from './store/useHookStore';
+import { ingestSocialUrlAPI } from './services/api';
 
 export function App() {
   const {
     hookA,
     hookB,
     topic,
+    platform,
     setHookA,
     setHookB,
     setTopic,
+    setPlatform,
     applyQuickFix,
     runComparison,
     isComparing,
@@ -25,6 +44,16 @@ export function App() {
     setOnboardingOpen,
     swapHooks,
   } = useHookStore();
+
+  // Modals state
+  const [isOutcomeOpen, setIsOutcomeOpen] = useState(false);
+  const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false);
+
+  // Social Ingestion state
+  const [showIngestInput, setShowIngestInput] = useState(false);
+  const [socialUrl, setSocialUrl] = useState('');
+  const [isIngesting, setIsIngesting] = useState(false);
+  const [ingestNotice, setIngestNotice] = useState(null);
 
   // Run initial comparison on mount if result is empty
   useEffect(() => {
@@ -50,6 +79,42 @@ export function App() {
   const handleApplyFixA = useCallback((id) => applyQuickFix('A', id), [applyQuickFix]);
   const handleApplyFixB = useCallback((id) => applyQuickFix('B', id), [applyQuickFix]);
 
+  const handleIngestUrl = async (e) => {
+    e.preventDefault();
+    if (!socialUrl.trim()) return;
+
+    setIsIngesting(true);
+    setIngestNotice(null);
+
+    try {
+      const data = await ingestSocialUrlAPI(socialUrl);
+      if (data && data.extracted_hook) {
+        setHookA(data.extracted_hook);
+        // Suggest a high-converting curiosity / contrarian challenger hook
+        const challenger = `Stop ignoring this: ${data.extracted_hook.replace(/^Why\s+|^The secret to\s+|^Stop doing this with your\s+/i, '')}`;
+        setHookB(challenger);
+        if (data.detected_platform) {
+          setPlatform(data.detected_platform);
+        }
+
+        setIngestNotice({
+          platform: data.detected_platform,
+          creator: data.creator_handle,
+          benchmark: data.platform_benchmarks,
+        });
+
+        // Auto trigger comparison with the freshly ingested hooks
+        setTimeout(() => {
+          runComparison();
+        }, 150);
+      }
+    } catch (err) {
+      alert(err.message || 'Failed to ingest URL. Ensure it is a valid TikTok, Reels, or Shorts link.');
+    } finally {
+      setIsIngesting(false);
+    }
+  };
+
   const PRESET_TOPICS = [
     { label: '🔥 Tech & Coding', value: 'Software engineering tips and junior developer common mistakes' },
     { label: '📈 Creator Growth', value: 'How to scale your audience on TikTok and Shorts in 30 days' },
@@ -63,8 +128,8 @@ export function App() {
       <div className="absolute top-[40%] -left-32 w-[400px] h-[400px] bg-fuchsia-600/10 blur-[130px] pointer-events-none rounded-full z-0" />
       <div className="absolute top-[60%] -right-32 w-[450px] h-[450px] bg-indigo-600/10 blur-[130px] pointer-events-none rounded-full z-0" />
 
-      {/* Top Floating Navbar */}
-      <Header />
+      {/* Top Floating Navbar with Analytics Button */}
+      <Header onOpenAnalytics={() => setIsAnalyticsOpen(true)} />
 
       {/* Main Studio Workspace */}
       <main className="relative z-10 flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
@@ -88,7 +153,7 @@ export function App() {
           </p>
         </div>
 
-        {/* Video Topic Search & Preset Floating Bar */}
+        {/* Video Topic Search & Ingest Floating Bar */}
         <div className="glass-panel rounded-2xl p-4 sm:p-5 border border-white/[0.08] shadow-2xl max-w-4xl mx-auto space-y-3">
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             <div className="shrink-0 text-xs font-bold text-violet-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -104,7 +169,64 @@ export function App() {
                 className="w-full bg-black/40 text-xs sm:text-sm text-white placeholder-zinc-500 rounded-xl px-4 py-2.5 border border-white/[0.08] focus:border-violet-500/50 focus:outline-none transition-all shadow-inner"
               />
             </div>
+            <button
+              onClick={() => setShowIngestInput(!showIngestInput)}
+              className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white border border-white/[0.08] transition-all"
+              title="Import Hook from TikTok, Reels, or Shorts URL"
+            >
+              <Link2 className="w-3.5 h-3.5 text-cyan-400" />
+              <span>{showIngestInput ? 'Hide Link Import' : 'Import Social Link'}</span>
+            </button>
           </div>
+
+          {/* Collapsible Social URL Ingestion Input */}
+          {showIngestInput && (
+            <form onSubmit={handleIngestUrl} className="pt-2 border-t border-white/[0.06] flex flex-col sm:flex-row items-stretch gap-2.5 animate-fade-in-up">
+              <div className="relative flex-1">
+                <input
+                  type="url"
+                  required
+                  value={socialUrl}
+                  onChange={(e) => setSocialUrl(e.target.value)}
+                  placeholder="Paste TikTok, Instagram Reels, or YouTube Shorts link..."
+                  className="w-full bg-black/50 text-xs text-white placeholder-zinc-500 rounded-xl pl-9 pr-3 py-2 border border-cyan-500/30 focus:border-cyan-400 focus:outline-none"
+                />
+                <Video className="w-4 h-4 text-cyan-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              </div>
+              <button
+                type="submit"
+                disabled={isIngesting}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 disabled:opacity-50 transition-all flex items-center justify-center gap-1.5 shrink-0 shadow-lg shadow-cyan-600/20"
+              >
+                {isIngesting ? (
+                  <>
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                    <span>Extracting Hook...</span>
+                  </>
+                ) : (
+                  <>
+                    <Zap className="w-3.5 h-3.5" />
+                    <span>Ingest Hook</span>
+                  </>
+                )}
+              </button>
+            </form>
+          )}
+
+          {/* Social Ingest Intelligence Notice Banner */}
+          {ingestNotice && (
+            <div className="p-3 rounded-xl bg-cyan-950/25 border border-cyan-500/30 text-xs text-cyan-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-cyan-400 shrink-0" />
+                <span>
+                  Extracted from <strong className="text-white">{ingestNotice.platform.toUpperCase()}</strong> ({ingestNotice.creator})
+                </span>
+              </div>
+              <div className="text-[11px] text-cyan-300 font-mono">
+                Target Pacing: &le;{ingestNotice.benchmark.target_pacing_sec}s &bull; Focus: {ingestNotice.benchmark.algorithm_focus}
+              </div>
+            </div>
+          )}
 
           {/* Quick Preset Pills */}
           <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-white/[0.04] text-xs">
@@ -184,7 +306,12 @@ export function App() {
         </div>
 
         {/* Comparison Arena: Results, Margin Guard & Recharts */}
-        {comparisonResult && <ComparisonArena result={comparisonResult} />}
+        {comparisonResult && (
+          <ComparisonArena
+            result={comparisonResult}
+            onOpenOutcome={() => setIsOutcomeOpen(true)}
+          />
+        )}
 
         {/* Hook Remix & Inspiration Lab (Day 3 Feature) */}
         <RemixLab />
@@ -195,6 +322,19 @@ export function App() {
 
       {/* Guided Walkthrough Modal */}
       <OnboardingModal />
+
+      {/* 48-Hour Outcome Feedback Loop Modal */}
+      <OutcomeModal
+        isOpen={isOutcomeOpen}
+        onClose={() => setIsOutcomeOpen(false)}
+        battle={comparisonResult}
+      />
+
+      {/* Database & Multi-User Analytics Intelligence Modal */}
+      <AnalyticsModal
+        isOpen={isAnalyticsOpen}
+        onClose={() => setIsAnalyticsOpen(false)}
+      />
 
       {/* Refined Footer */}
       <Footer />

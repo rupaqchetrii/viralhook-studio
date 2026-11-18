@@ -5,7 +5,7 @@ import { MarginGuardBanner } from './MarginGuardBanner';
 import { SignalsComparison } from './SignalsComparison';
 import { ExportBanner } from './ExportBanner';
 
-export function ComparisonArena({ result }) {
+export function ComparisonArena({ result, onOpenOutcome }) {
   if (!result) return null;
 
   const { hook_a, hook_b, margin_guard, disclaimer, isMockModel } = result;
@@ -226,7 +226,7 @@ export function ComparisonArena({ result }) {
       <SignalsComparison hookA={hook_a} hookB={hook_b} />
 
       {/* 5. Day 3 Export & Share Banner */}
-      <ExportBanner result={result} />
+      <ExportBanner result={result} onOpenOutcome={onOpenOutcome} />
 
       {/* 6. Mandatory Ethical Disclaimer (Faculty Mentor Requirement) */}
       <div className="p-4 rounded-xl bg-black/40 border border-white/[0.08] flex items-start gap-3 text-xs text-zinc-400">
