@@ -51,6 +51,7 @@ export function App() {
     fontSize,
     isLoggedIn,
     loginBack,
+    setSettingsPanelOpen,
   } = useHookStore();
 
   // Apply dark mode class to <html> element
@@ -64,13 +65,11 @@ export function App() {
     }
   }, [theme]);
 
-  // Apply font size class
+  // Apply font size
   useEffect(() => {
-    const root = document.documentElement;
-    root.classList.remove('text-sm-base', 'text-base-base', 'text-lg-base');
-    if (fontSize === 'small') root.style.fontSize = '14px';
-    else if (fontSize === 'large') root.style.fontSize = '17px';
-    else root.style.fontSize = '16px';
+    if (fontSize === 'small') document.documentElement.style.fontSize = '14px';
+    else if (fontSize === 'large') document.documentElement.style.fontSize = '17px';
+    else document.documentElement.style.fontSize = '16px';
   }, [fontSize]);
 
   // Run initial comparison on mount if result is empty
@@ -98,8 +97,31 @@ export function App() {
       {/* Top Navbar */}
       <Header />
 
-      {/* Main Studio Workspace */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+      {/* Logged-Out Screen */}
+      {!isLoggedIn ? (
+        <main className="flex-1 flex items-center justify-center px-4 py-20">
+          <div className="max-w-md w-full text-center space-y-6">
+            <div className="w-16 h-16 rounded-2xl bg-[#EA4C89]/10 flex items-center justify-center mx-auto">
+              <Swords className="w-8 h-8 text-[#EA4C89]" />
+            </div>
+            <h2 className="text-2xl font-extrabold text-[#0D0C22] dark:text-white tracking-tight">
+              You've been logged out
+            </h2>
+            <p className="text-sm text-[#6E6D7A] dark:text-[#9E9EA7] leading-relaxed">
+              Your session has ended. Click below to jump back into the studio.
+            </p>
+            <button
+              onClick={loginBack}
+              className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-[#EA4C89] hover:bg-[#F082AC] text-white font-bold text-sm shadow-lg shadow-[#EA4C89]/30 transition-all active:scale-95"
+            >
+              <Sparkles className="w-4 h-4" />
+              Back to Studio
+            </button>
+          </div>
+        </main>
+      ) : (
+        /* Main Studio Workspace */
+        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
         
         {/* Workspace Title & Presets Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pt-2">
@@ -204,6 +226,7 @@ export function App() {
         {/* Hook Remix & Inspiration Lab (Day 3 Feature) */}
         <RemixLab />
       </main>
+      )}
 
       {/* Slide-out Library / History Drawer */}
       <HistoryDrawer />
