@@ -36,6 +36,11 @@ app.add_middleware(
 # Include API Routers on primary prefix and /api/v1 alias for compatibility
 app.include_router(compare_router, prefix=settings.API_V1_PREFIX)
 app.include_router(analyze_router, prefix=settings.API_V1_PREFIX)
+app.include_router(library_router, prefix=settings.API_V1_PREFIX)
+app.include_router(remix_router, prefix=settings.API_V1_PREFIX)
+
+if (FRONTEND_DIST / "assets").exists():
+    app.mount("/assets", StaticFiles(directory=FRONTEND_DIST / "assets"), name="assets")
 
 
 @app.get("/", tags=["UI"], summary="Serve ViralHook Studio Web Interface")
