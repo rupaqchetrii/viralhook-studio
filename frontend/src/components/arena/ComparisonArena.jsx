@@ -1,211 +1,280 @@
 import React from 'react';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell, Legend } from 'recharts';
-import { Zap, ShieldCheck, AlertCircle, BarChart3, TrendingUp, Layers, Info, Cpu } from 'lucide-react';
-import { Card, CardBody, CardHeader } from '../ui/Card';
-import { Badge } from '../ui/Badge';
-import { MarginGuardBanner } from './MarginGuardBanner';
+import {
+  PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend,
+} from 'recharts';
+import { Trophy, Flame, Minus, Info, Zap, Shield, TrendingUp } from 'lucide-react';
 import { SignalsComparison } from './SignalsComparison';
 import { ExportBanner } from './ExportBanner';
 
+/* ── Custom label inside donut ─────────────────────────────────────── */
+function DonutLabel({ cx, cy, viral, isWinner, isDead }) {
+  return (
+    <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle">
+      <tspan
+        x={cx} dy="-14"
+        fontSize="28" fontWeight="900" fontFamily="monospace"
+        fill={isWinner && !isDead ? '#10B981' : '#0D0C22'}
+      >
+        {viral}%
+      </tspan>
+      <tspan
+        x={cx} dy="22"
+        fontSize="10" fontWeight="700"
+        fill="#6E6D7A" letterSpacing="0.08em"
+      >
+        VIRAL CHANCE
+      </tspan>
+    </text>
+  );
+}
+
+/* ── Custom tooltip ────────────────────────────────────────────────── */
+function CustomTooltip({ active, payload }) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="bg-white border border-[#E7E7E9] rounded-2xl shadow-xl px-4 py-3 text-xs">
+      <p className="font-black text-[#0D0C22] mb-1">{payload[0].name}</p>
+      <p className="font-mono font-bold text-[#EA4C89]">{payload[0].value}%</p>
+    </div>
+  );
+}
+
+/* ── Main Arena ────────────────────────────────────────────────────── */
 export function ComparisonArena({ result }) {
   if (!result) return null;
 
   const { hook_a, hook_b, margin_guard, disclaimer, isMockModel } = result;
 
-  // Prepare chart data for Recharts
-  const chartData = [
-    {
-      tier: 'Low',
-      HookA: Math.round(hook_a.probabilities.low * 100),
-      HookB: Math.round(hook_b.probabilities.low * 100),
-    },
-    {
-      tier: 'Medium',
-      HookA: Math.round(hook_a.probabilities.medium * 100),
-      HookB: Math.round(hook_b.probabilities.medium * 100),
-    },
-    {
-      tier: 'High (Viral)',
-      HookA: Math.round(hook_a.probabilities.high * 100),
-      HookB: Math.round(hook_b.probabilities.high * 100),
-    },
+  const aHigh   = Math.round(hook_a.probabilities.high   * 100);
+  const aMed    = Math.round(hook_a.probabilities.medium * 100);
+  const aLow    = Math.round(hook_a.probabilities.low    * 100);
+  const bHigh   = Math.round(hook_b.probabilities.high   * 100);
+  const bMed    = Math.round(hook_b.probabilities.medium * 100);
+  const bLow    = Math.round(hook_b.probabilities.low    * 100);
+
+  const isDead    = margin_guard.is_dead_heat;
+  const winnerA   = !isDead && margin_guard.winner === 'HOOK_A';
+  const winnerB   = !isDead && margin_guard.winner === 'HOOK_B';
+  const deltaStr  = (margin_guard.delta_p * 100).toFixed(1);
+
+  /* Donut slices: Viral (green) | Medium (amber) | Low (slate) */
+  const SLICE_COLORS = ['#10B981', '#F59E0B', '#E7E7E9'];
+
+  const dataA = [
+    { name: '🔥 Viral',  value: aHigh },
+    { name: '⚡ Medium', value: aMed  },
+    { name: '📉 Low',    value: aLow  },
+  ];
+  const dataB = [
+    { name: '🔥 Viral',  value: bHigh },
+    { name: '⚡ Medium', value: bMed  },
+    { name: '📉 Low',    value: bLow  },
   ];
 
   return (
-    <div className="space-y-8 pt-4">
-      {/* 1. Margin Guard Decision Support Banner */}
-      <MarginGuardBanner marginGuard={margin_guard} />
+    <div className="space-y-6 pt-4">
 
-      {/* Model Mode Indicator Pill */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs px-2 gap-2 text-[#6E6D7A]">
-        <div className="flex items-center gap-2">
-          <Cpu className="w-4 h-4 text-[#EA4C89]" />
-          <span>Inference Engine:</span>
-          <span className="font-bold text-[#0D0C22]">
-            {isMockModel ? 'Heuristic Rules Fallback' : 'Trained Hybrid ML Model (TF-IDF + 24 Features)'}
-          </span>
-        </div>
-        <div className="text-[11px] font-mono text-[#6E6D7A] bg-[#F8F7F4] border border-[#E7E7E9] px-3 py-1 rounded-full">
-          Decision Margin: ΔP = {(margin_guard.delta_p * 100).toFixed(1)}% (Threshold: 8.0%)
-        </div>
-      </div>
+      {/* ══ WINNER HERO CARD ═══════════════════════════════════════════ */}
+      <div className={`rounded-3xl p-6 sm:p-8 border-2 relative overflow-hidden ${
+        isDead
+          ? 'bg-amber-50 border-amber-300'
+          : 'bg-gradient-to-br from-emerald-50 to-white border-emerald-300'
+      }`}>
+        {/* Decorative background glow */}
+        <div className={`absolute -top-10 -right-10 w-40 h-40 rounded-full blur-3xl opacity-30 ${
+          isDead ? 'bg-amber-300' : 'bg-emerald-400'
+        }`} />
 
-      {/* 2. Side-by-Side Engagement & FNVM Metric Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Hook A Metrics Card */}
-        <Card borderAccent={margin_guard.winner === 'HOOK_A'}>
-          <CardHeader className="bg-[#F8F7F4]/60 border-b border-[#E7E7E9]">
-            <div className="flex items-center gap-2.5">
-              <Badge variant="dark">Hook A</Badge>
-              <span className="text-xs text-[#6E6D7A] font-medium truncate max-w-[200px]">"{hook_a.text}"</span>
+        <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-md ${
+              isDead
+                ? 'bg-amber-100 border-2 border-amber-300'
+                : 'bg-emerald-100 border-2 border-emerald-300'
+            }`}>
+              {isDead
+                ? <Minus className="w-7 h-7 text-amber-600" />
+                : <Trophy className="w-7 h-7 text-emerald-600" />
+              }
             </div>
-            <div className="text-right">
-              <span className="text-xs text-[#6E6D7A]">FNVM Score: </span>
-              <strong className="text-sm font-mono text-[#0D0C22]">{hook_a.fnvmScore}x</strong>
+            <div>
+              <p className={`text-xs font-black uppercase tracking-widest mb-1 ${isDead ? 'text-amber-700' : 'text-emerald-700'}`}>
+                {isDead ? '⚖️ Too Close to Call' : '🏆 More Likely to Go Viral'}
+              </p>
+              <h2 className="text-2xl sm:text-3xl font-black text-[#0D0C22] tracking-tight">
+                {isDead
+                  ? 'Dead Heat'
+                  : winnerA ? 'Hook Option A' : 'Hook Option B'
+                }
+              </h2>
+              <p className="text-xs text-[#6E6D7A] mt-1 max-w-md leading-relaxed">
+                {isDead
+                  ? `Both hooks are within ΔP = ${deltaStr}% — difference is statistically negligible. Test both.`
+                  : `${winnerA ? 'Hook A' : 'Hook B'} has a ${winnerA ? aHigh : bHigh}% viral chance vs ${winnerA ? bHigh : aHigh}% — leading by ΔP = ${deltaStr}%.`
+                }
+              </p>
             </div>
-          </CardHeader>
-          <CardBody className="space-y-5 p-6">
-            <div className="grid grid-cols-3 gap-3 text-center">
-              <div className="p-3 rounded-xl bg-[#F8F7F4] border border-[#E7E7E9]">
-                <div className="text-[10px] uppercase font-bold text-[#6E6D7A]">Low</div>
-                <div className="text-sm font-bold font-mono text-[#0D0C22] mt-0.5">
-                  {(hook_a.probabilities.low * 100).toFixed(0)}%
-                </div>
-              </div>
-              <div className="p-3 rounded-xl bg-[#F8F7F4] border border-[#E7E7E9]">
-                <div className="text-[10px] uppercase font-bold text-[#6E6D7A]">Medium</div>
-                <div className="text-sm font-bold font-mono text-amber-600 mt-0.5">
-                  {(hook_a.probabilities.medium * 100).toFixed(0)}%
-                </div>
-              </div>
-              <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
-                <div className="text-[10px] uppercase text-emerald-700 font-bold">High (Viral)</div>
-                <div className="text-base font-extrabold font-mono text-emerald-700 mt-0.5">
-                  {(hook_a.probabilities.high * 100).toFixed(0)}%
-                </div>
-              </div>
-            </div>
-
-            {/* Clickbait Semantic Alignment */}
-            <div className="pt-3 border-t border-[#E7E7E9] flex items-center justify-between text-xs">
-              <span className="text-[#6E6D7A] flex items-center gap-1.5 font-medium">
-                <ShieldCheck className="w-4 h-4 text-[#EA4C89]" />
-                Hook-to-Promise Alignment:
-              </span>
-              <span
-                className={`font-bold font-mono px-2 py-0.5 rounded-full text-[11px] ${
-                  hook_a.clickbaitWarning ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                }`}
-              >
-                {(hook_a.topicAlignment * 100).toFixed(0)}% match
-              </span>
-            </div>
-          </CardBody>
-        </Card>
-
-        {/* Hook B Metrics Card */}
-        <Card borderAccent={margin_guard.winner === 'HOOK_B'}>
-          <CardHeader className="bg-[#F8F7F4]/60 border-b border-[#E7E7E9]">
-            <div className="flex items-center gap-2.5">
-              <Badge variant="accent">Hook B</Badge>
-              <span className="text-xs text-[#6E6D7A] font-medium truncate max-w-[200px]">"{hook_b.text}"</span>
-            </div>
-            <div className="text-right">
-              <span className="text-xs text-[#6E6D7A]">FNVM Score: </span>
-              <strong className="text-sm font-mono text-[#EA4C89]">{hook_b.fnvmScore}x</strong>
-            </div>
-          </CardHeader>
-          <CardBody className="space-y-5 p-6">
-            <div className="grid grid-cols-3 gap-3 text-center">
-              <div className="p-3 rounded-xl bg-[#F8F7F4] border border-[#E7E7E9]">
-                <div className="text-[10px] uppercase font-bold text-[#6E6D7A]">Low</div>
-                <div className="text-sm font-bold font-mono text-[#0D0C22] mt-0.5">
-                  {(hook_b.probabilities.low * 100).toFixed(0)}%
-                </div>
-              </div>
-              <div className="p-3 rounded-xl bg-[#F8F7F4] border border-[#E7E7E9]">
-                <div className="text-[10px] uppercase font-bold text-[#6E6D7A]">Medium</div>
-                <div className="text-sm font-bold font-mono text-amber-600 mt-0.5">
-                  {(hook_b.probabilities.medium * 100).toFixed(0)}%
-                </div>
-              </div>
-              <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
-                <div className="text-[10px] uppercase text-emerald-700 font-bold">High (Viral)</div>
-                <div className="text-base font-extrabold font-mono text-emerald-700 mt-0.5">
-                  {(hook_b.probabilities.high * 100).toFixed(0)}%
-                </div>
-              </div>
-            </div>
-
-            {/* Clickbait Semantic Alignment */}
-            <div className="pt-3 border-t border-[#E7E7E9] flex items-center justify-between text-xs">
-              <span className="text-[#6E6D7A] flex items-center gap-1.5 font-medium">
-                <ShieldCheck className="w-4 h-4 text-[#EA4C89]" />
-                Hook-to-Promise Alignment:
-              </span>
-              <span
-                className={`font-bold font-mono px-2 py-0.5 rounded-full text-[11px] ${
-                  hook_b.clickbaitWarning ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                }`}
-              >
-                {(hook_b.topicAlignment * 100).toFixed(0)}% match
-              </span>
-            </div>
-          </CardBody>
-        </Card>
-      </div>
-
-      {/* 3. Recharts Probability Bar Chart Card */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <BarChart3 className="w-4 h-4 text-[#EA4C89]" />
-            <h3 className="text-sm font-bold text-[#0D0C22]">
-              Probability Tier Distribution Comparison
-            </h3>
           </div>
-          <span className="text-xs text-[#6E6D7A] font-medium hidden sm:inline">
-            Side-by-side linguistic confidence
-          </span>
-        </CardHeader>
-        <CardBody className="p-6">
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <XAxis dataKey="tier" stroke="#9E9EA7" fontSize={12} tickLine={false} />
-                <YAxis stroke="#9E9EA7" fontSize={12} unit="%" tickLine={false} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#FFFFFF',
-                    borderColor: '#E7E7E9',
-                    borderRadius: '12px',
-                    boxShadow: '0 8px 24px rgba(13,12,34,0.08)',
-                    color: '#0D0C22',
-                    fontSize: '12px',
-                    fontWeight: 600,
-                  }}
-                  cursor={{ fill: '#F8F7F4' }}
+
+          {/* Delta badge */}
+          <div className={`text-center px-5 py-3 rounded-2xl border-2 shrink-0 ${
+            isDead
+              ? 'bg-amber-50 border-amber-200'
+              : 'bg-white border-emerald-200'
+          }`}>
+            <div className={`text-3xl font-black font-mono ${isDead ? 'text-amber-700' : 'text-emerald-700'}`}>
+              {deltaStr}%
+            </div>
+            <div className="text-[10px] font-black uppercase tracking-widest text-[#6E6D7A] mt-0.5">
+              Margin ΔP
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ══ DUAL DONUT PIE CHARTS ═══════════════════════════════════════ */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {[
+          { label: 'Hook Option A', data: dataA, viral: aHigh, isWinner: winnerA, hook: hook_a, colorKey: '#0D0C22' },
+          { label: 'Hook Option B', data: dataB, viral: bHigh, isWinner: winnerB, hook: hook_b, colorKey: '#EA4C89' },
+        ].map(({ label, data, viral, isWinner, hook, colorKey }) => (
+          <div
+            key={label}
+            className={`bg-white rounded-3xl border-2 p-5 shadow-sm transition-all ${
+              isWinner && !isDead
+                ? 'border-emerald-300 shadow-emerald-100 shadow-lg'
+                : 'border-[#E7E7E9]'
+            }`}
+          >
+            {/* Card header */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div
+                  className="w-3 h-3 rounded-full"
+                  style={{ background: colorKey }}
                 />
-                <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
-                <Bar dataKey="HookA" name="Hook Option A" fill="#0D0C22" radius={[6, 6, 0, 0]} />
-                <Bar dataKey="HookB" name="Hook Option B" fill="#EA4C89" radius={[6, 6, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+                <span className="text-sm font-black text-[#0D0C22]">{label}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                {isWinner && !isDead && (
+                  <span className="text-[10px] font-black uppercase tracking-wide px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">
+                    🏆 Winner
+                  </span>
+                )}
+                {isDead && (
+                  <span className="text-[10px] font-black uppercase tracking-wide px-2.5 py-1 rounded-full bg-amber-100 text-amber-700 border border-amber-200">
+                    ⚖️ Tie
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Hook text preview */}
+            <p className="text-xs text-[#6E6D7A] italic mb-4 line-clamp-2 leading-relaxed border-l-2 border-[#E7E7E9] pl-3">
+              "{hook.text}"
+            </p>
+
+            {/* Donut Chart */}
+            <div className="h-52">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={data}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={85}
+                    paddingAngle={3}
+                    dataKey="value"
+                    labelLine={false}
+                    label={(props) =>
+                      props.cx === undefined ? null : (
+                        <DonutLabel
+                          cx={props.cx}
+                          cy={props.cy}
+                          viral={viral}
+                          isWinner={isWinner}
+                          isDead={isDead}
+                        />
+                      )
+                    }
+                  >
+                    {data.map((_, i) => (
+                      <Cell
+                        key={i}
+                        fill={SLICE_COLORS[i]}
+                        stroke="white"
+                        strokeWidth={2}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend
+                    iconType="circle"
+                    iconSize={8}
+                    wrapperStyle={{ fontSize: '11px', fontWeight: 700, paddingTop: '8px' }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Quick stats row */}
+            <div className="grid grid-cols-3 gap-2 mt-2">
+              {[
+                { label: '🔥 Viral',  val: `${viral}%`,    bg: 'bg-emerald-50 border-emerald-200 text-emerald-800' },
+                { label: '⚡ Medium', val: `${data[1].value}%`, bg: 'bg-amber-50 border-amber-200 text-amber-800' },
+                { label: '📉 Low',    val: `${data[2].value}%`, bg: 'bg-[#F8F7F4] border-[#E7E7E9] text-[#6E6D7A]' },
+              ].map((s) => (
+                <div key={s.label} className={`rounded-xl border p-2 text-center ${s.bg}`}>
+                  <div className="text-sm font-black font-mono">{s.val}</div>
+                  <div className="text-[10px] font-bold mt-0.5">{s.label}</div>
+                </div>
+              ))}
+            </div>
           </div>
-        </CardBody>
-      </Card>
+        ))}
+      </div>
 
-      {/* 4. Psycholinguistic Signals Breakdown Matrix */}
+      {/* ══ SIMPLE ALIGNMENT STRIP ══════════════════════════════════════ */}
+      <div className="bg-white rounded-2xl border border-[#E7E7E9] p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-[#FDF2F7] flex items-center justify-center">
+            <Shield className="w-4 h-4 text-[#EA4C89]" />
+          </div>
+          <div>
+            <p className="text-xs font-black text-[#0D0C22]">Hook-to-Promise Alignment</p>
+            <p className="text-[11px] text-[#6E6D7A]">How well each hook matches your video topic</p>
+          </div>
+        </div>
+        <div className="flex gap-3">
+          {[
+            { label: 'Hook A', pct: (hook_a.topicAlignment * 100).toFixed(0), warn: hook_a.clickbaitWarning },
+            { label: 'Hook B', pct: (hook_b.topicAlignment * 100).toFixed(0), warn: hook_b.clickbaitWarning },
+          ].map((h) => (
+            <div
+              key={h.label}
+              className={`text-center px-4 py-2 rounded-xl border font-mono font-black text-sm ${
+                h.warn
+                  ? 'bg-rose-50 border-rose-200 text-rose-700'
+                  : 'bg-emerald-50 border-emerald-200 text-emerald-700'
+              }`}
+            >
+              {h.pct}%
+              <div className="text-[9px] font-bold uppercase tracking-wide text-[#9E9EA7] mt-0.5">{h.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ══ SIGNALS + EXPORT ═══════════════════════════════════════════ */}
       <SignalsComparison hookA={hook_a} hookB={hook_b} />
-
-      {/* 5. One-Click Diagnostic Exporter */}
       <ExportBanner result={result} />
 
-      {/* 6. Ethical Disclaimer Display */}
+      {/* Disclaimer */}
       {disclaimer && (
         <div className="p-4 rounded-xl bg-[#F8F7F4] border border-[#E7E7E9] flex items-start gap-3 text-xs text-[#6E6D7A]">
-          <Info className="w-4 h-4 text-[#6E6D7A] shrink-0 mt-0.5" />
-          <p className="leading-relaxed font-normal">{disclaimer}</p>
+          <Info className="w-4 h-4 shrink-0 mt-0.5" />
+          <p className="leading-relaxed">{disclaimer}</p>
         </div>
       )}
     </div>
