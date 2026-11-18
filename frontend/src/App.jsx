@@ -22,6 +22,7 @@ import { OutcomeModal } from './components/analytics/OutcomeModal';
 import { AnalyticsModal } from './components/analytics/AnalyticsModal';
 import { Button } from './components/ui/Button';
 import { Card, CardBody } from './components/ui/Card';
+import { OAuthModal } from './components/oauth/OAuthModal';
 import { useHookStore } from './store/useHookStore';
 import { ingestSocialUrlAPI } from './services/api';
 
@@ -67,6 +68,7 @@ export function App() {
   // Modals state
   const [isOutcomeOpen, setIsOutcomeOpen] = useState(false);
   const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false);
+  const [isOAuthOpen, setIsOAuthOpen] = useState(false);
 
   // Social Ingestion state
   const [showIngestInput, setShowIngestInput] = useState(false);
@@ -147,7 +149,10 @@ export function App() {
   return (
     <div className="min-h-screen bg-white dark:bg-[#0F0F1A] text-[#0D0C22] dark:text-white flex flex-col font-sans selection:bg-[#EA4C89] selection:text-white transition-colors duration-300">
       {/* Top Navbar */}
-      <Header onOpenAnalytics={() => setIsAnalyticsOpen(true)} />
+      <Header
+        onOpenAnalytics={() => setIsAnalyticsOpen(true)}
+        onOpenOAuth={() => setIsOAuthOpen(true)}
+      />
 
       {/* Logged-Out / Auth State */}
       {!isLoggedIn ? (
@@ -345,6 +350,12 @@ export function App() {
       <AnalyticsModal
         isOpen={isAnalyticsOpen}
         onClose={() => setIsAnalyticsOpen(false)}
+      />
+
+      {/* Direct Social OAuth Integration Modal */}
+      <OAuthModal
+        isOpen={isOAuthOpen}
+        onClose={() => setIsOAuthOpen(false)}
       />
 
       {/* Footer */}

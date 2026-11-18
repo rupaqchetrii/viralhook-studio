@@ -6,7 +6,8 @@ import { LinterHighlighter } from './LinterHighlighter';
 import { countWords, countCharacters } from '../../utils/pacingCalculator';
 import { lintHook } from '../../utils/linterRules';
 import { transcribeAudioAPI } from '../../services/api';
-import { Mic, MicOff, Upload, Loader2 } from 'lucide-react';
+import { AudioWaveformVisualizer } from '../audio/AudioWaveformVisualizer';
+import { Mic, MicOff, Upload, Loader2, Activity } from 'lucide-react';
 
 // Memoized editor component: Typing in Hook A does not re-render Hook B
 export const HookEditor = memo(function HookEditor({
@@ -23,6 +24,7 @@ export const HookEditor = memo(function HookEditor({
 
   const [isRecording, setIsRecording] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [showWaveform, setShowWaveform] = useState(false);
   const fileInputRef = useRef(null);
   const recognitionRef = useRef(null);
 
@@ -142,6 +144,21 @@ export const HookEditor = memo(function HookEditor({
             <span className="hidden sm:inline">{isUploading ? 'Whisper...' : 'Audio'}</span>
           </button>
 
+          {/* Waveform visualizer toggle */}
+          <button
+            type="button"
+            onClick={() => setShowWaveform(!showWaveform)}
+            title="Toggle 0-5s Audio Waveform Spectrogram"
+            className={`px-2 py-1 rounded-full border text-[11px] transition-all flex items-center gap-1 ${
+              showWaveform || isRecording
+                ? 'bg-purple-50 text-purple-700 border-purple-200'
+                : 'bg-white text-[#6E6D7A] border-[#E7E7E9] hover:border-[#0D0C22] hover:text-[#0D0C22]'
+            }`}
+          >
+            <Activity className="w-3.5 h-3.5 text-[#EA4C89]" />
+            <span className="hidden sm:inline">Spectrogram</span>
+          </button>
+
           <span className="text-[#6E6D7A]">
             <strong className="text-[#0D0C22]">{wordCount}</strong> w
           </span>
@@ -167,6 +184,15 @@ export const HookEditor = memo(function HookEditor({
             className="w-full bg-[#F8F7F4] hover:bg-white text-[#0D0C22] placeholder-[#9E9EA7] text-sm sm:text-base rounded-xl p-4 border border-[#E7E7E9] focus:bg-white focus:border-[#EA4C89] focus:ring-2 focus:ring-[#EA4C89]/20 focus:outline-none resize-none transition-all duration-150 leading-relaxed font-sans shadow-sm"
           />
         </div>
+
+        {/* 0-5s Spoken Audio Waveform Spectrogram Visualizer */}
+        {(showWaveform || isRecording) && (
+          <AudioWaveformVisualizer
+            isRecording={isRecording}
+            wordsCount={wordCount}
+            spokenDuration={Math.max(1.2, wordCount / 2.75)}
+          />
+        )}
 
         {/* 1. Spoken Pacing Barometer (Dual Mode: Target Range Indicator) */}
         <PacingBarometer text={value} userWpm={wpm} />

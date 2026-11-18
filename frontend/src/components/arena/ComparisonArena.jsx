@@ -4,6 +4,7 @@ import {
 } from 'recharts';
 import { Trophy, Flame, Minus, Info, Zap, Shield, TrendingUp } from 'lucide-react';
 import { SignalsComparison } from './SignalsComparison';
+import { SemanticRadarCard } from './SemanticRadarCard';
 import { ExportBanner } from './ExportBanner';
 
 /* ── Custom label inside donut ─────────────────────────────────────── */
@@ -264,6 +265,9 @@ export function ComparisonArena({ result, onOpenOutcome }) {
           ))}
         </div>
       </div>
+
+      {/* 4. Dual-Tower 384-Dim Transformer Semantic Embedding Analysis */}
+      {SemanticRadarCard && <SemanticRadarCard hookA={hook_a.text} hookB={hook_b.text} />}
 
       {/* ══ SIGNALS + EXPORT ═══════════════════════════════════════════ */}
       <SignalsComparison hookA={hook_a} hookB={hook_b} />

@@ -11,6 +11,8 @@ from backend.app.api.remix import router as remix_router
 from backend.app.api.history_db import router as history_db_router
 from backend.app.api.audio import router as audio_router
 from backend.app.api.ingest import router as ingest_router
+from backend.app.api.embeddings import router as embeddings_router
+from backend.app.api.oauth import router as oauth_router
 from backend.app.services.prediction_gateway import gateway
 
 settings = get_settings()
@@ -45,6 +47,8 @@ app.include_router(remix_router, prefix=settings.API_V1_PREFIX)
 app.include_router(history_db_router, prefix=settings.API_V1_PREFIX)
 app.include_router(audio_router, prefix=settings.API_V1_PREFIX)
 app.include_router(ingest_router, prefix=settings.API_V1_PREFIX)
+app.include_router(embeddings_router, prefix=settings.API_V1_PREFIX)
+app.include_router(oauth_router, prefix=settings.API_V1_PREFIX)
 
 if (FRONTEND_DIST / "assets").exists():
     app.mount("/assets", StaticFiles(directory=FRONTEND_DIST / "assets"), name="assets")
@@ -92,7 +96,9 @@ def health_check():
             "social_ingest": True,
             "feedback_loop_48h": True,
             "hook_library": True,
-            "remix_lab": True
+            "remix_lab": True,
+            "deep_transformer_embeddings": True,
+            "oauth_social_sync": True
         }
     }
 

@@ -55,6 +55,19 @@ def bootstrap_schema():
                 notes           TEXT,
                 recorded_at     TEXT NOT NULL
             );
+
+            CREATE TABLE IF NOT EXISTS social_accounts (
+                id              INTEGER PRIMARY KEY AUTOINCREMENT,
+                platform        TEXT NOT NULL,
+                handle          TEXT NOT NULL UNIQUE,
+                display_name    TEXT NOT NULL,
+                followers       INTEGER DEFAULT 0,
+                avatar_url      TEXT,
+                scopes          TEXT NOT NULL,
+                is_active       INTEGER DEFAULT 1,
+                connected_at    TEXT NOT NULL,
+                last_synced_at  TEXT
+            );
         """)
 
 

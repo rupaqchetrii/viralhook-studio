@@ -7,11 +7,12 @@ import {
   ChevronDown,
   BarChart3,
   Settings,
+  Share2,
 } from 'lucide-react';
 import { useHookStore } from '../../store/useHookStore';
 import { checkBackendHealth } from '../../services/api';
 
-export function Header({ onOpenAnalytics }) {
+export function Header({ onOpenAnalytics, onOpenOAuth }) {
   const {
     platform,
     setPlatform,
@@ -126,6 +127,18 @@ export function Header({ onOpenAnalytics }) {
             <RefreshCw className="w-3.5 h-3.5 text-[#6E6D7A]" />
             <span>Swap</span>
           </button>
+
+          {/* Connected Social Channels */}
+          {onOpenOAuth && (
+            <button
+              onClick={onOpenOAuth}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-cyan-50 hover:bg-cyan-100 text-cyan-800 border border-cyan-200 text-xs font-semibold transition-all shadow-sm active:scale-95"
+              title="Connected Social Channels (TikTok & Instagram OAuth)"
+            >
+              <Share2 className="w-3.5 h-3.5 text-cyan-600" />
+              <span className="hidden sm:inline">Channels</span>
+            </button>
+          )}
 
           {/* Analytics Modal trigger */}
           {onOpenAnalytics && (
