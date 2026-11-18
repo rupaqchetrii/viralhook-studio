@@ -17,6 +17,7 @@ FRONTEND_DIST = BASE_DIR / "frontend" / "dist"
 FRONTEND_DIST_INDEX = FRONTEND_DIST / "index.html"
 DAY1_STATIC_INDEX = BASE_DIR / "frontend" / "public" / "day1_static.html"
 FRONTEND_INDEX = BASE_DIR / "frontend" / "index.html"
+FRONTEND_SHOWCASE = BASE_DIR / "frontend" / "showcase.html"
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -44,8 +45,9 @@ if (FRONTEND_DIST / "assets").exists():
 
 
 @app.get("/", tags=["UI"], summary="Serve ViralHook Studio Web Interface")
+@app.get("/day2", tags=["UI"], summary="Serve Day 2 Prototype Web Interface")
 def serve_ui():
-    """Serves the production React Studio UI if built, else fallback."""
+    """Serves the Day 2 React Studio interface."""
     if FRONTEND_DIST_INDEX.exists():
         return FileResponse(FRONTEND_DIST_INDEX)
     if DAY1_STATIC_INDEX.exists():

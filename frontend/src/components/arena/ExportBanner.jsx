@@ -36,38 +36,36 @@ export function ExportBanner({ result }) {
   };
 
   return (
-    <div className="p-4 rounded-2xl bg-[#191a2c]/60 border border-[#2e3152] flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-xl bg-[#A78BFA]/10 border border-[#A78BFA]/20 flex items-center justify-center text-[#A78BFA]">
-          <FileText className="w-4 h-4" />
+    <div className="p-5 rounded-2xl bg-[#F8F7F4] border border-[#E7E7E9] flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+      <div className="flex items-center gap-3.5">
+        <div className="w-10 h-10 rounded-xl bg-white border border-[#E7E7E9] flex items-center justify-center text-[#0D0C22] shadow-sm">
+          <FileText className="w-5 h-5" />
         </div>
         <div>
-          <h5 className="text-xs font-bold text-[#F1F5F9]">Export Creator Diagnostic Report</h5>
-          <p className="text-[11px] text-[#94A3B8]">
-            Copy full side-by-side metrics, probabilities, and pacing notes for your script.
+          <h5 className="text-xs font-bold text-[#0D0C22]">Export Creator Diagnostic Report</h5>
+          <p className="text-[11px] text-[#6E6D7A] mt-0.5">
+            Copy full side-by-side metrics, probabilities, and pacing notes for your production script.
           </p>
         </div>
       </div>
 
       <div className="flex items-center gap-2 shrink-0">
-        <Button
-          size="sm"
-          variant="outline"
+        <button
           onClick={handleCopyReport}
-          className="text-xs"
+          className="px-4 py-2 rounded-full text-xs font-bold bg-[#0D0C22] hover:bg-[#3D3D4E] text-white transition-all shadow-sm active:scale-95 flex items-center gap-1.5"
         >
           {copied ? (
             <>
-              <Check className="w-3.5 h-3.5 mr-1 text-emerald-400" />
-              <span className="text-emerald-400">Copied to Clipboard!</span>
+              <Check className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Copied Report!</span>
             </>
           ) : (
             <>
-              <Copy className="w-3.5 h-3.5 mr-1" />
+              <Copy className="w-3.5 h-3.5" />
               <span>Copy Full Report</span>
             </>
           )}
-        </Button>
+        </button>
       </div>
     </div>
   );

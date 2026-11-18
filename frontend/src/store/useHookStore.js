@@ -25,6 +25,14 @@ export const useHookStore = create(
       error: null,
       historyDrawerOpen: false,
       onboardingOpen: false,
+      settingsPanelOpen: false,
+
+      // Theme & user preferences
+      theme: 'light',       // 'light' | 'dark'
+      fontSize: 'medium',   // 'small' | 'medium' | 'large'
+      userName: 'Creator',
+      userEmail: 'creator@viralhook.studio',
+      isLoggedIn: true,
 
       // Persisted Battle Library History
       battleHistory: [],
@@ -37,6 +45,20 @@ export const useHookStore = create(
       setNiche: (niche) => set({ niche }),
       setHistoryDrawerOpen: (open) => set({ historyDrawerOpen: open }),
       setOnboardingOpen: (open) => set({ onboardingOpen: open }),
+      setSettingsPanelOpen: (open) => set({ settingsPanelOpen: open }),
+      setTheme: (theme) => set({ theme }),
+      setFontSize: (fontSize) => set({ fontSize }),
+      setUserName: (userName) => set({ userName }),
+      setUserEmail: (userEmail) => set({ userEmail }),
+      logout: () => set({
+        isLoggedIn: false,
+        comparisonResult: null,
+        settingsPanelOpen: false,
+        hookA: '',
+        hookB: '',
+        topic: '',
+      }),
+      loginBack: () => set({ isLoggedIn: true }),
 
       // Swap Hook A and Hook B
       swapHooks: () => {
@@ -155,6 +177,10 @@ export const useHookStore = create(
         battleHistory: state.battleHistory,
         platform: state.platform,
         niche: state.niche,
+        theme: state.theme,
+        fontSize: state.fontSize,
+        userName: state.userName,
+        userEmail: state.userEmail,
       }),
     }
   )

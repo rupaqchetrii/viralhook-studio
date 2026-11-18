@@ -1,77 +1,70 @@
 import React from 'react';
-import { Clock, Zap, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Clock, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { calculateSpokenTime, getPacingZone } from '../../utils/pacingCalculator';
 
 export function PacingBarometer({ wordCount }) {
   const spokenSec = calculateSpokenTime(wordCount);
   const info = getPacingZone(spokenSec);
 
-  // Normalize for a 5.0 second visual scale
+  // Normalizing to a 5-second gauge
   const progressPercent = Math.min(100, Math.round((spokenSec / 5.0) * 100));
 
   return (
-    <div className="space-y-2.5 pt-1">
-      {/* Header with tempo metric */}
+    <div className="space-y-2 pt-2">
       <div className="flex items-center justify-between text-xs">
-        <div className="flex items-center gap-1.5 text-zinc-400 font-medium">
-          <Clock className="w-3.5 h-3.5 text-violet-400" />
-          <span>Spoken Pace (2.75 wps):</span>
+        <div className="flex items-center gap-1.5 font-semibold text-[#0D0C22]">
+          <Clock className="w-3.5 h-3.5 text-[#EA4C89]" />
+          <span>3s Spoken Delivery Barometer:</span>
         </div>
-        <div className="flex items-center gap-2 font-mono">
-          <span
-            className={`font-bold px-2 py-0.5 rounded-md text-[11px] ${
-              spokenSec <= 3.0
-                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                : spokenSec <= 4.5
-                ? 'bg-amber-500/10 text-amber-300 border border-amber-500/20'
-                : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-            }`}
-          >
+        <div className="flex items-center gap-1.5 font-mono font-bold">
+          <span className={info.zone === 'green' ? 'text-emerald-600' : info.zone === 'yellow' ? 'text-amber-600' : 'text-rose-600'}>
             {spokenSec.toFixed(1)}s
           </span>
-          <span className="text-zinc-500 text-[11px]">/ 3.0s sweet spot</span>
+          <span className="text-[#6E6D7A]">/ 3.0s target</span>
         </div>
       </div>
 
-      {/* Sleek Gradient Segmented Progress Bar */}
-      <div className="relative h-2 w-full bg-black/40 rounded-full overflow-hidden border border-white/[0.08] p-[1px]">
-        {/* 3.0s Threshold Marker */}
+      {/* Progress track with 3s benchmark line */}
+      <div className="relative h-2.5 w-full bg-[#F3F3F6] rounded-full overflow-hidden border border-[#E7E7E9]">
+        {/* 3s benchmark marker at 60% (3s / 5s) */}
         <div
-          className="absolute top-0 bottom-0 w-[2px] bg-white/40 z-10 shadow-[0_0_8px_white]"
+          className="absolute top-0 bottom-0 w-0.5 bg-[#0D0C22] z-10"
           style={{ left: '60%' }}
           title="3.0s Retention Cliff"
         />
 
-        {/* Dynamic fill bar */}
+        {/* Progress fill */}
         <div
-          className={`h-full rounded-full transition-all duration-300 ${
+          className={`h-full transition-all duration-300 rounded-full ${
             spokenSec <= 3.0
-              ? 'bg-gradient-to-r from-emerald-500 to-teal-400 shadow-[0_0_12px_rgba(16,185,129,0.5)]'
+              ? 'bg-emerald-500'
               : spokenSec <= 4.5
-              ? 'bg-gradient-to-r from-amber-500 to-yellow-400 shadow-[0_0_12px_rgba(245,158,11,0.5)]'
-              : 'bg-gradient-to-r from-rose-500 to-red-400 shadow-[0_0_12px_rgba(239,68,68,0.5)]'
+              ? 'bg-amber-500'
+              : 'bg-rose-500'
           }`}
           style={{ width: `${progressPercent}%` }}
         />
       </div>
 
-      {/* Elegant zone pill tag */}
+      {/* Zone status banner */}
       <div
-        className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-[11px] transition-all backdrop-blur-md ${
+        className={`flex items-start gap-2.5 p-3 rounded-xl border text-xs ${
           info.zone === 'green'
-            ? 'bg-emerald-950/20 border-emerald-500/25 text-emerald-300'
+            ? 'bg-emerald-50/70 border-emerald-200 text-emerald-800'
             : info.zone === 'yellow'
-            ? 'bg-amber-950/20 border-amber-500/25 text-amber-300'
-            : 'bg-rose-950/20 border-rose-500/25 text-rose-300'
+            ? 'bg-amber-50/70 border-amber-200 text-amber-800'
+            : 'bg-rose-50/70 border-rose-200 text-rose-800'
         }`}
       >
         {info.zone === 'green' ? (
-          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+          <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600 mt-0.5" />
         ) : (
-          <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+          <AlertTriangle className={`w-4 h-4 shrink-0 mt-0.5 ${info.zone === 'yellow' ? 'text-amber-600' : 'text-rose-600'}`} />
         )}
-        <span className="font-semibold">{info.label}:</span>
-        <span className="text-zinc-400 truncate">{info.description}</span>
+        <div>
+          <div className="font-bold">{info.label}</div>
+          <div className="text-[11px] opacity-90 mt-0.5 leading-relaxed">{info.description}</div>
+        </div>
       </div>
     </div>
   );

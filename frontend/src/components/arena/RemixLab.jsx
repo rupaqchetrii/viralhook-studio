@@ -1,29 +1,32 @@
 import React from 'react';
-import { Wand2, Sparkles, ArrowRight, Lightbulb } from 'lucide-react';
+import { Wand2, Sparkles, ArrowRight, RefreshCw, Plus } from 'lucide-react';
+import { Card, CardBody, CardHeader } from '../ui/Card';
+import { Button } from '../ui/Button';
+import { Badge } from '../ui/Badge';
 import { useHookStore } from '../../store/useHookStore';
 
 const REMIX_TEMPLATES = [
   {
     archetype: 'Curiosity Loop',
-    badgeClass: 'bg-violet-500/15 text-violet-300 border-violet-500/30',
+    badgeVariant: 'accent',
     template: 'Why {topic} is secretly failing (and the 1 fix nobody talks about)',
     description: 'Creates an open knowledge gap that compels viewers to stay for the payoff.',
   },
   {
-    archetype: 'Loss Aversion',
-    badgeClass: 'bg-rose-500/15 text-rose-300 border-rose-500/30',
+    archetype: 'Loss Aversion / Negative Frame',
+    badgeVariant: 'danger',
     template: 'Stop doing this with your {topic} right now or you will regret it',
     description: 'Triggers the psychological urge to avoid loss or wasted effort.',
   },
   {
-    archetype: 'Listicle & Specificity',
-    badgeClass: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
+    archetype: 'Specificity & Listicle Proof',
+    badgeVariant: 'success',
     template: '3 simple {topic} habits that will save you 10 hours every week',
     description: 'Concrete numbers establish clear expectations and perceived value.',
   },
   {
     archetype: 'Direct Audience Challenge',
-    badgeClass: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+    badgeVariant: 'warning',
     template: 'You are probably making this major {topic} mistake without realizing it',
     description: 'Direct second-person address ("you") immediately grabs scroll attention.',
   },
@@ -41,65 +44,65 @@ export function RemixLab() {
     } else {
       setHookB(text);
     }
+    runComparison();
   };
 
   return (
-    <div className="glass-panel rounded-2xl p-6 border border-white/[0.08] shadow-2xl">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-white/[0.06] mb-5 gap-2">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-violet-500/15 border border-violet-500/30 flex items-center justify-center text-violet-400">
-            <Lightbulb className="w-4 h-4" />
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-white tracking-tight">
-              Hook Remix & Inspiration Lab
-            </h3>
-            <p className="text-xs text-zinc-400">One-click viral psychological archetype formulas calibrated to your topic</p>
-          </div>
+    <Card className="border-[#E7E7E9]">
+      <CardHeader>
+        <div className="flex items-center gap-2">
+          <Wand2 className="w-4 h-4 text-[#EA4C89]" />
+          <h3 className="text-sm font-bold text-[#0D0C22]">
+            Hook Remix Lab (Inspiration Gallery)
+          </h3>
         </div>
-      </div>
+        <span className="text-xs text-[#6E6D7A] font-medium hidden sm:inline">
+          One-click viral psychological archetype formulas calibrated to your topic
+        </span>
+      </CardHeader>
+      <CardBody className="p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {REMIX_TEMPLATES.map((item, idx) => {
+            const previewText = item.template.replace(/{topic}/g, cleanTopic);
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {REMIX_TEMPLATES.map((item, idx) => {
-          const formatted = item.template.replace(/{topic}/g, cleanTopic);
-
-          return (
-            <div
-              key={idx}
-              className="p-4 rounded-xl border border-white/[0.06] bg-black/30 hover:border-violet-500/40 hover:bg-white/[0.02] transition-all duration-200 flex flex-col justify-between gap-3 group shadow-sm"
-            >
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold border ${item.badgeClass}`}>
-                    {item.archetype}
-                  </span>
+            return (
+              <div
+                key={idx}
+                className="group p-5 rounded-2xl bg-[#F8F7F4] hover:bg-white border border-[#E7E7E9] hover:border-[#0D0C22] shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <Badge variant={item.badgeVariant} size="xs">
+                      {item.archetype}
+                    </Badge>
+                  </div>
+                  <p className="text-xs font-bold text-[#0D0C22] leading-snug mb-2 group-hover:text-[#EA4C89] transition-colors">
+                    "{previewText}"
+                  </p>
+                  <p className="text-[11px] text-[#6E6D7A] leading-relaxed mb-4">
+                    {item.description}
+                  </p>
                 </div>
-                <p className="text-sm font-semibold text-zinc-100 group-hover:text-violet-300 transition-colors leading-relaxed">
-                  "{formatted}"
-                </p>
-                <p className="text-xs text-zinc-400">{item.description}</p>
-              </div>
 
-              <div className="flex items-center gap-2 pt-2 border-t border-white/[0.06]">
-                <button
-                  onClick={() => handleApplyTemplate('A', item.template)}
-                  className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-violet-600/20 text-violet-300 border border-white/[0.06] hover:border-violet-500/40 transition-all flex items-center gap-1.5 shadow-sm"
-                >
-                  <span>Inject into Hook A</span>
-                  <ArrowRight className="w-3 h-3 text-violet-400" />
-                </button>
-                <button
-                  onClick={() => handleApplyTemplate('B', item.template)}
-                  className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-cyan-600/20 text-cyan-300 border border-white/[0.06] hover:border-cyan-500/40 transition-all flex items-center gap-1.5 shadow-sm"
-                >
-                  <span>Inject into Hook B</span>
-                  <ArrowRight className="w-3 h-3 text-cyan-400" />
-                </button>
+                <div className="pt-3 border-t border-[#E7E7E9] flex items-center justify-between gap-2">
+                  <button
+                    onClick={() => handleApplyTemplate('A', item.template)}
+                    className="flex-1 py-1.5 px-2 rounded-full text-[11px] font-semibold bg-white hover:bg-[#0D0C22] text-[#0D0C22] hover:text-white border border-[#E7E7E9] transition-all shadow-sm active:scale-95 text-center"
+                  >
+                    + Hook A
+                  </button>
+                  <button
+                    onClick={() => handleApplyTemplate('B', item.template)}
+                    className="flex-1 py-1.5 px-2 rounded-full text-[11px] font-semibold bg-[#FDF2F7] hover:bg-[#EA4C89] text-[#EA4C89] hover:text-white border border-[#EA4C89]/25 transition-all shadow-sm active:scale-95 text-center"
+                  >
+                    + Hook B
+                  </button>
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
+            );
+          })}
+        </div>
+      </CardBody>
+    </Card>
   );
 }

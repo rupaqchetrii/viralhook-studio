@@ -1,5 +1,7 @@
 import React from 'react';
-import { Sparkles, MessageSquare, Search, Hash, AlertOctagon, Zap, BookOpen, Clock, ShieldCheck } from 'lucide-react';
+import { Sparkles, MessageSquare, Search, Hash, AlertOctagon, Zap, BookOpen, Clock } from 'lucide-react';
+import { Card, CardBody, CardHeader } from '../ui/Card';
+import { Badge } from '../ui/Badge';
 
 export function SignalsComparison({ hookA, hookB }) {
   if (!hookA || !hookB) return null;
@@ -7,7 +9,8 @@ export function SignalsComparison({ hookA, hookB }) {
   const analysisA = hookA.analysis;
   const analysisB = hookB.analysis;
 
-  const getSignalList = (hook, analysis) => {
+  // Extract signals if available from backend analysis, or infer from text
+  const getSignals = (hook, analysis) => {
     if (analysis && analysis.signals) {
       return analysis.signals;
     }
@@ -16,178 +19,114 @@ export function SignalsComparison({ hookA, hookB }) {
     return [
       {
         label: 'Direct Address',
-        icon: MessageSquare,
-        active: /\b(you|your|you're)\b/i.test(text),
-        detail: /\b(you|your|you're)\b/i.test(text) ? 'Personal "you/your" used' : 'No personal address',
+        value: /\b(you|your|you're)\b/i.test(text) ? 'Personal address' : 'No direct address',
         impact: /\b(you|your|you're)\b/i.test(text) ? 'positive' : 'negative',
+        tip: 'Direct personal address boosts viewer connection.',
       },
       {
-        label: 'Curiosity Loop',
-        icon: Search,
-        active: /\b(secret|mistake|why|how|stop|never|nobody|hack)\b/i.test(text),
-        detail: /\b(secret|mistake|why|how|stop|never|nobody|hack)\b/i.test(text) ? 'Intrigue gap detected' : 'Standard phrasing',
-        impact: /\b(secret|mistake|why|how|stop|never|nobody|hack)\b/i.test(text) ? 'positive' : 'negative',
+        label: 'Curiosity Trigger',
+        value: /\b(secret|mistake|why|how|stop|never|nobody)\b/i.test(text) ? 'Curiosity loop' : 'No open loop',
+        impact: /\b(secret|mistake|why|how|stop|never|nobody)\b/i.test(text) ? 'positive' : 'negative',
+        tip: 'Curiosity words trigger the brain to seek closure.',
       },
       {
-        label: 'Specificity & Digits',
-        icon: Hash,
-        active: /\d+/.test(text),
-        detail: /\d+/.test(text) ? 'Concrete numbers present' : 'No numbers found',
+        label: 'Specificity / Numbers',
+        value: /\d+/.test(text) ? 'Concrete digit' : 'No numbers',
         impact: /\d+/.test(text) ? 'positive' : 'neutral',
+        tip: 'Numbers signal a quantifiable promise.',
       },
       {
-        label: 'Loss Aversion',
-        icon: AlertOctagon,
-        active: /\b(stop|never|mistake|wrong|ruin|avoid)\b/i.test(text),
-        detail: /\b(stop|never|mistake|wrong|ruin|avoid)\b/i.test(text) ? 'Loss-aversion frame' : 'Neutral framing',
-        impact: /\b(stop|never|mistake|wrong|ruin|avoid)\b/i.test(text) ? 'positive' : 'neutral',
-      },
-      {
-        label: 'Delivery Window',
-        icon: Clock,
-        active: spoken <= 3.0,
-        detail: `${spoken.toFixed(1)}s (${spoken <= 3.0 ? 'Optimal' : 'Needs trim'})`,
-        impact: spoken <= 3.0 ? 'positive' : 'negative',
-      },
-      {
-        label: 'Readability Ease',
-        icon: BookOpen,
-        active: true,
-        detail: `Grade ${analysis?.readability_grade || '5.5'} (Optimal 4-7)`,
-        impact: 'positive',
+        label: 'Speaking Window',
+        value: spoken <= 3.0 ? `${spoken.toFixed(1)}s (sweet spot)` : `${spoken.toFixed(1)}s`,
+        impact: spoken <= 3.0 ? 'positive' : 'neutral',
+        tip: 'Aim for under 3.0 seconds to prevent early drop-off.',
       },
     ];
   };
 
-  const signalsA = getSignalList(hookA, analysisA);
-  const signalsB = getSignalList(hookB, analysisB);
+  const signalsA = getSignals(hookA, analysisA);
+  const signalsB = getSignals(hookB, analysisB);
 
   return (
-    <div className="glass-panel rounded-2xl p-6 border border-white/[0.08] shadow-2xl">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-white/[0.06] mb-6 gap-2">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-violet-500/15 border border-violet-500/30 flex items-center justify-center text-violet-400">
-            <Sparkles className="w-4 h-4" />
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-white tracking-tight">
-              Psycholinguistic Signal Matrix
-            </h3>
-            <p className="text-xs text-zinc-400">Side-by-side linguistic breakdown & retention mechanics</p>
-          </div>
+    <Card>
+      <CardHeader>
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-4 h-4 text-[#EA4C89]" />
+          <h3 className="text-sm font-bold text-[#0D0C22]">
+            Psycholinguistic Feature Signals Breakdown (Day 2)
+          </h3>
         </div>
-
-        <div className="flex items-center gap-3 text-xs font-mono">
-          <span className="flex items-center gap-1.5 text-violet-300">
-            <span className="w-2 h-2 rounded-full bg-violet-400" /> Hook A
-          </span>
-          <span className="flex items-center gap-1.5 text-cyan-300">
-            <span className="w-2 h-2 rounded-full bg-cyan-400" /> Hook B
-          </span>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Hook A Card */}
-        <div className="space-y-3 p-4 rounded-xl bg-white/[0.02] border border-violet-500/20">
-          <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
-            <span className="px-2.5 py-0.5 rounded-lg text-xs font-bold font-mono bg-violet-500/15 text-violet-300 border border-violet-500/30">
-              Hook A Signals
-            </span>
-            <span className="text-xs text-zinc-400 truncate max-w-[200px]">"{hookA.text}"</span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            {signalsA.map((sig, idx) => {
-              const Icon = sig.icon || Sparkles;
-              const isPos = sig.impact === 'positive';
-              const isNeg = sig.impact === 'negative';
-
-              return (
+        <span className="text-xs text-[#6E6D7A] font-medium hidden sm:inline">
+          Fine-grained linguistic comparison
+        </span>
+      </CardHeader>
+      <CardBody className="p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Hook A Signals */}
+          <div className="p-4 rounded-xl bg-[#F8F7F4] border border-[#E7E7E9] space-y-3">
+            <div className="flex items-center justify-between pb-2 border-b border-[#E7E7E9]">
+              <span className="text-xs font-bold text-[#0D0C22]">Hook Option A Signals</span>
+              <Badge variant="dark" size="xs">Variant A</Badge>
+            </div>
+            <div className="space-y-2">
+              {signalsA.map((sig, idx) => (
                 <div
                   key={idx}
-                  className={`p-3 rounded-xl border text-xs flex flex-col justify-between gap-1.5 transition-all ${
-                    isPos
-                      ? 'bg-emerald-950/20 border-emerald-500/20'
-                      : isNeg
-                      ? 'bg-rose-950/20 border-rose-500/20'
-                      : 'bg-black/30 border-white/[0.06]'
-                  }`}
+                  className="p-3 rounded-lg bg-white border border-[#E7E7E9] flex items-center justify-between text-xs shadow-sm"
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="text-zinc-400 font-medium flex items-center gap-1.5 text-[11px]">
-                      <Icon className="w-3.5 h-3.5 text-violet-400" />
-                      {sig.label}
-                    </span>
-                    <span
-                      className={`text-[10px] px-1.5 py-0.2 rounded font-bold font-mono ${
-                        isPos
-                          ? 'bg-emerald-500/20 text-emerald-300'
-                          : isNeg
-                          ? 'bg-rose-500/20 text-rose-300'
-                          : 'bg-white/[0.05] text-zinc-400'
-                      }`}
-                    >
-                      {isPos ? 'Active' : isNeg ? 'Missing' : 'Fair'}
-                    </span>
+                  <div>
+                    <div className="font-semibold text-[#0D0C22]">{sig.label}</div>
+                    <div className="text-[11px] text-[#6E6D7A] mt-0.5">{sig.tip}</div>
                   </div>
-                  <div className="font-semibold text-white text-[11px] truncate">{sig.detail || sig.value}</div>
+                  <span
+                    className={`font-semibold px-2.5 py-1 rounded-full text-[11px] shrink-0 ml-2 ${
+                      sig.impact === 'positive'
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                        : sig.impact === 'negative'
+                        ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                        : 'bg-[#F8F7F4] text-[#6E6D7A] border border-[#E7E7E9]'
+                    }`}
+                  >
+                    {sig.value}
+                  </span>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Hook B Card */}
-        <div className="space-y-3 p-4 rounded-xl bg-white/[0.02] border border-cyan-500/20">
-          <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
-            <span className="px-2.5 py-0.5 rounded-lg text-xs font-bold font-mono bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
-              Hook B Signals
-            </span>
-            <span className="text-xs text-zinc-400 truncate max-w-[200px]">"{hookB.text}"</span>
+              ))}
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            {signalsB.map((sig, idx) => {
-              const Icon = sig.icon || Sparkles;
-              const isPos = sig.impact === 'positive';
-              const isNeg = sig.impact === 'negative';
-
-              return (
+          {/* Hook B Signals */}
+          <div className="p-4 rounded-xl bg-[#F8F7F4] border border-[#E7E7E9] space-y-3">
+            <div className="flex items-center justify-between pb-2 border-b border-[#E7E7E9]">
+              <span className="text-xs font-bold text-[#EA4C89]">Hook Option B Signals</span>
+              <Badge variant="accent" size="xs">Variant B</Badge>
+            </div>
+            <div className="space-y-2">
+              {signalsB.map((sig, idx) => (
                 <div
                   key={idx}
-                  className={`p-3 rounded-xl border text-xs flex flex-col justify-between gap-1.5 transition-all ${
-                    isPos
-                      ? 'bg-emerald-950/20 border-emerald-500/20'
-                      : isNeg
-                      ? 'bg-rose-950/20 border-rose-500/20'
-                      : 'bg-black/30 border-white/[0.06]'
-                  }`}
+                  className="p-3 rounded-lg bg-white border border-[#E7E7E9] flex items-center justify-between text-xs shadow-sm"
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="text-zinc-400 font-medium flex items-center gap-1.5 text-[11px]">
-                      <Icon className="w-3.5 h-3.5 text-cyan-400" />
-                      {sig.label}
-                    </span>
-                    <span
-                      className={`text-[10px] px-1.5 py-0.2 rounded font-bold font-mono ${
-                        isPos
-                          ? 'bg-emerald-500/20 text-emerald-300'
-                          : isNeg
-                          ? 'bg-rose-500/20 text-rose-300'
-                          : 'bg-white/[0.05] text-zinc-400'
-                      }`}
-                    >
-                      {isPos ? 'Active' : isNeg ? 'Missing' : 'Fair'}
-                    </span>
+                  <div>
+                    <div className="font-semibold text-[#0D0C22]">{sig.label}</div>
+                    <div className="text-[11px] text-[#6E6D7A] mt-0.5">{sig.tip}</div>
                   </div>
-                  <div className="font-semibold text-white text-[11px] truncate">{sig.detail || sig.value}</div>
+                  <span
+                    className={`font-semibold px-2.5 py-1 rounded-full text-[11px] shrink-0 ml-2 ${
+                      sig.impact === 'positive'
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                        : sig.impact === 'negative'
+                        ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                        : 'bg-[#F8F7F4] text-[#6E6D7A] border border-[#E7E7E9]'
+                    }`}
+                  >
+                    {sig.value}
+                  </span>
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      </CardBody>
+    </Card>
   );
 }
