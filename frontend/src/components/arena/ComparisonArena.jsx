@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend,
 } from 'recharts';
@@ -6,6 +6,8 @@ import { Trophy, Minus, Info, Shield, Sparkles } from 'lucide-react';
 import { SignalsComparison } from './SignalsComparison';
 import { SemanticRadarCard } from './SemanticRadarCard';
 import { ExportBanner } from './ExportBanner';
+import { fireConfetti } from '../../utils/confetti';
+import { AnimatedCounter } from '../ui/AnimatedCounter';
 
 /* ── Custom label inside donut ────────────────────────────────────── */
 function DonutLabel({ cx, cy, viral, isWinner, isDead }) {
@@ -41,6 +43,16 @@ function CustomTooltip({ active, payload }) {
 }
 
 export function ComparisonArena({ result, onOpenOutcome }) {
+  const isDeadWinner = result?.margin_guard?.is_dead_heat;
+  const winnerCode = result?.margin_guard?.winner;
+
+  // Trigger celebratory confetti burst on clear winner reveal unconditionally
+  useEffect(() => {
+    if (result && !isDeadWinner && (winnerCode === 'HOOK_A' || winnerCode === 'HOOK_B')) {
+      fireConfetti();
+    }
+  }, [result, isDeadWinner, winnerCode]);
+
   if (!result) return null;
 
   const { hook_a, hook_b, margin_guard, disclaimer } = result;
@@ -103,7 +115,7 @@ export function ComparisonArena({ result, onOpenOutcome }) {
                   {isDead ? '⚖️ MarginGuard Statistical Tie' : '🏆 High-Probability Winner'}
                 </p>
                 {!isDead && (
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-200 text-emerald-800 flex items-center gap-1">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-200 text-emerald-800 flex items-center gap-1 shadow-sm">
                     <Sparkles className="w-3 h-3 text-emerald-700" />
                     <span>ML Selected</span>
                   </span>
@@ -124,14 +136,14 @@ export function ComparisonArena({ result, onOpenOutcome }) {
             </div>
           </div>
 
-          {/* Delta badge */}
+          {/* Delta badge with live animated counter */}
           <div className={`text-center px-6 py-3.5 rounded-2xl border-2 shrink-0 shadow-sm ${
             isDead
               ? 'bg-amber-50 border-amber-300'
               : 'bg-white border-emerald-300'
           }`}>
             <div className={`text-3xl sm:text-4xl font-black font-mono ${isDead ? 'text-amber-700' : 'text-emerald-700'}`}>
-              {deltaStr}%
+              <AnimatedCounter value={Number(deltaStr)} decimals={1} suffix="%" />
             </div>
             <div className="text-[10px] font-black uppercase tracking-widest text-[#6E6D7A] mt-0.5">
               Margin ΔP
@@ -227,15 +239,17 @@ export function ComparisonArena({ result, onOpenOutcome }) {
               </ResponsiveContainer>
             </div>
 
-            {/* Quick stats row */}
+            {/* Quick stats row with animated counters */}
             <div className="grid grid-cols-3 gap-2 mt-2">
               {[
-                { label: '🔥 Viral',  val: `${viral}%`,    bg: 'bg-emerald-50 border-emerald-200 text-emerald-800' },
-                { label: '⚡ Medium', val: `${data[1].value}%`, bg: 'bg-amber-50 border-amber-200 text-amber-800' },
-                { label: '📉 Low',    val: `${data[2].value}%`, bg: 'bg-[#F8F7F4] border-[#E7E7E9] text-[#6E6D7A]' },
+                { label: '🔥 Viral',  rawVal: viral, bg: 'bg-emerald-50 border-emerald-200 text-emerald-800' },
+                { label: '⚡ Medium', rawVal: data[1].value, bg: 'bg-amber-50 border-amber-200 text-amber-800' },
+                { label: '📉 Low',    rawVal: data[2].value, bg: 'bg-[#F8F7F4] border-[#E7E7E9] text-[#6E6D7A]' },
               ].map((s) => (
                 <div key={s.label} className={`rounded-xl border p-2 text-center ${s.bg}`}>
-                  <div className="text-sm font-black font-mono">{s.val}</div>
+                  <div className="text-sm font-black font-mono">
+                    <AnimatedCounter value={s.rawVal} suffix="%" />
+                  </div>
                   <div className="text-[10px] font-bold mt-0.5">{s.label}</div>
                 </div>
               ))}
@@ -268,7 +282,7 @@ export function ComparisonArena({ result, onOpenOutcome }) {
                   : 'bg-emerald-50 border-emerald-200 text-emerald-700'
               }`}
             >
-              {h.pct}%
+              <AnimatedCounter value={Number(h.pct)} suffix="%" />
               <div className="text-[9px] font-bold uppercase tracking-wide text-[#9E9EA7] mt-0.5">{h.label}</div>
             </div>
           ))}

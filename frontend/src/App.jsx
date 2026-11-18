@@ -150,8 +150,9 @@ export function App() {
   return (
     <div className="min-h-screen bg-white dark:bg-[#0F0F1A] text-[#0D0C22] dark:text-white flex flex-col font-sans selection:bg-[#EA4C89] selection:text-white transition-colors duration-300 relative overflow-x-hidden">
       {/* World-Class Ambient Background Glow Elements */}
-      <div className="fixed top-20 left-1/2 -translate-x-1/2 w-[1100px] h-[500px] bg-gradient-to-tr from-[#EA4C89]/10 via-purple-600/8 to-indigo-500/8 rounded-full blur-[130px] pointer-events-none -z-10" />
-      <div className="fixed -top-40 -right-40 w-96 h-96 bg-cyan-400/8 rounded-full blur-[100px] pointer-events-none -z-10" />
+      <div className="fixed top-20 left-1/2 -translate-x-1/2 w-[1100px] h-[520px] bg-gradient-to-tr from-[#EA4C89]/12 via-purple-600/10 to-indigo-500/10 rounded-full blur-[130px] pointer-events-none -z-10 animate-drift-slow" />
+      <div className="fixed -top-40 -right-40 w-96 h-96 bg-cyan-400/10 rounded-full blur-[100px] pointer-events-none -z-10 animate-drift-reverse" />
+      <div className="fixed -bottom-40 -left-40 w-96 h-96 bg-[#EA4C89]/10 rounded-full blur-[100px] pointer-events-none -z-10 animate-drift-slow" />
 
       {/* Top Navbar */}
       <Header
@@ -164,13 +165,14 @@ export function App() {
         <LoginPage />
       ) : (
         /* Main Studio Workspace */
-        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
-          {activeTab === 'universal' ? (
-            <UniversalHookLab />
-          ) : (
-            <>
-              {/* Workspace Title & Presets Header */}
-              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pt-2">
+        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
+          <div key={activeTab} className="animate-tab-switch space-y-10">
+            {activeTab === 'universal' ? (
+              <UniversalHookLab />
+            ) : (
+              <>
+                {/* Workspace Title & Presets Header */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pt-2 animate-stagger-1">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F8F7F4] border border-[#E7E7E9] text-[#6E6D7A] text-xs font-semibold mb-3">
                 <span className="w-2 h-2 rounded-full bg-[#EA4C89]"></span>
@@ -290,8 +292,28 @@ export function App() {
             </div>
           )}
 
+          {/* Real-Time Neural Scanning Radar Bar during inference */}
+          {isComparing && (
+            <div className="p-4 rounded-2xl bg-[#0D0C22] text-white border border-[#EA4C89]/60 shadow-[0_10px_30px_rgba(234,76,137,0.3)] flex items-center justify-between gap-4 animate-pulse-glow">
+              <div className="flex items-center gap-3">
+                <RefreshCw className="w-5 h-5 text-[#EA4C89] animate-spin shrink-0" />
+                <div>
+                  <div className="text-xs font-black tracking-wide flex items-center gap-2">
+                    <span>Running Dual-Tower 384-Dim Latent Semantic Inference...</span>
+                  </div>
+                  <div className="text-[11px] text-[#9E9EA7]">
+                    Scanning 24 psycholinguistic features &bull; Spoken delivery tempo (2.75 wps) &bull; MarginGuard calibration
+                  </div>
+                </div>
+              </div>
+              <span className="hidden sm:inline-flex px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-[#EA4C89]/25 text-[#EA4C89] border border-[#EA4C89]/40 shrink-0">
+                AI ACTIVE
+              </span>
+            </div>
+          )}
+
           {/* Dual Editor Battle Grid (Hook A vs Hook B) */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch animate-stagger-2">
             <HookEditor
               label="Hook Option A"
               tagline="Variant A"
@@ -344,10 +366,11 @@ export function App() {
             />
           )}
 
-          {/* Hook Remix & Inspiration Lab */}
-          <RemixLab />
-            </>
-          )}
+            {/* Hook Remix & Inspiration Lab */}
+            <RemixLab />
+              </>
+            )}
+          </div>
         </main>
       )}
 

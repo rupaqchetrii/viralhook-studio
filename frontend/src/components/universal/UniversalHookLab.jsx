@@ -17,6 +17,7 @@ import {
 import { Card, CardBody, CardHeader } from '../ui/Card';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
+import { AnimatedCounter } from '../ui/AnimatedCounter';
 
 // 5 Universal Attention Domains
 const DOMAINS = [
@@ -352,7 +353,7 @@ export function UniversalHookLab() {
       <div className="space-y-2">
         <div className="flex items-center justify-between text-xs font-bold text-[#6E6D7A] uppercase tracking-wider px-1">
           <span>Select Target Communication Channel</span>
-          <span className="text-[#EA4C89]">{activeDomain.windowDesc}: {activeDomain.windowSec}</span>
+          <span className="text-[#EA4C89] font-mono">{activeDomain.windowDesc}: {activeDomain.windowSec}</span>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           {DOMAINS.map((domain) => {
@@ -400,248 +401,253 @@ export function UniversalHookLab() {
         </div>
       </div>
 
-      {/* Domain Context & Rules Callout */}
-      <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#1A1A2E] border border-[#E7E7E9] dark:border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="space-y-1 max-w-xl">
-          <div className="flex items-center gap-2">
-            <Target className="w-4 h-4 text-[#EA4C89]" />
-            <span className="font-bold text-xs text-[#0D0C22] dark:text-white">Attention Optimization Target:</span>
-          </div>
-          <p className="text-xs text-[#6E6D7A] dark:text-zinc-300">
-            {activeDomain.formulaGoal}
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          {activeDomain.rules.map((r) => (
-            <div
-              key={r.id}
-              title={r.desc}
-              className="px-3 py-1 rounded-full text-[11px] font-bold bg-[#F8F7F4] dark:bg-white/5 border border-[#E7E7E9] dark:border-white/10 text-[#0D0C22] dark:text-white flex items-center gap-1.5"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#EA4C89]" />
-              <span>{r.name}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Dual Universal Battle Arena */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
-        {/* Option A */}
-        <Card className="flex flex-col border-[#E7E7E9] dark:border-white/10 shadow-sm">
-          <CardHeader className="bg-[#F8F7F4]/60 dark:bg-white/5 border-b border-[#E7E7E9] dark:border-white/10 flex items-center justify-between">
+      {/* Dynamic Animated Content Area for Chosen Domain */}
+      <div key={activeDomainId} className="animate-tab-switch space-y-6">
+        {/* Domain Context & Rules Callout */}
+        <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#1A1A2E] border border-[#E7E7E9] dark:border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+          <div className="space-y-1 max-w-xl">
             <div className="flex items-center gap-2">
-              <Badge variant="dark" size="sm" className="font-bold">
-                Hook Variant A
-              </Badge>
-              <span className="text-[11px] font-mono text-[#6E6D7A]">
-                {scoreA.words} words &bull; {scoreA.chars} chars
-              </span>
+              <Target className="w-4 h-4 text-[#EA4C89]" />
+              <span className="font-bold text-xs text-[#0D0C22] dark:text-white">Attention Optimization Target:</span>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-[#6E6D7A]">Attention Score:</span>
-              <span className="font-mono font-extrabold text-sm px-2.5 py-0.5 rounded-full bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
-                {scoreA.score}%
-              </span>
-            </div>
-          </CardHeader>
-          <CardBody className="p-6 flex-1 flex flex-col gap-4">
-            <textarea
-              rows={4}
-              value={hookA}
-              onChange={(e) => setHookA(e.target.value)}
-              placeholder="Enter your opening hook or draft sentence..."
-              className="w-full bg-[#F8F7F4] dark:bg-white/5 text-[#0D0C22] dark:text-white rounded-xl p-4 border border-[#E7E7E9] dark:border-white/10 text-sm focus:border-[#EA4C89] focus:outline-none resize-none leading-relaxed font-sans"
-            />
-
-            {/* Diagnostic Signals */}
-            <div className="space-y-2 pt-1 flex-1">
-              <div className="text-[11px] font-bold text-[#6E6D7A] uppercase tracking-wide">
-                Psycholinguistic Diagnostics
-              </div>
-              <div className="space-y-1.5">
-                {scoreA.flags.map((flag, idx) => (
-                  <div
-                    key={idx}
-                    className={`p-2 rounded-xl text-xs flex items-start gap-2 border ${
-                      flag.status === 'pass'
-                        ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/30'
-                        : flag.status === 'fail'
-                        ? 'bg-rose-50 dark:bg-rose-950/20 text-rose-800 dark:text-rose-300 border-rose-200 dark:border-rose-800/30'
-                        : 'bg-amber-50 dark:bg-amber-950/20 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800/30'
-                    }`}
-                  >
-                    {flag.status === 'pass' ? (
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                    ) : (
-                      <AlertTriangle className="w-3.5 h-3.5 text-rose-600 shrink-0 mt-0.5" />
-                    )}
-                    <div>
-                      <strong className="block text-[11px]">{flag.label}</strong>
-                      <span className="text-[11px] opacity-90">{flag.text}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </CardBody>
-        </Card>
-
-        {/* Option B */}
-        <Card className="flex flex-col border-[#E7E7E9] dark:border-white/10 shadow-sm">
-          <CardHeader className="bg-[#F8F7F4]/60 dark:bg-white/5 border-b border-[#E7E7E9] dark:border-white/10 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Badge variant="accent" size="sm" className="font-bold">
-                Hook Variant B (Challenger)
-              </Badge>
-              <span className="text-[11px] font-mono text-[#6E6D7A]">
-                {scoreB.words} words &bull; {scoreB.chars} chars
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-[#6E6D7A]">Attention Score:</span>
-              <span className="font-mono font-extrabold text-sm px-2.5 py-0.5 rounded-full bg-pink-50 dark:bg-pink-950/40 text-[#EA4C89] border border-pink-200 dark:border-pink-800">
-                {scoreB.score}%
-              </span>
-            </div>
-          </CardHeader>
-          <CardBody className="p-6 flex-1 flex flex-col gap-4">
-            <textarea
-              rows={4}
-              value={hookB}
-              onChange={(e) => setHookB(e.target.value)}
-              placeholder="Enter comparison hook or alternate phrasing..."
-              className="w-full bg-[#F8F7F4] dark:bg-white/5 text-[#0D0C22] dark:text-white rounded-xl p-4 border border-[#E7E7E9] dark:border-white/10 text-sm focus:border-[#EA4C89] focus:outline-none resize-none leading-relaxed font-sans"
-            />
-
-            {/* Diagnostic Signals */}
-            <div className="space-y-2 pt-1 flex-1">
-              <div className="text-[11px] font-bold text-[#6E6D7A] uppercase tracking-wide">
-                Psycholinguistic Diagnostics
-              </div>
-              <div className="space-y-1.5">
-                {scoreB.flags.map((flag, idx) => (
-                  <div
-                    key={idx}
-                    className={`p-2 rounded-xl text-xs flex items-start gap-2 border ${
-                      flag.status === 'pass'
-                        ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/30'
-                        : flag.status === 'fail'
-                        ? 'bg-rose-50 dark:bg-rose-950/20 text-rose-800 dark:text-rose-300 border-rose-200 dark:border-rose-800/30'
-                        : 'bg-amber-50 dark:bg-amber-950/20 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800/30'
-                    }`}
-                  >
-                    {flag.status === 'pass' ? (
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                    ) : (
-                      <AlertTriangle className="w-3.5 h-3.5 text-rose-600 shrink-0 mt-0.5" />
-                    )}
-                    <div>
-                      <strong className="block text-[11px]">{flag.label}</strong>
-                      <span className="text-[11px] opacity-90">{flag.text}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </CardBody>
-        </Card>
-      </div>
-
-      {/* Battle Verdict Bar */}
-      <div
-        className={`p-6 rounded-3xl border-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all ${
-          winner === 'TIE'
-            ? 'bg-amber-50 dark:bg-amber-950/20 border-amber-300'
-            : winner === 'HOOK_A'
-            ? 'bg-emerald-50 dark:bg-emerald-950/20 border-emerald-300'
-            : 'bg-pink-50 dark:bg-pink-950/20 border-[#EA4C89]/50'
-        }`}
-      >
-        <div className="flex items-center gap-3.5">
-          <div
-            className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white shrink-0 shadow-md ${
-              winner === 'TIE' ? 'bg-amber-500' : winner === 'HOOK_A' ? 'bg-emerald-600' : 'bg-[#EA4C89]'
-            }`}
-          >
-            <Trophy className="w-6 h-6" />
+            <p className="text-xs text-[#6E6D7A] dark:text-zinc-300">
+              {activeDomain.formulaGoal}
+            </p>
           </div>
-          <div>
-            <div className="text-xs font-bold uppercase tracking-wider text-[#6E6D7A] dark:text-zinc-400">
-              Universal Attention Verdict
-            </div>
-            <div className="text-base sm:text-lg font-extrabold text-[#0D0C22] dark:text-white">
-              {winner === 'TIE'
-                ? `Statistical Dead-Heat (Within ±${delta}% margin)`
-                : winner === 'HOOK_A'
-                ? `Variant A Outperforms Variant B by +${delta}% Attention Retention`
-                : `Variant B Outperforms Variant A by +${delta}% Attention Retention`}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <div className="text-center px-4 py-2 rounded-xl bg-white dark:bg-white/10 border border-[#E7E7E9] dark:border-white/10 shadow-sm">
-            <div className="text-xs font-mono font-black text-[#0D0C22] dark:text-white">{scoreA.score}% vs {scoreB.score}%</div>
-            <div className="text-[10px] text-[#6E6D7A] font-bold">Raw Score</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Curated Domain Templates & Formulas */}
-      <div className="space-y-4 pt-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-[#EA4C89]" />
-            <h3 className="text-sm font-extrabold text-[#0D0C22] dark:text-white">
-              Curated Formulas for {activeDomain.title}
-            </h3>
-          </div>
-          <span className="text-xs text-[#6E6D7A]">Click to insert into Variant A</span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {activeDomain.templates.map((tmpl, idx) => (
-            <div
-              key={idx}
-              className="p-5 rounded-2xl bg-white dark:bg-[#1A1A2E] border border-[#E7E7E9] dark:border-white/10 flex flex-col justify-between gap-4 shadow-sm hover:border-[#EA4C89] transition-all group"
-            >
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-extrabold text-xs text-[#0D0C22] dark:text-white">
-                    {tmpl.title}
-                  </span>
-                  <button
-                    onClick={() => copyTemplate(tmpl.example, idx)}
-                    title="Copy Example"
-                    className="p-1.5 rounded-lg text-[#6E6D7A] hover:text-[#0D0C22] dark:hover:text-white transition-colors"
-                  >
-                    {copiedIndex === idx ? (
-                      <Check className="w-3.5 h-3.5 text-emerald-600" />
-                    ) : (
-                      <Copy className="w-3.5 h-3.5" />
-                    )}
-                  </button>
-                </div>
-                <div className="p-2.5 rounded-xl bg-[#F8F7F4] dark:bg-white/5 font-mono text-[11px] text-[#6E6D7A] dark:text-zinc-400 border border-[#E7E7E9] dark:border-white/10 leading-relaxed">
-                  {tmpl.formula}
-                </div>
-                <p className="text-xs text-[#0D0C22] dark:text-zinc-200 leading-relaxed italic">
-                  "{tmpl.example}"
-                </p>
-              </div>
-
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => applyTemplateToA(tmpl.example)}
-                className="w-full text-xs font-bold justify-center hover:bg-[#EA4C89] hover:text-white hover:border-[#EA4C89]"
+          <div className="flex flex-wrap items-center gap-2">
+            {activeDomain.rules.map((r) => (
+              <div
+                key={r.id}
+                title={r.desc}
+                className="px-3 py-1 rounded-full text-[11px] font-bold bg-[#F8F7F4] dark:bg-white/5 border border-[#E7E7E9] dark:border-white/10 text-[#0D0C22] dark:text-white flex items-center gap-1.5"
               >
-                <span>Use as Hook A</span>
-                <ArrowRight className="w-3.5 h-3.5 ml-1" />
-              </Button>
+                <span className="w-1.5 h-1.5 rounded-full bg-[#EA4C89]" />
+                <span>{r.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Dual Universal Battle Arena */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+          {/* Option A */}
+          <Card className="flex flex-col border-[#E7E7E9] dark:border-white/10 shadow-sm rounded-3xl overflow-hidden tactile-hover">
+            <CardHeader className="bg-[#F8F7F4]/60 dark:bg-white/5 border-b border-[#E7E7E9] dark:border-white/10 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Badge variant="dark" size="sm" className="font-bold">
+                  Hook Variant A
+                </Badge>
+                <span className="text-[11px] font-mono text-[#6E6D7A]">
+                  {scoreA.words} words &bull; {scoreA.chars} chars
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-[#6E6D7A]">Attention Score:</span>
+                <span className="font-mono font-extrabold text-sm px-2.5 py-0.5 rounded-full bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+                  <AnimatedCounter value={scoreA.score} suffix="%" />
+                </span>
+              </div>
+            </CardHeader>
+            <CardBody className="p-6 flex-1 flex flex-col gap-4">
+              <textarea
+                rows={4}
+                value={hookA}
+                onChange={(e) => setHookA(e.target.value)}
+                placeholder="Enter your opening hook or draft sentence..."
+                className="w-full bg-[#F8F7F4] dark:bg-white/5 text-[#0D0C22] dark:text-white rounded-xl p-4 border border-[#E7E7E9] dark:border-white/10 text-sm focus:border-[#EA4C89] focus:outline-none resize-none leading-relaxed font-sans"
+              />
+
+              {/* Diagnostic Signals */}
+              <div className="space-y-2 pt-1 flex-1">
+                <div className="text-[11px] font-bold text-[#6E6D7A] uppercase tracking-wide">
+                  Psycholinguistic Diagnostics
+                </div>
+                <div className="space-y-1.5">
+                  {scoreA.flags.map((flag, idx) => (
+                    <div
+                      key={idx}
+                      className={`p-2 rounded-xl text-xs flex items-start gap-2 border ${
+                        flag.status === 'pass'
+                          ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/30'
+                          : flag.status === 'fail'
+                          ? 'bg-rose-50 dark:bg-rose-950/20 text-rose-800 dark:text-rose-300 border-rose-200 dark:border-rose-800/30'
+                          : 'bg-amber-50 dark:bg-amber-950/20 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800/30'
+                      }`}
+                    >
+                      {flag.status === 'pass' ? (
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                      ) : (
+                        <AlertTriangle className="w-3.5 h-3.5 text-rose-600 shrink-0 mt-0.5" />
+                      )}
+                      <div>
+                        <strong className="block text-[11px]">{flag.label}</strong>
+                        <span className="text-[11px] opacity-90">{flag.text}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </CardBody>
+          </Card>
+
+          {/* Option B */}
+          <Card className="flex flex-col border-[#E7E7E9] dark:border-white/10 shadow-sm rounded-3xl overflow-hidden tactile-hover">
+            <CardHeader className="bg-[#F8F7F4]/60 dark:bg-white/5 border-b border-[#E7E7E9] dark:border-white/10 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Badge variant="accent" size="sm" className="font-bold">
+                  Hook Variant B (Challenger)
+                </Badge>
+                <span className="text-[11px] font-mono text-[#6E6D7A]">
+                  {scoreB.words} words &bull; {scoreB.chars} chars
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-[#6E6D7A]">Attention Score:</span>
+                <span className="font-mono font-extrabold text-sm px-2.5 py-0.5 rounded-full bg-pink-50 dark:bg-pink-950/40 text-[#EA4C89] border border-pink-200 dark:border-pink-800">
+                  <AnimatedCounter value={scoreB.score} suffix="%" />
+                </span>
+              </div>
+            </CardHeader>
+            <CardBody className="p-6 flex-1 flex flex-col gap-4">
+              <textarea
+                rows={4}
+                value={hookB}
+                onChange={(e) => setHookB(e.target.value)}
+                placeholder="Enter comparison hook or alternate phrasing..."
+                className="w-full bg-[#F8F7F4] dark:bg-white/5 text-[#0D0C22] dark:text-white rounded-xl p-4 border border-[#E7E7E9] dark:border-white/10 text-sm focus:border-[#EA4C89] focus:outline-none resize-none leading-relaxed font-sans"
+              />
+
+              {/* Diagnostic Signals */}
+              <div className="space-y-2 pt-1 flex-1">
+                <div className="text-[11px] font-bold text-[#6E6D7A] uppercase tracking-wide">
+                  Psycholinguistic Diagnostics
+                </div>
+                <div className="space-y-1.5">
+                  {scoreB.flags.map((flag, idx) => (
+                    <div
+                      key={idx}
+                      className={`p-2 rounded-xl text-xs flex items-start gap-2 border ${
+                        flag.status === 'pass'
+                          ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/30'
+                          : flag.status === 'fail'
+                          ? 'bg-rose-50 dark:bg-rose-950/20 text-rose-800 dark:text-rose-300 border-rose-200 dark:border-rose-800/30'
+                          : 'bg-amber-50 dark:bg-amber-950/20 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800/30'
+                      }`}
+                    >
+                      {flag.status === 'pass' ? (
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                      ) : (
+                        <AlertTriangle className="w-3.5 h-3.5 text-rose-600 shrink-0 mt-0.5" />
+                      )}
+                      <div>
+                        <strong className="block text-[11px]">{flag.label}</strong>
+                        <span className="text-[11px] opacity-90">{flag.text}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </CardBody>
+          </Card>
+        </div>
+
+        {/* Battle Verdict Bar */}
+        <div
+          className={`p-6 rounded-3xl border-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all shadow-md ${
+            winner === 'TIE'
+              ? 'bg-amber-50 dark:bg-amber-950/20 border-amber-300'
+              : winner === 'HOOK_A'
+              ? 'bg-emerald-50 dark:bg-emerald-950/20 border-emerald-300'
+              : 'bg-pink-50 dark:bg-pink-950/20 border-[#EA4C89]/50'
+          }`}
+        >
+          <div className="flex items-center gap-3.5">
+            <div
+              className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white shrink-0 shadow-md ${
+                winner === 'TIE' ? 'bg-amber-500' : winner === 'HOOK_A' ? 'bg-emerald-600' : 'bg-[#EA4C89]'
+              }`}
+            >
+              <Trophy className="w-6 h-6" />
             </div>
-          ))}
+            <div>
+              <div className="text-xs font-bold uppercase tracking-wider text-[#6E6D7A] dark:text-zinc-400">
+                Universal Attention Verdict
+              </div>
+              <div className="text-base sm:text-lg font-extrabold text-[#0D0C22] dark:text-white">
+                {winner === 'TIE'
+                  ? `Statistical Dead-Heat (Within ±${delta}% margin)`
+                  : winner === 'HOOK_A'
+                  ? `Variant A Outperforms Variant B by +${delta}% Attention Retention`
+                  : `Variant B Outperforms Variant A by +${delta}% Attention Retention`}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="text-center px-4 py-2 rounded-xl bg-white dark:bg-white/10 border border-[#E7E7E9] dark:border-white/10 shadow-sm">
+              <div className="text-xs font-mono font-black text-[#0D0C22] dark:text-white">
+                <AnimatedCounter value={scoreA.score} suffix="%" /> vs <AnimatedCounter value={scoreB.score} suffix="%" />
+              </div>
+              <div className="text-[10px] text-[#6E6D7A] font-bold">Raw Score</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Curated Domain Templates & Formulas */}
+        <div className="space-y-4 pt-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-[#EA4C89]" />
+              <h3 className="text-sm font-extrabold text-[#0D0C22] dark:text-white">
+                Curated Formulas for {activeDomain.title}
+              </h3>
+            </div>
+            <span className="text-xs text-[#6E6D7A]">Click to insert into Variant A</span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {activeDomain.templates.map((tmpl, idx) => (
+              <div
+                key={idx}
+                className="p-5 rounded-2xl bg-white dark:bg-[#1A1A2E] border border-[#E7E7E9] dark:border-white/10 flex flex-col justify-between gap-4 shadow-sm hover:border-[#EA4C89] transition-all group tactile-hover"
+              >
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-extrabold text-xs text-[#0D0C22] dark:text-white">
+                      {tmpl.title}
+                    </span>
+                    <button
+                      onClick={() => copyTemplate(tmpl.example, idx)}
+                      title="Copy Example"
+                      className="p-1.5 rounded-lg text-[#6E6D7A] hover:text-[#0D0C22] dark:hover:text-white transition-colors"
+                    >
+                      {copiedIndex === idx ? (
+                        <Check className="w-3.5 h-3.5 text-emerald-600" />
+                      ) : (
+                        <Copy className="w-3.5 h-3.5" />
+                      )}
+                    </button>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-[#F8F7F4] dark:bg-white/5 font-mono text-[11px] text-[#6E6D7A] dark:text-zinc-400 border border-[#E7E7E9] dark:border-white/10 leading-relaxed">
+                    {tmpl.formula}
+                  </div>
+                  <p className="text-xs text-[#0D0C22] dark:text-zinc-200 leading-relaxed italic">
+                    "{tmpl.example}"
+                  </p>
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => applyTemplateToA(tmpl.example)}
+                  className="w-full text-xs font-bold justify-center hover:bg-[#EA4C89] hover:text-white hover:border-[#EA4C89]"
+                >
+                  <span>Use as Hook A</span>
+                  <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                </Button>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
