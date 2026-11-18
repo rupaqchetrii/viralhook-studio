@@ -18,6 +18,7 @@ import { LoginPage } from './components/auth/LoginPage';
 import { HookEditor } from './components/arena/HookEditor';
 import { ComparisonArena } from './components/arena/ComparisonArena';
 import { RemixLab } from './components/arena/RemixLab';
+import { UniversalHookLab } from './components/universal/UniversalHookLab';
 import { OutcomeModal } from './components/analytics/OutcomeModal';
 import { AnalyticsModal } from './components/analytics/AnalyticsModal';
 import { Button } from './components/ui/Button';
@@ -49,6 +50,7 @@ const PRESETS = [
 
 export function App() {
   const {
+    activeTab,
     hookA,
     setHookA,
     hookB,
@@ -160,8 +162,12 @@ export function App() {
       ) : (
         /* Main Studio Workspace */
         <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
-          {/* Workspace Title & Presets Header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pt-2">
+          {activeTab === 'universal' ? (
+            <UniversalHookLab />
+          ) : (
+            <>
+              {/* Workspace Title & Presets Header */}
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pt-2">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F8F7F4] border border-[#E7E7E9] text-[#6E6D7A] text-xs font-semibold mb-3">
                 <span className="w-2 h-2 rounded-full bg-[#EA4C89]"></span>
@@ -327,6 +333,8 @@ export function App() {
 
           {/* Hook Remix & Inspiration Lab */}
           <RemixLab />
+            </>
+          )}
         </main>
       )}
 

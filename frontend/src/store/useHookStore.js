@@ -28,6 +28,7 @@ export const useHookStore = create(
       niche: 'tech',      // 'tech' | 'finance' | 'fitness' | 'education' | 'lifestyle'
 
       // Application UI states
+      activeTab: 'arena', // 'arena' | 'universal'
       isComparing: false,
       comparisonResult: null,
       error: null,
@@ -49,6 +50,7 @@ export const useHookStore = create(
       isSyncingWithDb: false,
 
       // Actions
+      setActiveTab: (activeTab) => set({ activeTab }),
       setHookA: (text) => set({ hookA: text, error: null }),
       setHookB: (text) => set({ hookB: text, error: null }),
       setTopic: (text) => set({ topic: text }),
