@@ -6,7 +6,15 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { compareHooksAPI } from '../services/api';
+import {
+  compareHooksAPI,
+  saveComparisonToDatabase,
+  fetchLibraryFromDatabase,
+  deleteLibraryItemFromDatabase,
+  recordPerformanceOutcome,
+  fetchPerformanceHistory,
+  saveBattleToDbAPI,
+} from '../services/api';
 import { lintHook } from '../utils/linterRules';
 
 export const useHookStore = create(
@@ -36,6 +44,9 @@ export const useHookStore = create(
 
       // Persisted Battle Library History
       battleHistory: [],
+      databaseHistory: [],
+      performanceRecords: [],
+      isSyncingWithDb: false,
 
       // Actions
       setHookA: (text) => set({ hookA: text, error: null }),
@@ -122,18 +133,19 @@ export const useHookStore = create(
         }
       },
 
-      // Save battle result to history
+      // Save battle result to history (both LocalStorage and SQLite Backend API)
       saveCurrentBattle: (explicitResult = null) => {
         const result = explicitResult || get().comparisonResult;
         if (!result) return;
 
-        const { hookA, hookB, platform, niche, battleHistory } = get();
+        const { hookA, hookB, platform, niche, topic, battleHistory } = get();
 
         const newEntry = {
           id: 'battle_' + Date.now(),
           timestamp: new Date().toISOString(),
           platform,
           niche,
+          topic,
           hookA,
           hookB,
           winner: result.margin_guard.winner,
@@ -141,21 +153,79 @@ export const useHookStore = create(
           isDeadHeat: result.margin_guard.is_dead_heat,
           pHighA: result.hook_a.probabilities.high,
           pHighB: result.hook_b.probabilities.high,
+          classA: result.hook_a.predictedClass || (result.hook_a.probabilities.high >= 0.5 ? 'High' : 'Medium'),
+          classB: result.hook_b.predictedClass || (result.hook_b.probabilities.high >= 0.5 ? 'High' : 'Medium'),
           fnvmA: result.hook_a.fnvmScore,
           fnvmB: result.hook_b.fnvmScore,
         };
 
-        // Keep last 30 saved battles
+        // Keep last 30 saved battles in client state
         set({ battleHistory: [newEntry, ...battleHistory.slice(0, 29)] });
+
+        // Asynchronously persist to SQLite Backend
+        saveComparisonToDatabase({
+          hook_a: hookA,
+          hook_b: hookB,
+          verdict: result.margin_guard.winner === 'DEAD_HEAT' ? 'Dead-Heat' : result.margin_guard.winner === 'HOOK_A' ? 'Hook A Leads' : 'Hook B Leads',
+          leading_hook: result.margin_guard.winner === 'DEAD_HEAT' ? null : (result.margin_guard.winner === 'HOOK_A' ? hookA : hookB),
+          score_diff: result.margin_guard.delta_p,
+          is_close: result.margin_guard.is_dead_heat,
+          prob_high_a: result.hook_a.probabilities.high,
+          prob_high_b: result.hook_b.probabilities.high,
+          class_a: newEntry.classA,
+          class_b: newEntry.classB,
+          is_mock: Boolean(result.isMockModel),
+          topic: topic || null,
+          notes: `FNVM: ${result.hook_a.fnvmScore}x vs ${result.hook_b.fnvmScore}x`,
+        }).then(() => {
+          get().syncDatabaseLibrary();
+        }).catch((e) => console.warn('SQLite persistence error:', e));
+
+        saveBattleToDbAPI(newEntry);
+      },
+
+      // Sync with SQLite backend library
+      syncDatabaseLibrary: async () => {
+        set({ isSyncingWithDb: true });
+        try {
+          const items = await fetchLibraryFromDatabase(50);
+          set({ databaseHistory: items || [], isSyncingWithDb: false });
+        } catch (e) {
+          set({ isSyncingWithDb: false });
+        }
+      },
+
+      // Delete SQLite library entry
+      deleteDatabaseEntry: async (id) => {
+        await deleteLibraryItemFromDatabase(id);
+        get().syncDatabaseLibrary();
+      },
+
+      // Record 48-Hour Performance Outcome (FR-08)
+      addPerformanceRecord: async (recordData) => {
+        const res = await recordPerformanceOutcome(recordData);
+        await get().loadPerformanceRecords();
+        return res;
+      },
+
+      // Load all 48-Hour Performance Records
+      loadPerformanceRecords: async () => {
+        try {
+          const records = await fetchPerformanceHistory();
+          set({ performanceRecords: records || [] });
+        } catch (e) {
+          console.warn('Failed to load performance records:', e);
+        }
       },
 
       // Restore past battle into active workspace
       restoreBattle: (entry) => {
         set({
-          hookA: entry.hookA,
-          hookB: entry.hookB,
+          hookA: entry.hookA || entry.hook_a,
+          hookB: entry.hookB || entry.hook_b,
           platform: entry.platform || 'tiktok',
           niche: entry.niche || 'tech',
+          topic: entry.topic || get().topic,
           historyDrawerOpen: false,
         });
         get().runComparison();

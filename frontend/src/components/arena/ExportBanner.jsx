@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Copy, Check, Share2, Download, FileText } from 'lucide-react';
-import { Button } from '../ui/Button';
+import { Copy, Check, FileText, TrendingUp } from 'lucide-react';
 
-export function ExportBanner({ result }) {
+export function ExportBanner({ result, onOpenOutcome }) {
   const [copied, setCopied] = useState(false);
 
   if (!result) return null;
@@ -42,14 +41,24 @@ export function ExportBanner({ result }) {
           <FileText className="w-5 h-5" />
         </div>
         <div>
-          <h5 className="text-xs font-bold text-[#0D0C22]">Export Creator Diagnostic Report</h5>
+          <h5 className="text-xs font-bold text-[#0D0C22]">Creator Export & 48h Outcome Loop</h5>
           <p className="text-[11px] text-[#6E6D7A] mt-0.5">
-            Copy full side-by-side metrics, probabilities, and pacing notes for your production script.
+            Copy diagnostics for your script or record real views after publishing.
           </p>
         </div>
       </div>
 
       <div className="flex items-center gap-2 shrink-0">
+        {onOpenOutcome && (
+          <button
+            onClick={onOpenOutcome}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-semibold transition-all shadow-sm active:scale-95"
+          >
+            <TrendingUp className="w-3.5 h-3.5" />
+            <span>Log 48h Outcome</span>
+          </button>
+        )}
+
         <button
           onClick={handleCopyReport}
           className="px-4 py-2 rounded-full text-xs font-bold bg-[#0D0C22] hover:bg-[#3D3D4E] text-white transition-all shadow-sm active:scale-95 flex items-center gap-1.5"

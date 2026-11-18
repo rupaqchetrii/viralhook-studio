@@ -39,8 +39,7 @@ function CustomTooltip({ active, payload }) {
   );
 }
 
-/* ── Main Arena ────────────────────────────────────────────────────── */
-export function ComparisonArena({ result }) {
+export function ComparisonArena({ result, onOpenOutcome }) {
   if (!result) return null;
 
   const { hook_a, hook_b, margin_guard, disclaimer, isMockModel } = result;
@@ -268,7 +267,8 @@ export function ComparisonArena({ result }) {
 
       {/* ══ SIGNALS + EXPORT ═══════════════════════════════════════════ */}
       <SignalsComparison hookA={hook_a} hookB={hook_b} />
-      <ExportBanner result={result} />
+      {/* 5. Day 3 Export & Share Banner */}
+      <ExportBanner result={result} onOpenOutcome={onOpenOutcome} />
 
       {/* Disclaimer */}
       {disclaimer && (

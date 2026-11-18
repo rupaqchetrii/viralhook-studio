@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Flame, History, HelpCircle, ChevronDown, Settings } from 'lucide-react';
-import { Button } from '../ui/Button';
-import { Badge } from '../ui/Badge';
+import {
+  Flame,
+  History,
+  HelpCircle,
+  RefreshCw,
+  ChevronDown,
+  BarChart3,
+  Settings,
+} from 'lucide-react';
 import { useHookStore } from '../../store/useHookStore';
 import { checkBackendHealth } from '../../services/api';
 
-export function Header() {
+export function Header({ onOpenAnalytics }) {
   const {
     platform,
     setPlatform,
@@ -59,7 +65,7 @@ export function Header() {
                   }`}
                 >
                   <span className={`w-1.5 h-1.5 rounded-full ${isModelLive ? 'bg-emerald-500 animate-pulse' : 'bg-amber-400'}`} />
-                  {isTrained ? 'Trained Model' : isModelLive ? 'API Live' : 'Offline'}
+                  {isTrained ? 'Dual-Tower ML' : isModelLive ? 'Gateway Live' : 'Offline'}
                 </span>
               )}
             </div>
@@ -109,8 +115,31 @@ export function Header() {
           </div>
         </div>
 
-        {/* Right Actions: History Drawer & Scoring Guide */}
-        <div className="flex items-center gap-2.5">
+        {/* Right Actions */}
+        <div className="flex items-center gap-2">
+          {/* Swap button */}
+          <button
+            onClick={swapHooks}
+            title="Swap Hook A and Hook B"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-full border border-[#E7E7E9] hover:border-[#0D0C22] text-[#0D0C22] text-xs font-semibold bg-white transition-all shadow-sm active:scale-95"
+          >
+            <RefreshCw className="w-3.5 h-3.5 text-[#6E6D7A]" />
+            <span>Swap</span>
+          </button>
+
+          {/* Analytics Modal trigger */}
+          {onOpenAnalytics && (
+            <button
+              onClick={onOpenAnalytics}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-semibold transition-all shadow-sm active:scale-95"
+              title="Channel Accuracy & Outcome Analytics"
+            >
+              <BarChart3 className="w-3.5 h-3.5 text-emerald-600" />
+              <span className="hidden sm:inline">Analytics</span>
+            </button>
+          )}
+
+          {/* History Drawer */}
           <button
             onClick={() => setHistoryDrawerOpen(true)}
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-[#E7E7E9] hover:border-[#0D0C22] text-[#0D0C22] text-xs font-semibold bg-white transition-all shadow-sm active:scale-95"
@@ -124,18 +153,19 @@ export function Header() {
             )}
           </button>
 
+          {/* How Scoring Works */}
           <button
             onClick={() => setOnboardingOpen(true)}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#0D0C22] hover:bg-[#3D3D4E] text-white text-xs font-semibold transition-all shadow-sm active:scale-95"
+            className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#0D0C22] hover:bg-[#3D3D4E] text-white text-xs font-semibold transition-all shadow-sm active:scale-95"
           >
             <HelpCircle className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">How Scoring Works</span>
+            <span>How Scoring Works</span>
           </button>
 
           {/* Settings Button */}
           <button
             onClick={() => setSettingsPanelOpen(true)}
-            className="w-9 h-9 rounded-full border border-[#E7E7E9] dark:border-white/10 hover:border-[#0D0C22] bg-white dark:bg-white/5 hover:bg-[#F8F7F4] dark:hover:bg-white/10 flex items-center justify-center text-[#6E6D7A] dark:text-[#9E9EA7] hover:text-[#0D0C22] dark:hover:text-white transition-all shadow-sm active:scale-95 group relative"
+            className="w-9 h-9 rounded-full border border-[#E7E7E9] hover:border-[#0D0C22] bg-white hover:bg-[#F8F7F4] flex items-center justify-center text-[#6E6D7A] hover:text-[#0D0C22] transition-all shadow-sm active:scale-95 group relative"
             title="Settings"
           >
             <Settings className="w-4 h-4 group-hover:rotate-45 transition-transform duration-300" />
@@ -153,7 +183,7 @@ export function Header() {
           ) : (
             <button
               onClick={() => logout()}
-              className="px-4 py-2 rounded-full bg-[#0D0C22] hover:bg-[#3D3D4E] dark:bg-white dark:hover:bg-gray-100 text-white dark:text-[#0D0C22] font-bold text-xs shadow-sm transition-all active:scale-95"
+              className="px-4 py-2 rounded-full bg-[#0D0C22] hover:bg-[#3D3D4E] text-white font-bold text-xs shadow-sm transition-all active:scale-95"
             >
               Log in
             </button>
