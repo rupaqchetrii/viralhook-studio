@@ -9,9 +9,10 @@
 import { countWords, calculateSpokenTime, getPacingZone } from '../utils/pacingCalculator';
 import { lintHook } from '../utils/linterRules';
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL ||
-  (typeof window !== 'undefined' && window.location.origin.includes(':8000')
+const rawApiUrl = (import.meta.env.VITE_API_URL || '').trim().replace(/\/+$/, '');
+const API_BASE_URL = rawApiUrl
+  ? (rawApiUrl.endsWith('/api') ? rawApiUrl.slice(0, -4) : rawApiUrl)
+  : (typeof window !== 'undefined' && window.location.origin.includes(':8000')
     ? window.location.origin
     : 'http://127.0.0.1:8000');
 

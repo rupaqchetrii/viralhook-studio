@@ -60,10 +60,12 @@ ml/data/processed/*
 !ml/data/processed/.gitkeep
 backend/models/*.joblib
 !backend/models/model_pipeline.joblib
+!models/model_pipeline.joblib
 !backend/models/.gitkeep
 backend/models/*.pkl
 *.joblib
 !backend/models/model_pipeline.joblib
+!models/model_pipeline.joblib
 *.pkl
 models/*.bin
 cache/
